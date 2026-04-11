@@ -2,10 +2,10 @@
 
 import React, { useEffect } from 'react';
 import { useKpiStore } from '@/store/kpiStore';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Trash2 } from 'lucide-react';
 
 export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () => void, isSubmitting: boolean }) {
-  const { tasks, updateThucHien, addTask, updateTaskField, getTotalScore } = useKpiStore();
+  const { tasks, updateThucHien, addTask, updateTaskField, getTotalScore, removeTask } = useKpiStore();
 
   const totalScore = getTotalScore();
 
@@ -23,6 +23,7 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
             <th className="border border-gray-300 p-2 text-center w-24">% Hoàn Thành</th>
             <th className="border border-gray-300 p-2 text-center w-20">Trọng số</th>
             <th className="border border-gray-300 p-2 text-center w-24">Đạt được</th>
+            <th className="border border-gray-300 p-2 text-center w-10">Xóa</th>
           </tr>
         </thead>
         <tbody>
@@ -49,12 +50,13 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
               <td className="border border-gray-300 p-2 text-center font-bold text-green-700">{t.phanTram > 0 ? t.phanTram + '%' : '-'}</td>
               <td className="border border-gray-300 p-2 text-center text-black font-bold">{t.trongSo}</td>
               <td className="border border-gray-300 p-2 text-center font-bold text-green-700">{t.datDuoc > 0 ? t.datDuoc : '-'}</td>
+              <td className="border border-gray-300 p-2 text-center">-</td>
             </tr>
           ))}
 
           {/* Dòng cách ly phân vùng */}
           <tr>
-            <td colSpan={9} className="bg-gray-200 text-center font-bold p-3 text-black uppercase text-xs border border-gray-300">
+            <td colSpan={10} className="bg-gray-200 text-center font-bold p-3 text-black uppercase text-xs border border-gray-300">
               ↓ Kế Hoạch Đề Xuất Cho Tuần Tới ↓
             </td>
           </tr>
@@ -62,7 +64,9 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
           {/* Phân Vùng 2: Lập kế hoạch mới */}
           {tasks.filter(t => !t.isNhiemVuCu).map((t, idx) => (
             <tr key={t.id} className="hover:bg-gray-50 transition-colors">
-              <td className="border border-gray-300 p-2 text-center text-sm text-black">✨</td>
+              <td className="border border-gray-300 p-2 text-center text-sm font-bold text-black">
+                {idx + 1}
+              </td>
               <td className="border border-gray-300 p-1">
                 <input type="text" className="w-full border border-gray-300 p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium placeholder:font-normal" value={t.noiDung} onChange={e => updateTaskField(t.id, 'noiDung', e.target.value)} placeholder="Tên công việc..." />
               </td>
@@ -86,12 +90,22 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
                 <input type="number" className="w-full border border-gray-300 text-center p-2 outline-none focus:border-blue-500 rounded-sm text-black font-bold" value={t.trongSo} onChange={e => updateTaskField(t.id, 'trongSo', parseFloat(e.target.value))} />
               </td>
               <td className="border border-gray-300 p-2 text-center bg-gray-100 text-gray-700 font-bold">-</td>
+              <td className="border border-gray-300 p-1 text-center">
+                 {/* Chỉ cho phép xóa nếu không phải nhiệm vụ cũ */}
+                 <button 
+                   onClick={() => removeTask(t.id)}
+                   className="text-red-400 hover:text-red-700 p-2 transition-colors"
+                   title="Xóa đầu việc này"
+                 >
+                   <Trash2 size={16} />
+                 </button>
+              </td>
             </tr>
           ))}
 
           {/* Nút thêm việc */}
           <tr>
-            <td colSpan={9} className="border border-gray-300 p-3 text-center bg-blue-50/30">
+            <td colSpan={10} className="border border-gray-300 p-3 text-center bg-blue-50/30">
               <button onClick={addTask} className="text-blue-600 hover:text-blue-800 font-semibold flex items-center justify-center gap-2 w-full py-1">
                 <PlusCircle size={18} /> Điền thêm Đầu Việc mới
               </button>

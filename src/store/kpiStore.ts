@@ -31,6 +31,9 @@ type KpiStore = {
   // Cập nhật text cho nhiệm vụ mới
   updateTaskField: <K extends keyof Task>(id: string, field: K, value: Task[K]) => void;
   
+  // Xóa nhiệm vụ mới
+  removeTask: (id: string) => void;
+  
   // Tính tổng
   getTotalScore: () => number;
 };
@@ -98,6 +101,10 @@ export const useKpiStore = create<KpiStore>((set, get) => ({
     });
     return { tasks: newTasks };
   }),
+
+  removeTask: (id) => set((state) => ({
+    tasks: state.tasks.filter(t => t.id !== id)
+  })),
 
   getTotalScore: () => {
     return get().tasks.reduce((sum, t) => sum + t.datDuoc, 0);
