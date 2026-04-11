@@ -102,8 +102,8 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
 
       {/* Thanh công cụ Submit Cố định ở đáy */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] p-4 flex justify-between items-center z-50">
-          <div className="text-lg px-8">
-            Tổng điểm KPI: <strong className="text-3xl text-green-700 ml-2">{totalScore.toFixed(2)}</strong> <span className="text-sm text-gray-500 font-bold ml-1">ĐIỂM</span>
+          <div className="text-lg px-8 text-black font-bold">
+            Tổng điểm KPI: <strong className="text-3xl text-green-700 ml-2">{totalScore.toFixed(2)}</strong> <span className="text-sm text-black font-bold ml-1">ĐIỂM</span>
           </div>
           <div className="px-8 flex gap-4">
             <button 

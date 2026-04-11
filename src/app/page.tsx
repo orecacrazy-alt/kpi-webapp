@@ -100,7 +100,7 @@ function AppContent() {
   if (loading) return <div className="p-8 text-center text-lg font-bold text-gray-500 animate-pulse">Cỗ máy đang đọc dữ liệu cũ của bạn. Vui lòng chờ nghen... ⚙️</div>;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Khối 1 */}
