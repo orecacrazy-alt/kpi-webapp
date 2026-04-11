@@ -1,0 +1,89 @@
+# Kế Hoạch Triển Khai: Mini Web App Báo Cáo KPI Tự Động 
+
+Phát triển Web App KPI tuân thủ nghiêm ngặt 100% diện mạo và logic tính toán của file `slark.xlsx`.
+
+> [!IMPORTANT]
+> **Điểm Nhấn UX Mới:** Khối thông tin nhân viên được tách lập hoàn toàn độc lập ở phía trên. Tích hợp Máy tính (Calculator) ẩn dưới lưới để tự động nảy số `% Hoàn thành` và `Điểm Đạt Được` ngay lập tức khi nhân viên gõ (Realtime). 
+
+## 1. Mục tiêu tổng thể
+
+- Xây dựng 1 Mini Web App (Next.js) thay thế hoàn toàn JotForm/Lark. Không cần đăng nhập.
+- Giải quyết bài toán: **Tái sử dụng Kế Hoạch Tuần Cũ làm Báo Cáo Tuần Mới** theo mô hình 2 phân vùng thời gian.
+- Clone y hệt UI của file Excel `slark.xlsx`. Giữ nguyên cảm giác "Báo Cáo Chuyên Nghiệp".
+- Liên kết chặt chẽ vào hệ sinh thái Discord của IruKa.
+
+---
+
+## 2. Thiết Kế UX/UI & Logic Tính Toán (Sao chép 1:1 Excel)
+
+Giao diện trang Web khi mở lên sẽ được chia làm 3 Khối (Blocks) độc lập.
+
+### KHỐI 1: Thông Tin Nhân Sự (Header Block)
+Trình bày dưới dạng bảng dọc (như góc trái trên cùng của Excel). Dữ liệu này được App tự động điền dựa vào Link Discord bắn ra, nhân viên **KHÔNG ĐƯỢC CHỈNH SỬA**:
+- **Họ tên:** Trần Thị Khánh Linh (Lấy từ URL `?name=Linh`)
+- **Báo cáo:** Giám Đốc
+- **Phòng:** HR (Lấy từ Database Nội bộ qua tên)
+- **Ngày Đ.giá:** 11/04/2026 (Ngày mở link)
+
+### KHỐI 2: Chốt Kết Quả Tuần Trước (Auto-calculate Block)
+Hệ thống tải lại các đầu việc của "Tuần Trước" đẩy vào mâm.
+Đây là nơi thuật toán Realtime hoạt động:
+- Cột khóa vĩnh viễn: `Nội dung, Đơn vị, Kế hoạch (Số lượng gốc), Trọng số, Yêu cầu`.
+- Cột nhân viên **ĐƯỢC GÕ**: `Thực hiện`
+- Cột **MÁY TỰ TÍNH (Nảy số ngay lập tức):**
+  1. **`% Hoàn Thành`** = `Thực hiện` ÷ `Kế hoạch` × 100%
+  2. **`Đạt Được`** = `% Hoàn Thành` × `Trọng số` × `Yêu Cầu`
+
+*Ví dụ trên giao diện lúc nhân viên đang gõ chuột:*
+> Tuyển Intern | Kế hoạch: 2 | Trọng số: 3 | **👉 [Gõ Thực hiện]: 1** 
+> ⚡ *(Màn hình lập tức nhảy số màu Xanh lá cây ở 2 ô tiếp theo)*: 
+> `% Hoàn thành: 50%` | `Đạt Được: 1.5 điểm`
+
+### KHỐI 3: Lập Kế Hoạch Tuần Này (Planning Block)
+Khu vực lưới trống để nhân viên đề xuất công việc tuần tới. 
+- Chỉ cho phép gõ: `Nội dung`, `Đơn vị`, `Kế hoạch` (Số lượng dự kiến tính làm), và `Trọng số` tự đề xuất.
+- **Giấu hoàn toàn** ô `Thực hiện` và `% Hoàn thành` để tuần sau mới lấy ra dùng.
+
+---
+
+## 3. Kiến Trúc Database Lõi (Google Sheets Backend)
+
+Để UI ở trên chạy được, Google Sheets phía sau sẽ lưu trữ từng dòng là 1 Đầu Việc (Task-Based).
+
+| Cột A (ID) | Cột B (Tên) | Cột C (Phòng) | Cột D (Tuần Lập) | Cột E (Công Việc) | Cột F (KH) | Cột G (Thực Hiện) | Cột H (Trọng Số) | Cột I (Trạng Thái) |
+|---|---|---|---|---|---|---|---|---|
+| TASK_01 | Khánh Linh | HR | Tuần 3 | Tuyển dev | 2 | 1 | 2 | Đã Báo Cáo |
+| TASK_02 | Khánh Linh | HR | Tuần 3 | Làm lương | 1 | *(Trống)* | 3 | Chờ Báo Cáo |
+
+Quy trình Submit (Gửi Form) từ Web xuống Sheets:
+1. Ghi đè (Update) cột `Thực Hiện` vào các Task cũ của Tuần 3, chuyển Trạng Thái từ `Chờ` -> `Đã Báo Cáo`.
+2. Tạo mới hoàn toàn (Insert/Append) các Task của Tuần 4 xuống đáy bảng, đặt trạng thái `Chờ Báo Cáo`. 
+
+*(Điều này khóa chặt tư duy quản lý, tạo ra sự liền mạch vĩnh cửu. Sheet tự động đóng vai trò như 1 máy chủ SQL)*.
+
+---
+
+## 4. Các Phase Triển Khai (Dự kiến 3 Tiếng)
+
+### Phase 1: Mở đất & Khởi tạo (Next.js)
+- Tạo thư mục riêng `kpi-webapp` bằng Next.js + Tailwind. 
+- Setup SDK đọc/ghi Google Sheets Service Account (Bê file credential từ Bot sang).
+
+### Phase 2: Code UI & Engine Máy Tính (Zustand)
+- Clone UI Excel sang Web (Bảng Khối 1 Nhân Sự & Bảng Lưới Động).
+- Dùng `Zustand` làm State Store để khi gõ số vào ô, nó tính toán lại toàn bộ `% Hoàn thành` ở tất cả các dòng mà không làm giật màn hình (React Re-render optimization).
+
+### Phase 3: Nối Mạch Máu API (Data Flow)
+- Viết hàm `GET /api/kpi`: Lấy dữ liệu Tuần n-1 đổ vào Khối 2.
+- Viết hàm `POST /api/kpi`: Gói 2 cục Data (Update Khối 2 và Insert Khối 3) bắn đồng thời vào Sheet.
+
+### Phase 4: CI/CD & Discord Notify
+- Deploy Public lên Vercel. 
+- Sửa lại hàm `/weekly` trong con Bot Discord của Sếp để bắn dính Link Web App chuẩn: `https://kpi-iruka.vercel.app/?name=X&week=Y&dept=HR`
+
+---
+
+## 5. Yêu Cầu Sếp Phê Duyệt Để Gõ Code
+
+1. Sếp duyệt việc tách **"Khối 1: Thông tin nhân sự"** ra đứng riêng, và **Khối 2 sẽ nảy số tự động ở cột % HT / Điểm Đạt** đúng như mô tả ở trên chứ?
+2. Bộ code này tôi định đặt thẳng vào một thư mục chung là `/Users/mr.dao/Desktop/WorkSpace/cong-nghe/kpi-webapp`. Nếu Sếp duyệt, tôi sẽ cài đặt Next.js ngay.
