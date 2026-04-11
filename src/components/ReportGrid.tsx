@@ -38,11 +38,15 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
 
               {/* Ô THỰC HIỆN ĐƯỢC PHÉP CHỈNH SỬA (LỖI THOÁT) */}
               <td className="border border-gray-300 p-1">
-                <input
                   type="number"
+                  min="1"
+                  step="1"
                   className="w-full text-center border-2 border-yellow-500 bg-yellow-50 focus:ring-2 focus:ring-yellow-600 outline-none py-1 font-bold text-black text-base"
                   value={t.thucHien !== null ? t.thucHien : ''}
-                  onChange={(e) => updateThucHien(t.id, parseFloat(e.target.value))}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    updateThucHien(t.id, isNaN(val) ? 0 : val);
+                  }}
                   placeholder="?"
                 />
               </td>
@@ -68,16 +72,42 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
                 {idx + 1}
               </td>
               <td className="border border-gray-300 p-1">
-                <input type="text" className="w-full border border-gray-300 p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium placeholder:font-normal" value={t.noiDung} onChange={e => updateTaskField(t.id, 'noiDung', e.target.value)} placeholder="Tên công việc..." />
+                <textarea 
+                  className="w-full border border-gray-300 p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium placeholder:font-normal min-h-[60px] resize-y" 
+                  value={t.noiDung} 
+                  onChange={e => updateTaskField(t.id, 'noiDung', e.target.value)} 
+                  placeholder="Tên công việc (có thể xuống dòng)..." 
+                />
               </td>
               <td className="border border-gray-300 p-1">
-                <input type="text" className="w-full border border-gray-300 p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium placeholder:font-normal" value={t.ghiChu} onChange={e => updateTaskField(t.id, 'ghiChu', e.target.value)} placeholder="Ghi chú..." />
+                <textarea 
+                  className="w-full border border-gray-300 p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium placeholder:font-normal min-h-[60px] resize-y" 
+                  value={t.ghiChu} 
+                  onChange={e => updateTaskField(t.id, 'ghiChu', e.target.value)} 
+                  placeholder="Ghi chú chi tiết..." 
+                />
               </td>
               <td className="border border-gray-300 p-1">
-                <input type="text" className="w-full border border-gray-300 text-center p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium" value={t.donVi} onChange={e => updateTaskField(t.id, 'donVi', e.target.value)} />
+                <input 
+                  type="text" 
+                  className="w-full border border-gray-300 text-center p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium" 
+                  value={t.donVi} 
+                  onChange={e => updateTaskField(t.id, 'donVi', e.target.value)} 
+                  placeholder="game/api..."
+                />
               </td>
               <td className="border border-gray-300 p-1">
-                <input type="number" className="w-full border border-gray-300 text-center p-2 outline-none focus:border-blue-500 font-bold text-black rounded-sm" value={t.keHoach} onChange={e => updateTaskField(t.id, 'keHoach', parseFloat(e.target.value))} />
+                <input 
+                  type="number" 
+                  min="1"
+                  step="1"
+                  className="w-full border border-gray-300 text-center p-2 outline-none focus:border-blue-500 font-bold text-black rounded-sm" 
+                  value={t.keHoach} 
+                  onChange={e => {
+                    const val = parseInt(e.target.value);
+                    updateTaskField(t.id, 'keHoach', isNaN(val) ? 1 : Math.max(1, val));
+                  }} 
+                />
               </td>
 
               {/* Đóng băng ô Thực hiện ở phần KH mới */}
@@ -87,7 +117,15 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
 
               <td className="border border-gray-300 p-2 text-center bg-gray-100 text-gray-700 font-bold">-</td>
               <td className="border border-gray-300 p-1">
-                <input type="number" className="w-full border border-gray-300 text-center p-2 outline-none focus:border-blue-500 rounded-sm text-black font-bold" value={t.trongSo} onChange={e => updateTaskField(t.id, 'trongSo', parseFloat(e.target.value))} />
+                <select
+                  className="w-full border border-gray-300 text-center p-2 outline-none focus:border-blue-500 rounded-sm text-black font-bold bg-white"
+                  value={t.trongSo}
+                  onChange={e => updateTaskField(t.id, 'trongSo', parseInt(e.target.value))}
+                >
+                  <option value={1}>1</option>
+                  <option value={2}>2</option>
+                  <option value={3}>3</option>
+                </select>
               </td>
               <td className="border border-gray-300 p-2 text-center bg-gray-100 text-gray-700 font-bold">-</td>
               <td className="border border-gray-300 p-1 text-center">
