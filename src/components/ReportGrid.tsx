@@ -110,7 +110,7 @@ export default function ReportGrid({ onSubmit, isSubmitting }: { onSubmit: () =>
             onClick={onSubmit}
             disabled={isSubmitting}
             className={`font-bold py-3 px-8 rounded shadow-lg transform transition ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#1e3a5f] hover:bg-blue-800 text-white hover:scale-105 animate-pulse'}`}>
-            {isSubmitting ? '⏳ ĐANG LƯU DATA...' : '📤 GỬI BÁO CÁO & LƯU KẾ HOẠCH'}
+            {isSubmitting ? '⏳ ĐANG LƯU DATA...' : '📤 NỘP BÁO CÁO'}
           </button>
         </div>
       </div>
