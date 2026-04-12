@@ -116,7 +116,8 @@ export default function ReportGrid({
   const newTasks = tasks.filter(t => !t.isNhiemVuCu);
 
   // ── Tính toán số liệu tổng hợp (% KH gia quyền) ──────────
-  const totalWeight = oldTasks.reduce((sum, t) => sum + t.trongSo, 0);
+  // Guard: trongSo có thể là '' (chưa điền) → tạm tính = 0
+  const totalWeight = oldTasks.reduce((sum, t) => sum + (t.trongSo === '' ? 0 : t.trongSo), 0);
   const percentage  = totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
   
   // Tách số tuần từ "Tuần 15" -> "15"
