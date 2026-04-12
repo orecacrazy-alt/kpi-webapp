@@ -424,13 +424,19 @@ export default function ReportGrid({
           <button
             onClick={onSubmit}
             disabled={isSubmitting}
-            className={`font-black py-3 px-6 sm:px-12 rounded-xl shadow-lg transform transition-all text-white text-sm sm:text-base whitespace-nowrap
+            className={`relative font-black py-3 px-6 sm:px-14 rounded-xl transform transition-all text-white text-sm sm:text-lg whitespace-nowrap z-10
               ${isSubmitting
-                ? 'bg-gray-400 cursor-not-allowed scale-95'
-                : 'bg-[#1e3a5f] hover:bg-blue-800 hover:scale-[1.03] active:scale-95 border-b-4 border-blue-900'
+                ? 'bg-gray-400 cursor-not-allowed scale-95 shadow-none'
+                : 'bg-gradient-to-br from-blue-500 to-[#1e3a5f] hover:from-blue-400 hover:to-blue-800 hover:scale-[1.05] active:scale-95 shadow-[0_10px_25px_rgba(59,130,246,0.6)] hover:shadow-[0_15px_35px_rgba(59,130,246,0.9)] border-b-[5px] border-blue-900 border-t border-blue-400/50'
               }`}
           >
-            {isSubmitting ? '⏳ ĐANG NỘP...' : '📤 NỘP BÁO CÁO'}
+            {/* Vòng sáng nhấp nháy bên ngoài (Glow effect) để thu hút ánh nhìn */}
+            {!isSubmitting && (
+              <span className="absolute -inset-1 rounded-xl bg-blue-400 blur-lg opacity-50 animate-pulse -z-10" />
+            )}
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              {isSubmitting ? '⏳ ĐANG NỘP...' : '📤 NỘP BÁO CÁO'}
+            </span>
           </button>
         </div>
       </div>
