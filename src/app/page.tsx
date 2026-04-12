@@ -14,6 +14,7 @@ function AppContent() {
   
   const reportWeek = searchParams.get('report_week') || 'Tuần N/A';
   const planWeek = searchParams.get('plan_week') || 'Tuần N/A+1';
+  const isLate = searchParams.get('is_late') === 'true';
   
   // Format Date hôm nay
   const today = new Date();
@@ -67,6 +68,9 @@ function AppContent() {
     // Các task mới (Thêm vào) 
     const newTasks = currentTasks.filter(t => !t.isNhiemVuCu && t.noiDung.trim() !== '');
 
+    const isConfirm = window.confirm("Lưu ý: Nếu bạn nộp báo cáo lần 2 trong tuần này, toàn bộ dữ liệu báo cáo cũ của tuần sẽ bị xóa để GHI ĐÈ bằng dữ liệu mới.\n\nBạn có chắc chắn muốn tiếp tục Nộp báo cáo?");
+    if (!isConfirm) return;
+
     setSubmitting(true);
     
     try {
@@ -79,8 +83,10 @@ function AppContent() {
            role,
            report_week: reportWeek,
            plan_week: planWeek,
+           is_late: isLate,
            tasksToUpdate: oldTasks,
-           tasksToInsert: newTasks
+           tasksToInsert: newTasks,
+           allTasks: [...oldTasks, ...newTasks] // Truyền tất cả để GAS viết đè
         })
       });
 
