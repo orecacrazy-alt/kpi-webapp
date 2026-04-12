@@ -76,7 +76,6 @@ function TableHeader() {
     </thead>
   );
 }
-}
 
 /**
  * Banner tiêu đề nằm BÊN TRÊN mỗi bảng (không phải dòng trong tbody nữa)
