@@ -188,7 +188,7 @@ export default function ReportGrid({
                         className="w-full text-center border border-gray-300 p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium bg-white"
                         value={t.donVi}
                         onChange={e => updateTaskField(t.id, 'donVi', e.target.value)}
-                        placeholder="game..."
+                        placeholder="game"
                       />
                     ) : (
                       <div className="p-2 text-center text-black font-medium">{t.donVi}</div>
@@ -340,7 +340,7 @@ export default function ReportGrid({
                     className="w-full border border-gray-300 text-center p-2 outline-none focus:border-blue-500 rounded-sm text-black font-medium"
                     value={t.donVi}
                     onChange={e => updateTaskField(t.id, 'donVi', e.target.value)}
-                    placeholder="game/api..."
+                    placeholder="game"
                   />
                 </td>
                 <td className="border border-gray-300 p-1">
