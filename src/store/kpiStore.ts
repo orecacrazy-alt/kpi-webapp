@@ -19,7 +19,7 @@ export type Task = {
 type KpiStore = {
   tasks: Task[];
   initTasks: (tasks: Task[]) => void;
-  updateThucHien: (id: string, value: number) => void;
+  updateThucHien: (id: string, value: number | null) => void;
   addTask: () => void;
   addOldTask: () => void; // Thêm dòng mới ở Phân vùng 1 (dành cho lần đầu tự điền)
   updateTaskField: <K extends keyof Task>(id: string, field: K, value: Task[K]) => void;
