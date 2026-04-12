@@ -306,7 +306,7 @@ export default function ReportGrid({
         {/* Banner tiêu đề bảng 2 */}
         <SectionBanner
           icon="🗓️"
-          label="Kế Hoạch Tuần Này"
+          label="Kế Hoạch Tuần Tới"
           hint="Đặt mục tiêu cho tuần tới — Điền đủ các cột"
           colorClass="bg-gray-200 text-black"
         />
