@@ -14,6 +14,7 @@ type Props = {
   date: string;
   reportWeek: string;
   planWeek: string;
+  reportTo: string;
   isLate: boolean;
 }
 
@@ -43,7 +44,7 @@ function getWeekDateRange(weekLabel: string): string {
   return `(${fmt(monday)} - ${fmt(sunday)})`;
 }
 
-export default function HeaderInfo({ name, role, dept, date, reportWeek, planWeek, isLate }: Props) {
+export default function HeaderInfo({ name, role, dept, date, reportWeek, planWeek, reportTo, isLate }: Props) {
   const reportDates = getWeekDateRange(reportWeek);
   const planDates = getWeekDateRange(planWeek);
 
@@ -79,8 +80,8 @@ export default function HeaderInfo({ name, role, dept, date, reportWeek, planWee
             <td className="border border-gray-300 px-4 py-2 text-[#1e3a5f] font-black min-w-[200px] text-base">{name}</td>
           </tr>
           <tr>
-            <td className="border border-gray-300 px-4 py-2 font-bold bg-gray-100 text-gray-700">Chức vụ</td>
-            <td className="border border-gray-300 px-4 py-2 text-[#1e3a5f] font-bold">{role}</td>
+            <td className="border border-gray-300 px-4 py-2 font-bold bg-gray-100 text-gray-700">Báo cáo cho</td>
+            <td className="border border-gray-300 px-4 py-2 text-[#1e3a5f] font-bold">{reportTo}</td>
           </tr>
           <tr>
             <td className="border border-gray-300 px-4 py-2 font-bold bg-gray-100 text-gray-700">Phòng ban</td>

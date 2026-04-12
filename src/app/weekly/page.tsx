@@ -182,6 +182,7 @@ function AppContent() {
   const autoWeeks  = getAutoWeeks();
   const reportWeek = searchParams.get('report_week') || autoWeeks.report;
   const planWeek   = searchParams.get('plan_week') || autoWeeks.plan;
+  const reportTo   = searchParams.get('report_to') || 'CEO';
   const isLate     = searchParams.get('is_late') === 'true';
 
   const today = new Date();
@@ -384,7 +385,7 @@ function AppContent() {
         {/* Khối 1: Header thông tin NV */}
         <HeaderInfo
           name={name} role={role} dept={dept} date={dateStr}
-          reportWeek={reportWeek} planWeek={planWeek} isLate={isLate}
+          reportWeek={reportWeek} planWeek={planWeek} reportTo={reportTo} isLate={isLate}
         />
 
         {/* Khối 2: Lưới báo cáo */}
