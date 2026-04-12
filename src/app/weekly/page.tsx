@@ -156,16 +156,32 @@ function SuccessScreen({ name, reportWeek, totalScore }: { name: string; reportW
   );
 }
 
+// ── Helper tự tính tuần nếu không có param ───────────────────────
+function getAutoWeeks() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  const planWeekNum = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+  const reportWeekNum = planWeekNum > 1 ? planWeekNum - 1 : 52;
+  return {
+    report: `Tuần ${reportWeekNum}`,
+    plan: `Tuần ${planWeekNum}`
+  };
+}
+
 // ════════════════════════════════════════════════════════════════
 // COMPONENT CHÍNH
 // ════════════════════════════════════════════════════════════════
 function AppContent() {
   const searchParams = useSearchParams();
-  const name       = searchParams.get('name') || 'Chưa rõ';
+  const name       = searchParams.get('name') || 'Bạn chưa có Tên';
   const dept       = searchParams.get('dept') || 'Chưa rõ';
   const role       = searchParams.get('role') || 'Cán bộ';
-  const reportWeek = searchParams.get('report_week') || 'Tuần N/A';
-  const planWeek   = searchParams.get('plan_week') || 'Tuần N/A+1';
+  
+  const autoWeeks  = getAutoWeeks();
+  const reportWeek = searchParams.get('report_week') || autoWeeks.report;
+  const planWeek   = searchParams.get('plan_week') || autoWeeks.plan;
   const isLate     = searchParams.get('is_late') === 'true';
 
   const today = new Date();
@@ -188,8 +204,8 @@ function AppContent() {
   // ── 1. FETCH DATA ──────────────────────────────────────────────
   useEffect(() => {
     async function loadData() {
-      // Không có params → không load
-      if (name === 'Chưa rõ' || reportWeek === 'Tuần N/A') {
+      // Nếu không dính líu đến user cụ thể (chưa truyền param vào)
+      if (name === 'Bạn chưa có Tên') {
         setScreen('form');
         setIsFirstTime(true);
         return;
