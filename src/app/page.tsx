@@ -23,26 +23,39 @@ function AppContent() {
   const { initTasks, addTask, tasks } = useKpiStore();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [noData, setNoData] = useState(false); // true = không có dữ liệu tuần trước
 
   // 1. FETCH DATA TỪ API
   useEffect(() => {
     async function loadData() {
       try {
         if(name !== 'Chưa rõ' && reportWeek !== 'Tuần N/A') {
-          const res = await fetch(`/api/kpi?name=${encodeURIComponent(name)}&report_week=${encodeURIComponent(reportWeek)}`);
+          // Truyền thêm plan_week để GAS biết load kế hoạch đã nộp tuần này (Fix [A])
+          const res = await fetch(
+            `/api/kpi?name=${encodeURIComponent(name)}&report_week=${encodeURIComponent(reportWeek)}&plan_week=${encodeURIComponent(planWeek)}`
+          );
           const data = await res.json();
           
-          if(data.tasks && data.tasks.length > 0) {
-            initTasks(data.tasks);
+          if (data.error) {
+            // GAS chưa cấu hình hoặc lỗi hệ thống
+            console.error('⚠️ API lỗi:', data.error);
+            setNoData(true);
+          } else if(data.tasks && data.tasks.length > 0) {
+            // Có nhiệm vụ cũ → init bình thường
+            // Nếu có thêm planTasks (kế hoạch đã nộp tuần này) → pre-fill Phân vùng 2
+            const planTasks = (data.planTasks || []).map((t: any) => ({ ...t, isNhiemVuCu: false }));
+            initTasks([...data.tasks, ...planTasks]);
           } else {
-            console.log("Không có data mầm tuần trước.");
+            console.log('Không có data mầm tuần trước.');
+            setNoData(true);
           }
         }
       } catch (error) {
-        console.error("Lỗi kéo data API", error);
+        console.error('Lỗi kéo data API', error);
+        setNoData(true);
       } finally {
         setLoading(false);
-        // Sau khi load xong, nhét vào 1 dòng trống cho tuần mới
+        // Sau khi load xong, nhét vào 1 dòng trống nếu Phân vùng 2 chưa có đầu việc nào
         setTimeout(() => {
           if(useKpiStore.getState().tasks.filter(t => !t.isNhiemVuCu).length === 0) {
              addTask();
@@ -51,7 +64,9 @@ function AppContent() {
       }
     }
     loadData();
-  }, [name, reportWeek, initTasks, addTask]);
+  }, [name, reportWeek, planWeek, initTasks, addTask]);
+
+
 
   // 2. CHỨC NĂNG SUBMIT TỚI API
   const handleSubmit = async () => {
@@ -113,6 +128,16 @@ function AppContent() {
         
         {/* Khối 1 */}
         <HeaderInfo name={name} role={role} dept={dept} date={dateStr} />
+
+        {/* Banner: không có dữ liệu tuần trước */}
+        {noData && (
+          <div className="mb-4 p-4 bg-blue-50 border border-blue-300 rounded-lg text-blue-800 text-sm font-medium">
+            ℹ️ <strong>Không có dữ liệu tuần trước.</strong> Bạn có thể bắt đầu điền kế hoạch cho tuần tới ngay bên dưới. Nếu đây là lần đầu tiên trong hệ thống thì rất bình thường — Phân vùng 1 sẽ hiện dữ liệu từ tuần sau!{' '}
+            {!process.env.NEXT_PUBLIC_GAS_CONFIGURED && (
+              <span className="text-red-600 font-bold">(Nếu bạn thấy điều này liên tục, nhớ báo IT kiểm tra cấu hình Google Sheet!)</span>
+            )}
+          </div>
+        )}
 
         {/* Khối 2: Lưới báo cáo, Truyền thêm nút Nộp Của Khang vào Bottom Bar */}
         <ReportGrid onSubmit={handleSubmit} isSubmitting={submitting} />

@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const name = searchParams.get('name');
   const reportWeek = searchParams.get('report_week');
+  const planWeek = searchParams.get('plan_week'); // Tuần kế hoạch đã nộp (dùng để load lại khi sửa)
 
   if (!name || !reportWeek) {
     return NextResponse.json({ error: 'Thiếu name hoặc report_week trên URL' }, { status: 400 });
@@ -17,14 +18,19 @@ export async function GET(request: Request) {
   }
 
   try {
-    const url = `${GAS_URL}?name=${encodeURIComponent(name)}&report_week=${encodeURIComponent(reportWeek)}`;
+    // Query cả 2: nhiệm vụ cũ (plan_week=report_week) + kế hoạch đã nộp tuần này (plan_week=planWeek)
+    let url = `${GAS_URL}?name=${encodeURIComponent(name)}&report_week=${encodeURIComponent(reportWeek)}`;
+    if (planWeek) url += `&plan_week=${encodeURIComponent(planWeek)}`;
     console.log("Fetching from GAS:", url);
     const response = await fetch(url);
     const data = await response.json();
     
     if (data.error) throw new Error(data.error);
 
-    return NextResponse.json({ tasks: data.tasks || [] });
+    return NextResponse.json({
+      tasks: data.tasks || [],
+      planTasks: data.planTasks || [], // Kế hoạch đã nộp tuần này (pre-fill Phân vùng 2)
+    });
   } catch (error: any) {
     console.error('🚨 Lỗi GET Apps Script:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
