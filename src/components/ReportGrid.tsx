@@ -68,7 +68,7 @@ function TableHeader() {
         <th className="border border-gray-300 p-2 text-center min-w-[100px] whitespace-nowrap">Đơn vị</th>
         <th className="border border-gray-300 p-2 text-center min-w-[120px] whitespace-nowrap">Số lượng (KH)</th>
         <th className="border border-gray-300 p-2 text-center min-w-[120px] bg-yellow-600 whitespace-nowrap italic">Thực hiện</th>
-        <th className="border border-gray-300 p-2 text-center min-w-[100px] whitespace-nowrap">% HT</th>
+        <th className="border border-gray-300 p-2 text-center min-w-[140px] whitespace-nowrap">% Hoàn Thành</th>
         <th className="border border-gray-300 p-2 text-center min-w-[100px] whitespace-nowrap">Trọng số</th>
         <th className="border border-gray-300 p-2 text-center min-w-[100px] whitespace-nowrap">Đạt được</th>
         <th className="border border-gray-300 p-2 text-center w-10 whitespace-nowrap">Xóa</th>
