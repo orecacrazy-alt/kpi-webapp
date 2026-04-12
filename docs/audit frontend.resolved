@@ -1,0 +1,185 @@
+# Audit Frontend — KPI WebApp
+
+## 1. Tổng quan màn hình hiện tại
+
+WebApp có **3 màn hình chính**:
+- `/` — Form báo cáo KPI (nhân viên dùng)
+- `/dashboard` — Sếp duyệt báo cáo  
+- `/result` — NV xem kết quả sau khi Sếp duyệt
+
+---
+
+## 2. Sơ đồ luồng (Mermaid)
+
+```mermaid
+flowchart TD
+    A[NV nhận link từ Bot Discord] --> B{Mở link /?name=&week=...}
+    B --> C[Loading: Đang đọc dữ liệu...]
+    C --> D{Gọi API /api/kpi}
+    
+    D -->|Lỗi token 403| E[❌ Trang báo lỗi token hết hạn]
+    D -->|Lần đầu - chưa có dữ liệu| F[Banner xanh: Không có dữ liệu tuần trước]
+    D -->|Có nhiệm vụ tuần cũ| G[Phân vùng 1: Danh sách đầu việc cũ]
+    
+    F --> H{Có draft localStorage?}
+    G --> H
+    H -->|Có draft| I[Popup: Khôi phục bản nháp?]
+    H -->|Không có draft| J[Phân vùng 2: 1 dòng trống để điền]
+    
+    I -->|OK| K[Ghép: Việc cũ + Draft kế hoạch]
+    I -->|Hủy| J
+    
+    G --> L[NV điền số Thực hiện → % HT + Điểm tự tính]
+    J --> M[NV điền kế hoạch tuần tới]
+    K --> M
+    L --> M
+    
+    M --> N[Bấm NỘP BÁO CÁO]
+    N --> O{Validate: Thực hiện đã điền đủ?}
+    O -->|Thiếu| P[Alert: Chưa điền đủ Thực hiện]
+    O -->|Đủ| Q[Confirm: Ghi đè nếu nộp lần 2?]
+    Q -->|OK| R[POST /api/kpi → GAS]
+    R -->|Thành công| S[Alert: NỘP THÀNH CÔNG]
+    R -->|Lỗi| T[Alert: Lỗi + message]
+```
+
+---
+
+## 3. Liệt kê đầy đủ các Flow
+
+| # | Tên flow | Khi nào xảy ra |
+|---|----------|---------------|
+| F1 | Lần đầu dùng hệ thống | NV chưa từng nộp báo cáo |
+| F2 | Báo cáo bình thường | Có dữ liệu tuần trước |
+| F3 | Nộp lại (lần 2) | NV sửa và nộp lại trong tuần |
+| F4 | Có draft cũ | Tắt tab nhầm / mất mạng giữa chừng |
+| F5 | Token hết hạn | Link cũ hơn 72h |
+| F6 | Loading chờ API | Mạng chậm |
+| F7 | Lỗi API | GAS lỗi / không kết nối được |
+| F8 | Validate trống | Quên điền Thực hiện |
+| F9 | Nộp thành công | Mọi thứ OK |
+| F10 | Mạng đứt khi nộp | Network error lúc submit |
+
+---
+
+## 4. Kiểm tra UI thực tế từng flow
+
+| # | Flow | Đang hiển thị | Vấn đề |
+|---|------|--------------|--------|
+| F1 | Lần đầu | Banner xanh nhỏ, Phân vùng 2 có 1 dòng trống | ⚠️ Banner nhỏ, NV dễ bỏ qua, không biết mình đang làm gì |
+| F2 | BC bình thường | Phân vùng 1 load đầu việc cũ → NV điền Thực hiện | ⚠️ Không có tiêu đề phân biệt rõ ràng "Tuần X" đang báo cáo |
+| F3 | Nộp lại | Confirm popup từ `window.confirm()` | ⚠️ Popup hệ thống xấu, mất brand |
+| F4 | Có draft | Popup `window.confirm()` hỏi khôi phục | ⚠️ Popup hệ thống, không có thời gian cụ thể |
+| F5 | Token hết hạn | API trả 403, code không xử lý → **trắng trang** | ❌ Bug nghiêm trọng: Trang trắng hoàn toàn |
+| F6 | Loading | Chữ nhỏ animate-pulse trên nền trắng | ⚠️ Quá đơn giản, NV tưởng trang lỗi |
+| F7 | Lỗi API | `setNoData(true)` → hiện banner xanh | ❌ Lỗi API và "lần đầu" hiện giống hệt nhau — NV không biết hệ thống đang lỗi |
+| F8 | Validate trống | `alert()` hệ thống | ⚠️ Alert hệ thống xấu, không highlight ô nào bị thiếu |
+| F9 | Nộp xong | `alert()` thành công, KHÔNG reset form | ❌ NV không biết làm gì tiếp — không có trang cảm ơn / tóm tắt |
+| F10 | Mạng đứt | `alert()` lỗi | ✅ Có xử lý, nhưng cũng là alert xấu |
+
+---
+
+## 5. Bug nghiêm trọng cần sửa ngay
+
+### ❌ Bug 1: Token hết hạn → TRANG TRẮNG
+**Root cause:** API trả 403, code chỉ check `data.error` nhưng response `fetch` vẫn là `resp.ok = false`. Code hiện tại:
+```ts
+const res = await fetch('/api/kpi?...');
+const data = await res.json(); // Nếu 403 thì data.error có
+if (data.error) setNoData(true); // ← Chỉ setNoData, không báo nguyên nhân thật
+```
+Kết quả: NV thấy Banner "Không có dữ liệu" thay vì "Link hết hạn" → **hoàn toàn sai**
+
+### ❌ Bug 2: Sau khi nộp thành công — Form không reset, NV bấm lại được
+**Root cause:** Không có trang success, không lock form, NV bấm NỘP 2 lần ghi đè luôn.
+
+### ⚠️ Bug 3: Lỗi API và Lần đầu dùng — hiển thị y hệt nhau
+**Root cause:** Cả 2 đều `setNoData(true)` → cùng banner xanh "Không có dữ liệu tuần trước"
+
+---
+
+## 6. Bảng đề xuất sửa đổi (PLAN)
+
+| # | Flow | Vấn đề | Đề xuất sửa | Loại |
+|---|------|---------|------------|------|
+| 1 | F1: Lần đầu | Banner nhỏ, không rõ | Màn hình chào "Chào mừng bạn đến với IruKa KPI! Đây là lần đầu bạn dùng hệ thống..." + CTA rõ ràng | Frontend |
+| 2 | F5: Token hết hạn | Trang trắng / Banner sai | Màn hình lỗi riêng: "🔗 Link đã hết hạn (72h). Vui lòng yêu cầu Bot gửi link mới." | Frontend |
+| 3 | F7: Lỗi API | Hiển thị giống F1 | Phân biệt: `setErrorType('no_data' \| 'api_error' \| 'token_expired')` | Frontend |
+| 4 | F9: Nộp xong | Alert + form vẫn còn | Màn hình success riêng: Tóm tắt điểm + "Sếp sẽ duyệt trong 24h" | Frontend |
+| 5 | F3/F4: Popup xấu | `window.confirm()` | Thay bằng Modal component đẹp trong trang | Frontend |
+| 6 | F6: Loading | Quá đơn giản | Skeleton loader đẹp hơn + tên NV đã biết thì hiện sẵn | Frontend |
+| 7 | F8: Validate | Alert + không highlight | Highlight đỏ ô còn trống, inline error message | Frontend |
+| 8 | F2: Header tuần | Không rõ đang báo cáo tuần mấy | Thêm badge "🗓️ Báo cáo tuần X / Kế hoạch tuần Y" vào HeaderInfo | Frontend |
+| 9 | Tất cả | `alert()` xấu | Thay hết bằng toast notification (react-hot-toast) | Frontend |
+| 10 | F2: Phân vùng 1 | Không có tiêu đề section | Thêm dải tiêu đề "📋 Tuần trước (Tuần X) — Chốt kết quả" | Frontend |
+
+---
+
+## 7. Sơ đồ màn hình đề xuất (Mockup Mermaid)
+
+```mermaid
+stateDiagram-v2
+    [*] --> Loading: Mở link
+
+    Loading --> TokenExpired: 403 token hết hạn
+    Loading --> WelcomeFirst: Lần đầu
+    Loading --> FormNormal: Có dữ liệu tuần cũ
+    Loading --> ApiError: Lỗi GAS
+
+    TokenExpired --> [*]: Màn hình: 🔗 Link hết hạn\nBấm yêu cầu link mới
+    WelcomeFirst --> FormEmpty: Màn hình: 🎉 Chào mừng\nHướng dẫn điền lần đầu
+    ApiError --> [*]: Màn hình: ⚠️ Hệ thống lỗi\nBáo IT
+
+    FormEmpty --> Submitting: NV điền xong → NỘP
+    FormNormal --> DraftCheck: Load xong
+    DraftCheck --> FormWithDraft: Có draft
+    DraftCheck --> FormNormal2: Không có draft
+    FormWithDraft --> Submitting: NV điền xong → NỘP
+    FormNormal2 --> Submitting: NV điền xong → NỘP
+
+    Submitting --> SuccessPage: Thành công ✅
+    Submitting --> FormNormal2: Lỗi → Toast đỏ + Giữ form
+
+    SuccessPage --> [*]: Màn hình: ✅ Đã nộp!\nTóm tắt điểm + "Sếp sẽ duyệt trong 24h"
+```
+
+---
+
+## 8. Kế hoạch triển khai (Phân scope)
+
+### Scope A — Sửa bug nghiêm trọng (ƯU TIÊN 1 — làm ngay)
+
+**File sửa: `src/app/page.tsx`**
+- Phân biệt 3 loại error state: `token_expired` | `api_error` | `no_data`
+- Thêm màn hình lỗi token riêng
+- Thêm màn hình success sau khi nộp (thay alert)
+- Lock form sau khi nộp thành công
+
+### Scope B — Cải thiện UX (ƯU TIÊN 2)
+
+**File sửa: `src/components/ReportGrid.tsx`**
+- Thêm tiêu đề phân vùng có tuần cụ thể
+- Highlight ô thiếu khi validate
+- Inline error thay alert
+
+**File sửa: `src/components/HeaderInfo.tsx`**
+- Thêm badge tuần báo cáo + tuần kế hoạch
+- Thêm trạng thái "Nộp muộn" nếu `is_late=true`
+
+### Scope C — Polish (ƯU TIÊN 3)
+
+- Thay `window.confirm()` bằng Modal component
+- Thêm skeleton loader đẹp
+- Toast notification thay alert
+
+> [!IMPORTANT]
+> Scope A phải làm trước vì có Bug nghiêm trọng (trang trắng khi token hết hạn).
+> Scope B + C làm sau để không blocl.
+
+---
+
+## 9. Không cần sửa Backend (GAS/API)
+
+Tất cả đề xuất trên đều là **Frontend only**. Backend (GAS + API routes) đã xử lý đúng, chỉ cần Frontend đọc response đúng hơn.
+
+**Ngoại lệ duy nhất:** API `/api/kpi` hiện trả `{error: "Token không hợp lệ"}` nhưng HTTP status là 403. Frontend cần check `resp.status === 403` thay vì chỉ check `data.error`.

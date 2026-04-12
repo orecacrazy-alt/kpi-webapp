@@ -1,0 +1,478 @@
+# 🔍 AUDIT BÁO CÁO KPI WEBAPP + DISCORD BOT
+> Phiên bản 3.0 — Đã cập nhật theo quyết định chính thức của Sếp (12/04/2026)
+
+---
+
+## 1. TỔNG QUAN HỆ THỐNG
+
+Hệ thống gồm **3 tầng** phối hợp với nhau:
+
+| Tầng | Vai trò | Actor |
+|------|---------|-------|
+| **Discord Bot** (`weekly.js`) | Nhận lệnh `/weekly`, kiểm tra khung giờ, tạo link URL, gửi cho nhân viên | Nhân viên |
+| **KPI WebApp** (Next.js) | Giao diện điền + sửa báo cáo + gửi data | Nhân viên |
+| **Google Apps Script** (GAS) | Nhận data, ghi/đọc Google Sheets | Máy chủ trung gian |
+
+---
+
+## 2. SƠ ĐỒ LUỒNG TỔNG THỂ
+
+```mermaid
+sequenceDiagram
+    participant NV as Nhân viên (Discord)
+    participant BOT as Discord Bot
+    participant WEB as KPI WebApp (Vercel)
+    participant API as /api/kpi (Next.js)
+    participant GAS as Google Apps Script
+    participant GS as Google Sheets
+    participant SEP as Sếp (Dashboard Web)
+
+    NV->>BOT: Gõ lệnh /weekly
+    BOT->>BOT: getMemberByDiscordId(discordId)
+    BOT->>BOT: ✅ Kiểm tra khung giờ hợp lệ
+    Note over BOT: Trước T7 0h → CHẶN, từ chối gửi link
+    Note over BOT: Sau T2 24h → Cảnh báo muộn, vẫn gửi link
+    BOT->>NV: Embed + Link WebApp (ephemeral)
+
+    NV->>WEB: Mở link (có query params: name, dept, role, report_week, plan_week)
+    WEB->>API: GET /api/kpi?name=...&report_week=...
+    API->>GAS: GET dữ liệu tuần trước + kế hoạch hiện tại (nếu đã nộp rồi)
+    GAS->>GS: Đọc dữ liệu
+    GS-->>API: JSON {tasks: [...]}
+    WEB->>NV: Hiển thị đầy đủ (Phân vùng 1: Báo cáo thực hiện, Phân vùng 2: Kế hoạch mới/cũ để sửa)
+
+    NV->>WEB: Điền/Sửa → Bấm NỘP BÁO CÁO
+    WEB->>API: POST /api/kpi {name, dept, role, report_week, plan_week, discordId, submitted_at, tasksToUpdate, tasksToInsert}
+    API->>GAS: POST (JSON)
+    GAS->>GS: Xóa dữ liệu cũ cùng tuần của NV → Ghi dữ liệu mới
+    GAS-->>API: {success: true}
+    API->>BOT: markWeeklySubmitted() [Chỉ gọi sau khi POST thành công]
+    WEB->>NV: alert "NỘP BÁO CÁO THÀNH CÔNG"
+
+    SEP->>SEP: Vào Dashboard Web → Xem danh sách báo cáo
+    SEP->>GS: Chỉnh cột Q: "Đã duyệt" hoặc "Trả về" + ghi Comment cột R
+    GS->>BOT: onEdit() trigger → gọi webhook Bot
+    BOT->>NV: DM Discord "Sếp đã duyệt kế hoạch của bạn!"
+    Note over BOT,NV: Nếu có comment → kèm link WebApp /result?name=...&week=...
+```
+
+---
+
+## 3. BẢNG LIỆT KÊ TOÀN BỘ FLOW (Đã quyết định)
+
+| # | Tên flow | Loại | Actor | Kết quả dự kiến | Vấn đề? |
+|---|---|---|---|---|---|
+| 1 | NV có trong members.json, gõ /weekly đúng giờ | Happy | NV | Nhận embed + link đầy đủ | ✅ OK |
+| 2 | NV KHÔNG có trong members.json | Edge | NV | Dùng Discord username, thiếu phòng ban | 🟡 Cần cảnh báo |
+| 3 | API GET - Có dữ liệu tuần trước | Happy | System | Load đúng tasks cũ vào Phân vùng 1 | ✅ OK |
+| 4 | API GET - Không có dữ liệu tuần trước | Edge | System | tasks = [] → Phân vùng 1 trống | 🟡 Thêm thông báo |
+| 5 | GOOGLE_APPS_SCRIPT_URL chưa set | Error | System | Trả 500, bảng trắng | 🔴 UX kém |
+| 6 | NV bấm NỘP khi chưa điền Thực hiện | Edge | NV | Alert bắt điền đủ | ✅ OK |
+| 7 | markWeeklySubmitted() ghi khi mở link | Error | System | Ghi "đã nộp" dù NV chưa điền | 🔴 Logic sai |
+| 8 | NV mở link 2 lần (refresh) | Edge | NV | Load lại đúng data | ✅ OK |
+| 9 | POST thành công nhưng GAS lỗi | Error | System | Alert lỗi đúng | ✅ OK |
+| 10 | Mạng đứt khi bấm NỘP | Error | NV | Alert + form vẫn còn data | 🟡 Chưa lưu draft |
+| 11 | NV inactive gõ /weekly | Edge | NV | Bot chưa lọc | 🟡 Nên chặn |
+| 12 | Thực hiện > Kế hoạch (vượt 100%) | Edge | NV | **Chấp nhận, tính đủ theo số thực tế** ✅ | ✅ Đã quyết định |
+| 13 | KPI_WEBAPP_URL chưa set | Error | System | Fallback localhost:3000 | 🔴 Nguy hiểm |
+| 14 | NV gõ /weekly trước Thứ 7 0h | Edge | NV | **CHẶN, không gửi link, cảnh báo rõ ràng** | 🔴 Cần triển khai |
+| 15 | NV gõ /weekly sau Thứ 2 24h | Edge | NV | **Cảnh báo muộn trong embed, vẫn gửi link** | 🟡 Cần triển khai |
+| 16 | NV gõ /weekly lần 2 (sửa kế hoạch) | Edge | NV | **Load kế hoạch cũ → NV sửa đè → Ghi đè Sheet** | 🔴 Cần triển khai |
+| 17 | Sếp duyệt → NV nhận thông báo | Feature | Sếp | **Bot DM "Đã duyệt" + link xem nếu có comment** | 🔴 Cần triển khai |
+| 18 | Ghi đôi data khi submit 2 lần | Error | System | Dữ liệu trùng trong Sheet | 🔴 Cần xử lý |
+| 19 | Bảo mật URL (đổi ?name= xem data người khác) | Security | — | Lộ thông tin | 🔴 Cần token |
+| 20 | NV mở link trên nhiều tab | Edge | NV | State không đồng bộ | 🟡 Cần kiểm tra |
+
+---
+
+## 4. PHÂN TÍCH CHI TIẾT VẤN ĐỀ KỸ THUẬT HIỆN TẠI
+
+---
+
+### ❌ VẤN ĐỀ #1 — Ghi "đã nộp" TRƯỚC khi nhân viên thực sự nộp
+
+📍 Vị trí: `weekly.js` dòng 113-114
+
+💥 **Hậu quả:**
+- NV gõ `/weekly` → mở link → đóng lại chưa điền gì
+- Scheduler sáng T2 báo "Đã nộp" → Sếp bị lừa thông tin
+
+✅ **Cách sửa:** Chỉ gọi `markWeeklySubmitted()` sau khi POST thành công. Truyền `discordId` vào POST body, Bot nhận callback từ WebApp.
+
+---
+
+### ❌ VẤN ĐỀ #2 — KPI_WEBAPP_URL fallback về localhost
+
+📍 Vị trí: `weekly.js` dòng 107
+
+✅ **Cách sửa:**
+```js
+if (!process.env.KPI_WEBAPP_URL) {
+  return interaction.reply({ content: '⚠️ Hệ thống chưa được cấu hình. Báo IT ngay!', ephemeral: true });
+}
+```
+
+---
+
+### ❌ VẤN ĐỀ #3 — Không báo UX khi GAS chưa cấu hình
+
+📍 Vị trí: `route.ts` dòng 15-17
+
+✅ **Cách sửa:** Khi `data.tasks` lỗi, hiện thông báo UI rõ ràng thay vì bảng trống im lặng.
+
+---
+
+## 5. ✅ CHÍNH SÁCH KHUNG GIỜ NỘP (Đã quyết định)
+
+> **Khung giờ hợp lệ: 0h Thứ 7 → 24h Thứ 2**
+
+### Lý do đã được xác nhận:
+- Nhân viên làm hết **sáng Thứ 7** mới kết thúc tuần làm việc
+- Nộp trước Thứ 7 0h = tuần chưa xong → số liệu không chính xác → **CHẶN**
+
+---
+
+### Tình huống A: Nộp SỚM (trước Thứ 7 0h) — **CHẶN HOÀN TOÀN**
+
+| Hạng mục | Nội dung |
+|----------|----------|
+| **Hành vi Bot** | Từ chối gửi link, trả về tin nhắn lỗi ephemeral |
+| **Thông báo NV** | *"🚫 Chưa đến thời gian nộp báo cáo. Khung giờ hợp lệ: 0h Thứ 7 đến 24h Thứ 2. Hiện tại chưa kết thúc tuần làm việc."* |
+| **Có gửi link không** | ❌ KHÔNG |
+| **Logic code** | `if (status === 'early') return interaction.reply({ content: '🚫...', ephemeral: true })` |
+
+---
+
+### Tình huống B: Nộp MUỘN (sau Thứ 2 24h) — **Cho nộp, cảnh báo**
+
+| Hạng mục | Nội dung |
+|----------|----------|
+| **Hành vi Bot** | Gửi link bình thường nhưng embed có banner đỏ |
+| **Thông báo NV** | *"⚠️ Bạn đang nộp QUÁ HẠN (hết hạn: 24h Thứ 2). Báo cáo vẫn được ghi nhận nhưng đánh dấu [Nộp muộn]."* |
+| **Có gửi link không** | ✅ CÓ |
+| **Ghi vào Sheet** | Cột **Q: Trạng thái duyệt** tự ghi *"Nộp muộn"* thay vì *"Chờ duyệt"* |
+| **Timestamp** | Cột **P: Thời gian nộp** ghi chính xác → Sếp biết ai nộp lúc mấy giờ |
+
+---
+
+### Tình huống C: Nộp ĐÚNG GIỜ (T7 0h → T2 24h) — **Bình thường**
+
+| Hạng mục | Nội dung |
+|----------|----------|
+| **Hành vi Bot** | Gửi link bình thường, không hiển thị banner |
+| **Ghi vào Sheet** | Cột Q ghi *"Chờ duyệt"* |
+| **Giao diện WebApp** | Không hiện banner thêm gì — làm đúng thì không cần thông báo |
+
+---
+
+### Code Logic tính khung giờ (đề xuất cho `weekly.js`):
+
+```js
+/**
+ * Tính toán trạng thái thời gian nộp báo cáo
+ * Khung giờ hợp lệ: 0h Thứ 7 (day=6) → 24h Thứ 2 (day=1)
+ * @returns 'early' | 'on_time' | 'late'
+ */
+function getSubmissionStatus() {
+  const now = new Date();
+  // Chuyển sang múi giờ Việt Nam (UTC+7)
+  const vnTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+  const day = vnTime.getUTCDay(); // 0=CN, 1=T2, 2=T3 ... 6=T7
+  
+  if (day === 6) return 'on_time';  // Thứ 7 → hợp lệ
+  if (day === 0) return 'on_time';  // Chủ Nhật → hợp lệ
+  if (day === 1) return 'on_time';  // Thứ 2 → hợp lệ (trong vòng 24h)
+  
+  // Thứ 3, 4, 5 → muộn (tuần trước) hoặc sớm (tuần tới)
+  // Vì chạy theo tuần làm việc, T3-T5 đều là NGOÀI khung giờ
+  if (day >= 2 && day <= 4) return 'late'; // T3, T4, T5 = muộn tuần trước
+  if (day === 5) return 'early';            // T6 = sớm cho tuần đang chạy
+  
+  return 'on_time';
+}
+```
+
+> ⚠️ **Lưu ý quan trọng:** Cần dùng múi giờ **UTC+7 (Việt Nam)** khi tính ngày, không dùng `new Date()` raw vì server có thể ở múi giờ khác.
+
+---
+
+## 6. ✅ CƠ CHẾ SỬA KẾ HOẠCH (Đã quyết định: Phương án 2)
+
+### Nghiệp vụ xác nhận:
+- **Khung giờ cho sửa:** Đồng nhất với khung giờ nộp — từ **0h Thứ 7 đến 24h Thứ 2**
+- **Cách hoạt động:** Khi NV gõ `/weekly` trong tuần đã nộp → **Load toàn bộ kế hoạch cũ** ra form → NV chỉnh sửa trực tiếp → Bấm NỘP → **GHI ĐÈ** (xóa bản cũ, lưu bản mới)
+- **Không cần nút "Sửa" riêng:** Mỗi lần mở link đều hiển thị bản mới nhất để NV chỉnh
+
+### Luồng hoạt động:
+
+```
+NV gõ /weekly (lần 2 trong cùng tuần)
+    ↓
+Bot kiểm tra khung giờ → OK
+    ↓
+WebApp GET data → GAS tìm kế hoạch tuần hiện tại của NV
+    ↓ (Nếu đã có kế hoạch)
+Load vào form: Phân vùng 1 = Báo cáo thực hiện cũ, Phân vùng 2 = Kế hoạch cũ đã điền sẵn
+    ↓
+NV chỉnh sửa trực tiếp lên form
+    ↓
+Bấm NỘP BÁO CÁO → Hiện confirm: "Bạn đã nộp tuần này rồi. Nộp lại sẽ GHI ĐÈ kế hoạch cũ. Tiếp tục?"
+    ↓
+GAS: Xóa toàn bộ dòng cũ của NV trong tuần đó → Ghi dữ liệu mới
+    ↓
+Ghi timestamp mới, Trạng thái = "Chờ duyệt" (hoặc "Nộp muộn")
+```
+
+### Thay đổi cần làm ở GAS `doPost`:
+
+```javascript
+function doPost(e) {
+  const body = JSON.parse(e.postData.contents);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+  
+  // BƯỚC 1: Xóa toàn bộ dữ liệu cũ của NV trong tuần báo cáo này
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (data[i][0] === body.name && data[i][3] === body.report_week) {
+      sheet.deleteRow(i + 1); // Xóa từ dưới lên để index không bị lệch
+    }
+  }
+  
+  // BƯỚC 2: Ghi toàn bộ dữ liệu mới (cả báo cáo lẫn kế hoạch)
+  const status = body.is_late ? 'Nộp muộn' : 'Chờ duyệt';
+  
+  body.allTasks.forEach((task, index) => {
+    sheet.appendRow([
+      body.name, body.dept, body.role,
+      body.report_week, body.plan_week,
+      index + 1, task.noiDung, task.ghiChu, task.donVi,
+      task.keHoach, task.thucHien, task.phanTram / 100,
+      task.trongSo, task.datDuoc,
+      task.isNhiemVuCu ? 'cu' : 'moi',
+      now, status, ''
+    ]);
+  });
+  
+  return ContentService.createTextOutput(JSON.stringify({ success: true }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+```
+
+---
+
+## 7. ✅ SẾP DUYỆT & COMMENT (Đã quyết định: Phương án 3 — Dashboard Web)
+
+### Luồng đã xác nhận:
+
+```
+Sếp vào Dashboard Web riêng (đăng nhập bằng Google Account)
+    ↓
+Xem danh sách toàn bộ báo cáo tuần của tất cả nhân viên
+    ↓
+Bấm "Duyệt" → Cột Q cập nhật "Đã duyệt"
+Bot Discord DM ngay cho NV: "✅ Sếp đã duyệt kế hoạch tuần của bạn!"
+    ↓ (HOẶC)
+Sếp gõ Comment → Cột R cập nhật
+Bot Discord DM cho NV: "💬 Sếp có nhận xét về kế hoạch của bạn!"
+                       + kèm LINK: "Xem tại: [link /result?name=...&week=...]"
+```
+
+### Phân chia 2 loại thông báo:
+
+| Sếp làm gì | NV nhận gì qua Discord DM |
+|------------|--------------------------|
+| Duyệt kế hoạch (không comment) | *"✅ Sếp đã duyệt kế hoạch của bạn tuần [X]. Tiếp tục phát huy!"* |
+| Duyệt + có comment | *"✅ Sếp đã duyệt + có nhận xét. Xem chi tiết tại: [link WebApp /result]"* |
+| Trả về (cần sửa) | *"🔄 Sếp đã trả lại kế hoạch để bạn chỉnh sửa + nhận xét: [link WebApp /result]"* |
+
+### Dashboard Sếp cần có (Phạm vi phát triển):
+
+| Tính năng | Độ ưu tiên |
+|-----------|-----------|
+| Xem danh sách báo cáo theo tuần | 🔴 Bắt buộc |
+| Filter theo phòng ban | 🔴 Bắt buộc |
+| Nút Duyệt / Trả về | 🔴 Bắt buộc |
+| Ô nhập comment | 🔴 Bắt buộc |
+| Tổng hợp điểm KPI cả team | 🟡 Quan trọng |
+| Biểu đồ so sánh tuần | 🟢 Backlog |
+| Export Excel | 🟢 Backlog |
+
+---
+
+## 8. ✅ CÔNG THỨC TÍNH ĐIỂM KPI (Đã quyết định)
+
+### Nguyên tắc đã xác nhận:
+- **Không giới hạn % Hoàn thành** — Nếu NV làm được 150% thì tính đúng 150%
+- **Lý do:** Nhân viên có thể và nên được khuyến khích làm tốt hơn kế hoạch
+- **Công thức tính điểm:** Dựa trực tiếp vào số thực tế, không cap
+
+```typescript
+function calculateFields(thucHien: number | null, keHoach: number, trongSo: number) {
+  if (thucHien === null || isNaN(thucHien) || !keHoach) {
+    return { phanTram: 0, datDuoc: 0 };
+  }
+  
+  // % Hoàn thành — KHÔNG giới hạn, tính theo số thực tế
+  const phanTram = (thucHien / keHoach) * 100;
+  
+  // Điểm đạt được = (Thực hiện / Kế hoạch) × Trọng số
+  // Nếu vượt kế hoạch, điểm cũng tính vượt theo tỉ lệ
+  const datDuoc = (thucHien / keHoach) * trongSo;
+  
+  return {
+    phanTram: parseFloat(phanTram.toFixed(1)),
+    datDuoc: parseFloat(datDuoc.toFixed(2))
+  };
+}
+```
+
+### Ví dụ minh họa:
+| Kế hoạch | Thực hiện | % HT | Trọng số | Điểm đạt |
+|----------|-----------|------|----------|----------|
+| 10 | 10 | 100% | 3 | 3.00 |
+| 10 | 15 | 150% | 3 | 4.50 ✅ (được thêm điểm) |
+| 10 | 7 | 70% | 3 | 2.10 |
+| 10 | 0 | 0% | 3 | 0.00 |
+
+---
+
+## 9. 🔴 CÁC VẤN ĐỀ BẢO MẬT CẦN XỬ LÝ
+
+### 9.1 Lỗ hổng URL — Xem data người khác
+
+**Tình huống:** URL có `?name=Nguyen+Van+A`. NV B đổi thành tên khác → xem được kế hoạch của người khác.
+
+**Cách sửa:** Thêm `token` có thời hạn 72h vào URL, gắn với `discordId`. GAS verify token trước khi trả data.
+
+```js
+// Khi Bot tạo link
+const token = generateToken(discordId, weekNum); // expires in 72h
+const url = `${baseUrl}?name=...&token=${token}`;
+
+// Khi GAS nhận GET request
+function verifyToken(token, name) {
+  // Kiểm tra token hợp lệ và thuộc về đúng người
+}
+```
+
+### 9.2 Submit trùng khi bấm 2 lần (mạng chậm)
+
+**Tình huống:** NV bấm NỘP → mạng chậm → bấm thêm lần nữa → 2 request song song đến GAS.
+
+**Cách sửa trong WebApp:** Disable nút NỘP ngay sau lần bấm đầu tiên, chỉ enable lại nếu có lỗi.
+
+```tsx
+// Đã có logic isSubmitting, chỉ cần đảm bảo disabled chính xác
+<button disabled={isSubmitting} ...>
+  {isSubmitting ? '⏳ ĐANG LƯU...' : '📤 NỘP BÁO CÁO'}
+</button>
+```
+
+---
+
+## 10. BẢNG PHÂN LOẠI CÔNG VIỆC CẦN LÀM
+
+### 🔴 Nhóm 1 — Làm ngay (Ảnh hưởng logic cốt lõi)
+
+| # | Vấn đề | File cần sửa | Công việc cụ thể |
+|---|--------|--------------|-----------------|
+| 1 | markWeeklySubmitted() ghi sai thời điểm | `weekly.js` | Chuyển sang gọi sau POST thành công |
+| 2 | Không có Logic khung giờ nộp | `weekly.js` | Thêm `getSubmissionStatus()` + CHẶN sớm, CẢNH BÁO muộn |
+| 3 | Không ghi đè khi NV nộp lần 2 | `GAS doPost` | Xóa dữ liệu cũ trong tuần trước khi ghi mới |
+| 4 | KPI_WEBAPP_URL fallback localhost | `weekly.js` | Validate env var, reply lỗi nếu thiếu |
+| 5 | Bảo mật URL | `weekly.js` + `route.ts` | Thêm token có thời hạn |
+
+**Ước tính:** ~4-6 giờ
+
+---
+
+### 🟡 Nhóm 2 — Sớm (Ảnh hưởng UX)
+
+| # | Vấn đề | Công việc cụ thể |
+|---|--------|-----------------|
+| 6 | NV nộp lần 2: không load kế hoạch cũ | WebApp: Khi GET thấy đã có kế hoạch tuần này → điền sẵn vào Phân vùng 2 |
+| 7 | Không có thông báo khi WebApp không load được data | Thêm UI "Không tìm thấy dữ liệu" |
+| 8 | NV không trong hệ thống không biết mình chưa đăng ký | Thêm cảnh báo trong embed |
+| 9 | NV `active: false` vẫn gõ được /weekly | Kiểm tra `active` field trước khi trả link |
+| 10 | Form mất data nếu mạng đứt | Lưu tạm vào `localStorage` |
+
+**Ước tính:** ~2-3 giờ
+
+---
+
+### 🟢 Nhóm 3 — Backlog (Tính năng mới lớn)
+
+| # | Tính năng | Mô tả |
+|---|-----------|-------|
+| 11 | Dashboard Sếp | Trang web riêng, đăng nhập Google, xem + duyệt + comment tất cả báo cáo |
+| 12 | Trang /result cho NV | NV xem điểm + nhận xét Sếp qua link gửi từ Discord |
+| 13 | Bot DM thông báo khi Sếp duyệt | onEdit() trigger trên GAS → gọi Discord Bot webhook → DM cho NV |
+| 14 | Tổng hợp tuần vào Thứ 2 | Scheduler T2 sáng gửi báo cáo tổng cho Sếp qua Discord |
+
+---
+
+## 11. CÂU HỎI KỸ THUẬT CÒN MỞ
+
+| # | Câu hỏi | Ảnh hưởng |
+|---|---------|-----------|
+| Q1 | Dashboard Sếp dùng Stack gì? (Next.js riêng hay gắn vào kpi-webapp?) | Phạm vi code |
+| Q2 | Sếp đăng nhập Dashboard bằng Google Account nào? (lifestylead.vn@gmail.com?) | Auth config |
+| Q3 | Bot DM NV khi Sếp duyệt: Cần setup Webhook riêng hay dùng Bot Token hiện có? | Discord config |
+
+---
+
+## 12. HƯỚNG DẪN TEST THỦ CÔNG
+
+```
+TEST 1 — NV có trong hệ thống, nộp đúng giờ (T7):
+  → Gõ /weekly vào Thứ 7
+  → Kỳ vọng: Embed + link, WebApp load được, nộp thành công → Sheet cập nhật
+
+TEST 2 — NV gõ /weekly vào Thứ 6 (TRƯỚC khung giờ):
+  → Kỳ vọng: Bot từ chối, thông báo "Chưa đến thời gian nộp..."
+
+TEST 3 — NV gõ /weekly vào Thứ 3 (SAU khung giờ):
+  → Kỳ vọng: Bot gửi link + cảnh báo muộn trong embed, Sheet ghi "Nộp muộn"
+
+TEST 4 — NV nộp lần 2 (sửa kế hoạch):
+  → Gõ /weekly lần 2, kỳ vọng form hiển thị kế hoạch cũ đã điền sẵn
+  → Sửa 1 ô, bấm NỘP → Confirm dialog → Xác nhận → Sheet chỉ còn 1 bản mới nhất
+
+TEST 5 — Thực hiện vượt kế hoạch:
+  → Nhập Thực hiện = 15, Kế hoạch = 10, Trọng số = 3
+  → Kỳ vọng: % = 150%, Điểm đạt = 4.50 (không bị cap)
+
+TEST 6 — Mở link nhưng KHÔNG bấm NỘP:
+  → Mở link, đóng tab lại
+  → Kỳ vọng: weekly-reports.json KHÔNG ghi nhận đã nộp
+
+TEST 7 — Sếp duyệt (không comment):
+  → Sếp đổi cột Q = "Đã duyệt"
+  → Kỳ vọng: NV nhận DM Discord "Sếp đã duyệt..."
+
+TEST 8 — Sếp duyệt + có comment:
+  → Sếp đổi cột Q + ghi nội dung cột R
+  → Kỳ vọng: NV nhận DM kèm link /result để xem
+
+✅ PASS khi: Data trong Google Sheets khớp 100% với những gì nhân viên điền trên WebApp.
+```
+
+---
+
+## 13. TÓM TẮT MỨC ĐỘ SẴN SÀNG HỆ THỐNG
+
+| Hạng mục | Trạng thái | Ghi chú |
+|----------|------------|---------|
+| Luồng Happy Path (NV có trong hệ thống, điền và gửi) | ✅ Sẵn sàng | |
+| UX của WebApp (layout, ô nhập liệu, xóa đầu việc, STT) | ✅ Đã hoàn thiện | |
+| Logic khung giờ nộp (T7 0h - T2 24h) | 🔴 Chưa có | Làm ngay |
+| markWeeklySubmitted() đúng thời điểm | 🔴 Logic sai | Làm ngay |
+| Cơ chế sửa kế hoạch (load cũ + ghi đè) | 🔴 Chưa có | Làm ngay |
+| Bảo mật URL (token) | 🔴 Chưa có | Nên làm sớm |
+| Ghi đôi data khi submit 2 lần | 🟡 Một phần | Cần kiểm tra |
+| Handle NV chưa đăng ký | 🟡 Có nhưng UX kém | |
+| Công thức điểm KPI (tính vượt theo thực tế) | ✅ Đã xác nhận | Cần update code |
+| Dashboard Sếp | 🔴 Chưa có | Backlog lớn |
+| Bot DM khi Sếp duyệt | 🔴 Chưa có | Backlog |
+| Auto-deploy CI/CD (Github → Vercel) | ✅ Đã setup | |
