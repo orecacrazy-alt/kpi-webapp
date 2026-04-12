@@ -132,19 +132,29 @@ function ApiErrorScreen({ message }: { message: string }) {
 
 
 // ── Màn hình SUCCESS sau khi nộp (F9) ────────────────────────────
-function SuccessScreen({ name, reportWeek, totalScore }: { name: string; reportWeek: string; totalScore: number }) {
+function SuccessScreen({ name, reportWeek, totalPercent }: { name: string; reportWeek: string; totalPercent: number }) {
+  // Tách số tuần
+  const weekNum = reportWeek.match(/\d+/)?.[0] || '';
+
   return (
     <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-xl p-10 max-w-lg w-full text-center mx-4">
         <div className="text-7xl mb-4 animate-bounce">✅</div>
         <h2 className="text-3xl font-bold text-green-700 mb-2">Nộp báo cáo thành công!</h2>
-        <p className="text-gray-500 text-sm mb-6">Dữ liệu đã được ghi vào Google Sheets.</p>
+        <p className="text-gray-500 text-sm mb-6">Dữ liệu đã được ghi vào hệ thống nhân sự IruKa.</p>
 
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-6">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
           <p className="text-gray-600 text-sm mb-1">Người nộp: <strong className="text-[#1e3a5f]">{name}</strong></p>
-          <p className="text-gray-600 text-sm mb-3">Tuần báo cáo: <strong className="text-[#1e3a5f]">{reportWeek}</strong></p>
-          <div className="text-4xl font-bold text-green-700">{totalScore.toFixed(2)}</div>
-          <div className="text-sm text-gray-500 mt-1">điểm KPI tuần trước</div>
+          <p className="text-gray-600 text-sm mb-4">Mục tiêu: <strong className="text-[#1e3a5f]">{reportWeek}</strong></p>
+          
+          <div className="flex flex-col items-center justify-center py-2">
+            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Kết quả thực đạt</div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm font-bold text-gray-500 uppercase">Tuần {weekNum} Đạt</span>
+              <span className="text-5xl font-black text-green-700">{totalPercent.toFixed(1)}%</span>
+              <span className="text-lg font-black text-green-700 ml-1">KH</span>
+            </div>
+          </div>
         </div>
 
         <p className="text-blue-600 text-sm font-medium bg-blue-50 rounded-lg px-4 py-3">
@@ -328,9 +338,12 @@ function AppContent() {
           });
 
           if (resp.ok) {
-            // F9: Thành công
-            const score = getTotalScore();
-            setFinalScore(score);
+            // F9: Thành công - Tính % gia quyền để hiện màn hình Success
+            const totalScore = getTotalScore();
+            const totalWeight = oldTasks.reduce((sum, t) => sum + t.trongSo, 0);
+            const finalPercent = totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
+            
+            setFinalScore(finalPercent);
             clearDraft(name, reportWeek);
             setScreen('success');
           } else {
@@ -356,7 +369,7 @@ function AppContent() {
   // F7: Lỗi API
   if (screen === 'api_error') return <ApiErrorScreen message={errorMsg} />;
   // F9: Thành công
-  if (screen === 'success') return <SuccessScreen name={name} reportWeek={reportWeek} totalScore={finalScore} />;
+  if (screen === 'success') return <SuccessScreen name={name} reportWeek={reportWeek} totalPercent={finalScore} />;
 
   const draftMeta = (window as any).__draftMeta;
 

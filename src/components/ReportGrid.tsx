@@ -105,6 +105,14 @@ export default function ReportGrid({
   const oldTasks = tasks.filter(t => t.isNhiemVuCu);
   const newTasks = tasks.filter(t => !t.isNhiemVuCu);
 
+  // ── Tính toán số liệu tổng hợp (% KH gia quyền) ──────────
+  const totalWeight = oldTasks.reduce((sum, t) => sum + t.trongSo, 0);
+  const percentage  = totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
+  
+  // Tách số tuần từ "Tuần 15" -> "15"
+  const weekNumMatch = reportWeek.match(/\d+/);
+  const weekNum = weekNumMatch ? weekNumMatch[0] : '';
+
   // Lần đầu: tự seed 1 dòng trống cho bảng 1
   // → NV thấy ngay chỗ điền, không bị trống hoàn toàn
   useEffect(() => {
@@ -386,22 +394,24 @@ export default function ReportGrid({
       </div>
 
       {/* ══════ Thanh Bottom cố định ══════ */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-[#1e3a5f] shadow-[0_-10px_20px_-3px_rgba(0,0,0,0.12)] p-4 flex justify-between items-center z-50">
-        <div className="px-4 sm:px-8">
-          <div className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">Điểm KPI — {reportWeek}</div>
-          <div className="flex items-end gap-2">
-            <span className="text-3xl sm:text-4xl font-bold text-green-700">{totalScore.toFixed(2)}</span>
-            <span className="text-sm text-gray-500 font-bold mb-1">/ điểm</span>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-[#1e3a5f] shadow-[0_-10px_20px_-3px_rgba(0,0,0,0.12)] p-4 flex justify-end items-center z-50">
+        <div className="flex flex-row items-center gap-4 sm:gap-8 mr-4 sm:mr-8">
+          <div className="text-right">
+            <div className="text-[10px] text-gray-400 font-medium uppercase tracking-tight">Kết quả hoàn thành</div>
+            <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
+              <span className="text-sm sm:text-lg font-bold text-gray-600 uppercase">Tuần {weekNum} Đạt</span>
+              <span className="text-2xl sm:text-3xl font-black text-green-700">{percentage.toFixed(1)}%</span>
+              <span className="text-sm font-black text-green-700 ml-0.5">KH</span>
+            </div>
           </div>
-        </div>
-        <div className="px-4 sm:px-8">
+          
           <button
             onClick={onSubmit}
             disabled={isSubmitting}
-            className={`font-bold py-3 px-6 sm:px-10 rounded-xl shadow-lg transform transition-all text-white text-sm sm:text-base
+            className={`font-black py-3 px-6 sm:px-12 rounded-xl shadow-lg transform transition-all text-white text-sm sm:text-base whitespace-nowrap
               ${isSubmitting
                 ? 'bg-gray-400 cursor-not-allowed scale-95'
-                : 'bg-[#1e3a5f] hover:bg-blue-800 hover:scale-105 active:scale-95'
+                : 'bg-[#1e3a5f] hover:bg-blue-800 hover:scale-[1.03] active:scale-95 border-b-4 border-blue-900'
               }`}
           >
             {isSubmitting ? '⏳ ĐANG NỘP...' : '📤 NỘP BÁO CÁO'}
