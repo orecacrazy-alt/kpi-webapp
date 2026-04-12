@@ -367,7 +367,7 @@ function AppContent() {
           if (resp.ok) {
             // F9: Thành công - Tính % gia quyền để hiện màn hình Success
             const totalScore = getTotalScore();
-            const totalWeight = oldTasks.reduce((sum, t) => sum + t.trongSo, 0);
+            const totalWeight = oldTasks.reduce((sum, t) => sum + (t.trongSo === '' ? 0 : t.trongSo), 0);
             const finalPercent = totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
             
             setFinalScore(finalPercent);
