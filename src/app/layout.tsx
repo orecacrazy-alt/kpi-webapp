@@ -28,12 +28,12 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-screen bg-slate-50 flex overflow-hidden font-sans">
-        {/* Sidebar tĩnh bên trái (ẩn trên màn nhỏ, chỉ hiện rên màn hỉnh MD trở lên) */}
+      <body className="min-h-screen bg-[#f8fafc] flex font-sans">
+        {/* Sidebar tĩnh bên trái (Fixed 1 chỗ, không ảnh hưởng cuộn trang) */}
         <Sidebar />
         
-        {/* Main Content Area (Vùng trắng để hiển thị các trang bên trong) */}
-        <main className="flex-1 overflow-y-auto bg-[#f8fafc] text-slate-800">
+        {/* Main Content Area (Cho phép cuộn dọc thoải mái theo độ dài nội dung) */}
+        <main className="flex-1 text-slate-800 min-h-screen">
           {children}
         </main>
       </body>
