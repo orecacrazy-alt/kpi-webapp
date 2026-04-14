@@ -106,7 +106,7 @@ function Card({ d }: { d: CardData }) {
     >
       {/* Left color bar */}
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", borderRadius: "14px 0 0 14px", background: BAR[d.color] }} />
-      <div style={{ paddingLeft: "8px" }}>
+      <div style={{ paddingLeft: "8px", display: "flex", flexDirection: "column", flex: 1 }}>
         {/* cmd-header */}
         <div className="flex items-center justify-between mb-3" style={{ flexWrap: "wrap", gap: "6px" }}>
           <code style={CMD_STYLE}>{d.cmd}</code>

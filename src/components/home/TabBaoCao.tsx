@@ -116,7 +116,7 @@ function CardInner({ card }: { card: CmdCard }) {
   const cmdStyle  = CMD_NAME_STYLE[card.color];
 
   return (
-    <>
+    <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
       {/* cmd-header */}
       <div className="flex items-center justify-between mb-3" style={{ flexWrap: "wrap", gap: "6px" }}>
         {/* cmd-name: JetBrains Mono 14px/700, bg #f1f5f9, border #e2e8f0 */}
@@ -179,7 +179,7 @@ function CardInner({ card }: { card: CmdCard }) {
           dangerouslySetInnerHTML={{ __html: card.tip }}
         />
       )}
-    </>
+    </div>
   );
 }
 
@@ -227,7 +227,7 @@ export default function TabBaoCao({ selectedDept }: { selectedDept: string }) {
               className="hover:-translate-y-0.5 hover:shadow-xl hover:border-blue-400"
             >
               {barEl}
-              <div style={{ paddingLeft: "8px" }}>
+              <div style={{ paddingLeft: "8px", display: "flex", flexDirection: "column", flex: 1 }}>
                 <CardInner card={card} />
               </div>
             </Link>
@@ -241,7 +241,7 @@ export default function TabBaoCao({ selectedDept }: { selectedDept: string }) {
             className="hover:-translate-y-0.5 hover:shadow-xl hover:border-blue-400"
           >
             {barEl}
-            <div style={{ paddingLeft: "8px" }}>
+            <div style={{ paddingLeft: "8px", display: "flex", flexDirection: "column", flex: 1 }}>
               <CardInner card={card} />
             </div>
           </div>

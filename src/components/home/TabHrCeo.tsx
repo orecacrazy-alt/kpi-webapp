@@ -1,14 +1,16 @@
 // ═══════════════════════════════════════════════════════════════════
 // TabHrCeo — Tab "👑 Lệnh HR / CEO"
-// Hiển thị toàn bộ 12 lệnh quản lý nội bộ
-// Chỉ CEO và HR có quyền dùng các lệnh này
+// Đồng bộ font size, left-bar, flex layout với TabBaoCao / TabXinPhep
+// cmd-name: JetBrains Mono 16px/700 | cmd-title: 16px/700
+// cmd-desc: 14px | cmd-steps: 14px | badge: 12px | warn/tip: 13px
+// height: 100% + flex column để các card trong cùng row bằng nhau
 // ═══════════════════════════════════════════════════════════════════
 
 // ─── Kiểu dữ liệu ────────────────────────────────────────────────────────────
 interface HrCmd {
   cmd:    string;
   access: string;           // "CEO · HR" | "CEO only" | ...
-  color:  keyof typeof C;
+  color:  keyof typeof BAR;
   title:  string;
   desc:   string;
   steps:  string[];
@@ -16,15 +18,49 @@ interface HrCmd {
   tip?:     string;
 }
 
-// ─── Bảng màu ─────────────────────────────────────────────────────────────────
-const C = {
-  navy:   { border:"border-slate-300",  cmd:"text-slate-700 bg-slate-100",   step:"bg-slate-600",   warn:"bg-amber-50 border-amber-200 text-amber-800",tip:"bg-slate-50 text-slate-600"   },
-  blue:   { border:"border-blue-200",   cmd:"text-blue-700 bg-blue-100",     step:"bg-blue-500",    warn:"bg-amber-50 border-amber-200 text-amber-800",tip:"bg-blue-50 text-blue-700"    },
-  green:  { border:"border-emerald-200",cmd:"text-emerald-700 bg-emerald-100",step:"bg-emerald-500",warn:"bg-amber-50 border-amber-200 text-amber-800",tip:"bg-emerald-50 text-emerald-700"},
-  red:    { border:"border-red-200",    cmd:"text-red-700 bg-red-100",       step:"bg-red-500",     warn:"bg-red-50 border-red-200 text-red-800",     tip:"bg-red-50 text-red-700"      },
-  purple: { border:"border-purple-200", cmd:"text-purple-700 bg-purple-100", step:"bg-purple-500",  warn:"bg-amber-50 border-amber-200 text-amber-800",tip:"bg-purple-50 text-purple-700"},
-  amber:  { border:"border-amber-200",  cmd:"text-amber-700 bg-amber-100",   step:"bg-amber-500",   warn:"bg-amber-50 border-amber-200 text-amber-800",tip:"bg-amber-50 text-amber-700" },
-  teal:   { border:"border-teal-200",   cmd:"text-teal-700 bg-teal-100",     step:"bg-teal-500",    warn:"bg-amber-50 border-amber-200 text-amber-800",tip:"bg-teal-50 text-teal-700"   },
+// ─── Left bar color (đồng bộ với các tab khác) ───────────────────────────────
+const BAR: Record<string, string> = {
+  navy:   "#1e3a5f",
+  blue:   "#3b82f6",
+  green:  "#10b981",
+  red:    "#ef4444",
+  purple: "#8b5cf6",
+  amber:  "#f59e0b",
+  teal:   "#14b8a6",
+};
+
+// ─── Step circle color ────────────────────────────────────────────────────────
+const STEP_BG: Record<string, string> = {
+  navy:   "#1e3a5f",
+  blue:   "#3b82f6",
+  green:  "#10b981",
+  red:    "#ef4444",
+  purple: "#8b5cf6",
+  amber:  "#f59e0b",
+  teal:   "#14b8a6",
+};
+
+// ─── CMD badge color ──────────────────────────────────────────────────────────
+const CMD_BG: Record<string, { bg: string; color: string }> = {
+  navy:   { bg: "#f1f5f9", color: "#1e3a5f" },
+  blue:   { bg: "#dbeafe", color: "#1e40af" },
+  green:  { bg: "#dcfce7", color: "#166534" },
+  red:    { bg: "#fee2e2", color: "#991b1b" },
+  purple: { bg: "#ede9fe", color: "#5b21b6" },
+  amber:  { bg: "#fef3c7", color: "#92400e" },
+  teal:   { bg: "#ccfbf1", color: "#0f766e" },
+};
+
+// ─── Warn / Tip box styles (đồng bộ với TabBaoCao) ───────────────────────────
+const WARN_STYLE: React.CSSProperties = {
+  background: "#fff7ed", border: "1px solid #fed7aa", color: "#9a3412",
+  borderRadius: "8px", padding: "7px 10px", fontSize: "13px", fontWeight: 600,
+  minHeight: "48px", display: "flex", alignItems: "center", gap: "6px", marginTop: "auto",
+};
+const TIP_STYLE: React.CSSProperties = {
+  background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534",
+  borderRadius: "8px", padding: "7px 10px", fontSize: "13px", fontWeight: 600,
+  minHeight: "48px", display: "flex", alignItems: "center", gap: "6px", marginTop: "auto",
 };
 
 // ─── Dữ liệu 12 lệnh ─────────────────────────────────────────────────────────
@@ -115,32 +151,92 @@ const CMDS: HrCmd[] = [
   },
 ];
 
+import React from "react";
+
 // ─── Component phụ: một card ──────────────────────────────────────────────────
 function HrCard({ d }: { d: HrCmd }) {
-  const c = C[d.color];
   const isCeoOnly = d.access === "CEO only";
+  const cmdBg = CMD_BG[d.color];
+
   return (
-    <div className={`rounded-2xl border ${c.border} bg-white shadow-sm hover:shadow-md transition-shadow p-5`}>
-      <div className="flex items-start justify-between gap-2 mb-3 flex-wrap">
-        <code className={`text-sm font-bold px-2.5 py-1 rounded-lg ${c.cmd}`}>{d.cmd}</code>
-        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-          isCeoOnly ? "bg-rose-100 text-rose-700" : "bg-indigo-100 text-indigo-700"
-        }`}>
-          {d.access}
-        </span>
+    <div
+      className="hover:-translate-y-0.5 hover:shadow-xl"
+      style={{
+        background: "#fff",
+        borderRadius: "14px",
+        border: "1.5px solid #e2e8f0",
+        padding: "18px 20px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",      // ← fill grid cell → bằng nhau trong cùng hàng
+        transition: "all 0.2s",
+      }}
+    >
+      {/* Left color bar */}
+      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", borderRadius: "14px 0 0 14px", background: BAR[d.color] }} />
+
+      {/* Nội dung — flex column để mt-auto hoạt động đúng */}
+      <div style={{ paddingLeft: "8px", display: "flex", flexDirection: "column", flex: 1 }}>
+
+        {/* cmd-header */}
+        <div className="flex items-center justify-between mb-3" style={{ flexWrap: "wrap", gap: "6px" }}>
+          {/* cmd-name: JetBrains Mono 16px/700 */}
+          <code style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "16px",
+            fontWeight: 700,
+            background: cmdBg.bg,
+            color: cmdBg.color,
+            padding: "4px 10px",
+            borderRadius: "7px",
+            border: "1px solid #e2e8f0",
+          }}>
+            {d.cmd}
+          </code>
+          {/* access badge: 12px/700 */}
+          <span style={{
+            fontSize: "12px",
+            fontWeight: 700,
+            padding: "3px 8px",
+            borderRadius: "20px",
+            background: isCeoOnly ? "#fee2e2" : "#e0e7ff",
+            color: isCeoOnly ? "#991b1b" : "#3730a3",
+            textTransform: "uppercase",
+            letterSpacing: "0.3px",
+          }}>
+            {d.access}
+          </span>
+        </div>
+
+        {/* cmd-title: 16px/700 */}
+        <p style={{ fontSize: "16px", fontWeight: 700, color: "#0f172a", marginBottom: "6px" }}>{d.title}</p>
+
+        {/* cmd-desc: 14px */}
+        <p style={{ fontSize: "14px", color: "#64748b", lineHeight: 1.5, marginBottom: "12px" }}>{d.desc}</p>
+
+        {/* cmd-steps: 14px */}
+        <div className="flex flex-col mb-4" style={{ gap: "5px" }}>
+          {d.steps.map((s, i) => (
+            <div key={i} className="flex items-start" style={{ gap: "8px", fontSize: "14px", color: "#374151" }}>
+              <span
+                className="shrink-0 flex items-center justify-center rounded-full"
+                style={{ width: "20px", height: "20px", background: STEP_BG[d.color], color: "#fff", fontSize: "11px", fontWeight: 800, marginTop: "1px" }}
+              >
+                {i + 1}
+              </span>
+              <span dangerouslySetInnerHTML={{ __html: s.replace(/(\/[\w]+)/g, "<b>$1</b>").replace(/@([\w]+)/g, "<b>@$1</b>") }} />
+            </div>
+          ))}
+        </div>
+
+        {/* cmd-warning: 13px/600, mt-auto đẩy xuống đáy */}
+        {d.warning && <div style={WARN_STYLE}>{d.warning}</div>}
+        {/* cmd-tip: 13px/600, mt-auto đẩy xuống đáy */}
+        {d.tip     && <div style={TIP_STYLE}>{d.tip}</div>}
       </div>
-      <p className="font-bold text-slate-800 mb-1">{d.title}</p>
-      <p className="text-sm text-slate-500 mb-3 leading-relaxed">{d.desc}</p>
-      <div className="space-y-1.5 mb-3">
-        {d.steps.map((s, i) => (
-          <div key={i} className="flex items-start gap-2 text-sm text-slate-600">
-            <span className={`shrink-0 w-5 h-5 rounded-full ${c.step} text-white text-[10px] font-black flex items-center justify-center mt-0.5`}>{i + 1}</span>
-            <span dangerouslySetInnerHTML={{ __html: s.replace(/\/([\w]+)/g, '<b>/$1</b>').replace(/@([\w]+)/g, '<b>@$1</b>') }} />
-          </div>
-        ))}
-      </div>
-      {d.warning && <div className={`text-xs rounded-xl p-2.5 border mb-2 ${c.warn}`}>{d.warning}</div>}
-      {d.tip     && <div className={`text-xs rounded-xl p-2.5 ${c.tip}`}>{d.tip}</div>}
     </div>
   );
 }
@@ -151,15 +247,19 @@ export default function TabHrCeo({ selectedDept }: { selectedDept: string }) {
   return (
     <div>
       {/* Banner cảnh báo quyền hạn */}
-      <div className="flex items-center gap-3 bg-gradient-to-r from-slate-800 to-blue-700 rounded-2xl px-5 py-4 mb-5">
-        <span className="text-2xl">👑</span>
+      <div className="flex items-center gap-3 rounded-2xl px-5 py-4 mb-5" style={{
+        background: "linear-gradient(135deg, #0f172a 0%, #2563eb 100%)",
+      }}>
+        <span style={{ fontSize: "24px" }}>👑</span>
         <div>
-          <p className="text-white font-bold text-sm">Khu vực quản lý HR &amp; CEO</p>
-          <p className="text-blue-200 text-xs">Các lệnh bên dưới chỉ dành cho CEO và HR — nhân viên thường không có quyền sử dụng.</p>
+          {/* Banner title: 16px/700 */}
+          <p style={{ color: "#fff", fontWeight: 700, fontSize: "16px" }}>Khu vực quản lý HR &amp; CEO</p>
+          {/* Banner sub: 14px */}
+          <p style={{ color: "#93c5fd", fontSize: "14px", marginTop: "2px" }}>Các lệnh bên dưới chỉ dành cho CEO và HR — nhân viên thường không có quyền sử dụng.</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" style={{ gap: "14px" }}>
         {CMDS.map((d) => <HrCard key={d.cmd} d={d} />)}
       </div>
     </div>
