@@ -32,8 +32,8 @@ export default function RootLayout({
         {/* Sidebar tĩnh bên trái (Fixed 1 chỗ, không ảnh hưởng cuộn trang) */}
         <Sidebar />
         
-        {/* Main Content Area (Cho phép cuộn dọc thoải mái theo độ dài nội dung) */}
-        <main className="flex-1 text-slate-800 min-h-screen">
+        {/* Main Content Area (padding 28px 32px như mockup) */}
+        <main className="flex-1 text-slate-800 min-h-screen" style={{padding: "28px 32px 60px"}}>
           {children}
         </main>
       </body>

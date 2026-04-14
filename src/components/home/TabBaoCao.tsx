@@ -98,7 +98,7 @@ function CardInner({ card }: { card: CmdCard }) {
     <>
       {/* Header: lệnh + badge */}
       <div className="flex items-start justify-between gap-2 mb-3 flex-wrap">
-        <code className={`text-sm font-bold px-2.5 py-1 rounded-lg ${c.cmd}`}>{card.cmd}</code>
+        <code className={`text-[15px] font-bold px-3 py-1.5 rounded-lg ${c.cmd}`}>{card.cmd}</code>
         <div className="flex flex-wrap gap-1.5">
           <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${c.badge}`}>{card.depts}</span>
           {card.deadline && (
@@ -108,13 +108,13 @@ function CardInner({ card }: { card: CmdCard }) {
       </div>
 
       {/* Title + Desc */}
-      <p className="font-bold text-slate-800 mb-1">{card.title}</p>
-      <p className="text-sm text-slate-500 mb-3 leading-relaxed">{card.desc}</p>
+      <p className="font-extrabold text-slate-800 mb-1.5" style={{ fontSize: "15px" }}>{card.title}</p>
+      <p className="text-slate-500 mb-3 leading-relaxed" style={{ fontSize: "13px" }}>{card.desc}</p>
 
       {/* Steps */}
-      <div className="space-y-1.5 mb-3">
+      <div className="space-y-2 mb-3">
         {card.steps.map((s, i) => (
-          <div key={i} className="flex items-start gap-2 text-sm text-slate-600">
+          <div key={i} className="flex items-start gap-2" style={{ fontSize: "13px", color: "#374151" }}>
             <span className={`shrink-0 w-5 h-5 rounded-full ${c.step} text-white text-[10px] font-black flex items-center justify-center mt-0.5`}>{i + 1}</span>
             <span dangerouslySetInnerHTML={{ __html: s.text.replace(/(\/[\w]+)/g, '<b>$1</b>') }} />
           </div>
@@ -123,10 +123,10 @@ function CardInner({ card }: { card: CmdCard }) {
 
       {/* Warning / Tip */}
       {card.warning && (
-        <div className={`text-xs rounded-xl p-2.5 border ${c.warn}`}>{card.warning}</div>
+        <div className={`rounded-xl p-2.5 border ${c.warn}`} style={{ fontSize: "12.5px", fontWeight: 600 }}>{card.warning}</div>
       )}
       {card.tip && (
-        <div className={`text-xs rounded-xl p-2.5 ${c.tip} mt-2`}>{card.tip}</div>
+        <div className={`rounded-xl p-2.5 ${c.tip} mt-2`} style={{ fontSize: "12.5px", fontWeight: 600 }}>{card.tip}</div>
       )}
     </>
   );
