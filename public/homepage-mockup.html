@@ -487,11 +487,12 @@
         <div class="tc-deadline-label">Deadline nộp</div>
         <div class="tc-deadline-val amber">Trước 09:00</div>
         <div class="tc-rows">
-          <div class="tc-row"><span class="bul amber"></span><span>Bot nhắc lần 2 lúc <b>9:20</b> nếu chưa nộp</span></div>
-          <div class="tc-row"><span class="bul amber"></span><span>Bot tổng hợp gửi CEO lúc <b>9:30</b></span></div>
-          <div class="tc-row"><span class="bul amber"></span><span>Có thể sửa báo cáo trước <b>10:00</b></span></div>
+          <div class="tc-row"><span class="bul amber"></span><span>Bot gửi Embed tổng hợp standup lên kênh lúc <b>9:00</b> (phiên sáng)</span></div>
+          <div class="tc-row"><span class="bul amber"></span><span>Bot tổng hợp /daily gửi DM CEO lúc <b>9:30</b> (T2-T7)</span></div>
+          <div class="tc-row"><span class="bul amber"></span><span>Bot gửi thêm Embed standup phiên chiều lúc <b>14:00</b> (tag ai chưa nộp)</span></div>
+          <div class="tc-row"><span class="bul amber"></span><span>Có thể sửa báo cáo đã nộp trước <b>10:00</b> — sau 10:00 khóa hoàn toàn</span></div>
         </div>
-        <div class="tc-warning">⚠️ Nộp trễ: bị phạt đóng quỹ <b>50,000đ</b></div>
+        <div class="tc-warning">⚠️ Nộp trễ sau 9:30: Bot báo cáo riêng về CEO, bị phạt đóng quỹ <b>50,000đ</b></div>
       </div>
 
       <div class="timeline-card tc-red">
@@ -504,11 +505,11 @@
         <div class="tc-deadline-label">Deadline nộp</div>
         <div class="tc-deadline-val red">24:00 Chủ Nhật</div>
         <div class="tc-rows">
-          <div class="tc-row"><span class="bul red"></span><span>Bot nhắc nhở qua Discord DM trước deadline</span></div>
-          <div class="tc-row"><span class="bul red"></span><span>Bot quét danh sách nộp lúc <b>9:05 Thứ Hai</b></span></div>
-          <div class="tc-row"><span class="bul red"></span><span>Nộp muộn được ghi nhận báo CEO</span></div>
+          <div class="tc-row"><span class="bul red"></span><span>Bot DM nhắc từng người chưa nộp lúc <b>20:00 Chủ Nhật</b> (còn 4 tiếng)</span></div>
+          <div class="tc-row"><span class="bul red"></span><span>Bot quét & tổng hợp ai đã nộp lúc <b>9:05 Thứ Hai</b> → gửi CEO</span></div>
+          <div class="tc-row"><span class="bul red"></span><span>Bot DM xác nhận "Nộp thành công" ngay khi phát hiện bạn đã submit</span></div>
         </div>
-        <div class="tc-warning">⚠️ Không áp dụng cho: <b>Dev, CEO, HĐQT</b></div>
+        <div class="tc-warning">⚠️ Chỉ áp dụng: <b>HR · Content · Design · QC</b> (Dev báo cáo qua /monthly)</div>
       </div>
 
       <div class="timeline-card tc-purple">
@@ -552,7 +553,7 @@
             <div class="cmd-header">
               <span class="cmd-name">/daily</span>
               <div class="cmd-badges">
-                <span class="badge badge-dept">Dev · Design · Content · QC · Edu · Tester</span>
+                <span class="badge badge-dept">Dev · Design · Content · QC · Edu</span>
                 <span class="badge badge-deadline">⏰ Trước 9:00</span>
               </div>
             </div>
@@ -570,7 +571,7 @@
             <div class="cmd-header">
               <span class="cmd-name">/weekly</span>
               <div class="cmd-badges">
-                <span class="badge badge-dept">HR · Design · Content · QC · Edu · Tester</span>
+                <span class="badge badge-dept">HR · Content · Design · QC</span>
                 <span class="badge badge-deadline">⏰ CN 24:00</span>
               </div>
             </div>
@@ -581,7 +582,7 @@
               <div class="cmd-step"><span class="cmd-step-num">2</span><span>Bot gửi link form cá nhân bảo mật</span></div>
               <div class="cmd-step"><span class="cmd-step-num">3</span><span>Điền đầy đủ 2 bảng: BC tuần cũ + KH tuần mới</span></div>
             </div>
-            <div class="cmd-tip">✅ Dev không dùng lệnh này (Dev báo cáo theo /monthly)</div>
+            <div class="cmd-tip">✅ Dev, Edu, Tester không dùng lệnh này — Dev báo cáo theo /monthly</div>
           </div>
 
           <div class="cmd-card purple">
@@ -599,7 +600,23 @@
               <div class="cmd-step"><span class="cmd-step-num">2</span><span>Gõ <b>/monthly</b> → Bot gửi link Google Sheets</span></div>
               <div class="cmd-step"><span class="cmd-step-num">3</span><span>Điền: Đầu việc · Số lượng · Deadline · Độ ưu tiên</span></div>
             </div>
-            <div class="cmd-warning">⚠️ Nộp trước ngày mùng 5 — trễ sẽ được báo về CEO</div>
+            <div class="cmd-warning">⚠️ Nộp trước ngày mùng 5 lúc 9:00 — Bot chốt danh sách và báo CEO</div>
+          </div>
+
+          <div class="cmd-card green">
+            <div class="cmd-header">
+              <span class="cmd-name">/summary</span>
+              <div class="cmd-badges">
+                <span class="badge badge-dept">Tất cả NV (CEO only đầy đủ)</span>
+              </div>
+            </div>
+            <div class="cmd-title">Xem tóm tắt hoạt động</div>
+            <div class="cmd-desc">Xem tóm tắt hoạt động cá nhân trong tuần — task được giao, báo cáo đã nộp...</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/summary</b> trong DM Bot</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Bot hiện bản tóm tắt hoạt động gần nhất</span></div>
+            </div>
+            <div class="cmd-tip">✅ CEO có thể xem chi tiết của từng nhân viên bằng cách gõ <b>đánh giá @username</b> trong DM Bot</div>
           </div>
 
         </div>
@@ -830,21 +847,108 @@
           <div class="faq-a">Bot ghi nhận khi bạn <b>phản hồi</b> tin nhắn. Nếu sau 30 phút bạn không trả lời, Bot sẽ nhắc bạn lần 2. Sau 3 tiếng không phản hồi sẽ leo thang báo CEO. Vì vậy hãy phản hồi sớm nhất có thể.</div>
         </div>
 
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            📅 Tôi quên nộp /daily hôm nay — có nộp bù được không?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">Có thể nộp muộn, nhưng Bot sẽ báo riêng cho CEO biết bạn nộp sau <b>9:30</b> (vì tổng hợp đã gửi CEO rồi). Nộp muộn vẫn bị ghi nhận là <b>trễ</b> và có thể bị phạt 50,000đ. Tốt nhất là nộp trước 9:00 mỗi sáng.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            🤖 Bot không phản hồi thì phải làm sao?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">Thử gõ lại lệnh sau 1-2 phút. Nếu vẫn không có phản hồi, hãy nhắn Admin hoặc IT để kiểm tra. Bot có thể đang khởi động lại — thường xong trong vài phút.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            ✏️ Gửi sai nội dung trong /daily rồi — sửa thế nào?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">Gõ lại <b>/daily</b> trước <b>10:00 sáng</b> — Bot sẽ hỏi bạn có muốn sửa không, bấm <b>"Sửa lại"</b> để mở lại form với nội dung cũ điền sẵn. Sau 10:00 sáng thì khóa hoàn toàn, không sửa được nữa.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            📊 Tôi là Dev — có phải nộp /weekly không?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a"><b>Không</b> — Dev không cần nộp /weekly. Dev chỉ cần: <b>/daily</b> (mỗi sáng) + <b>/monthly</b> (đầu tháng). Bot còn theo dõi thêm <b>lịch sử git push</b> của Dev vào lúc 17:00 và 17:30 hàng ngày.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            ⚡ Git push phải làm trước mấy giờ?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">Bot kiểm tra git push lúc <b>17:00</b> (nhắc lần 1) và <b>17:30</b> (nhắc lần 2) hàng ngày Thứ 2 - Thứ 7. Áp dụng cho team <b>Dev</b>. Kết quả được gửi vào kênh standup để CEO theo dõi.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            🏖️ Tôi được bao nhiêu ngày phép mỗi tháng?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">
+            <b>Fulltime:</b> 1 ngày phép có lương/tháng — cộng dồn, reset đầu năm mới.<br/>
+            <b>Parttime:</b> 1 buổi (sáng hoặc chiều) mỗi tuần = 0.5 ngày, tối đa nghỉ thêm 1 ngày.<br/>
+            Nghỉ quá số ngày phép → không tính lương ngày nghỉ thêm.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            📬 Nộp /weekly rồi, sao không thấy Bot xác nhận?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">Bot quét hệ thống mỗi <b>10 phút</b> vào Thứ 7, Chủ Nhật, Thứ Hai để phát hiện ai mới nộp. Sau khi phát hiện, Bot sẽ DM xác nhận về Discord của bạn. Nếu sau 30 phút vẫn không thấy, hãy gõ <b>/mystatus</b> để kiểm tra.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            💬 Muốn hỏi sếp một việc riêng tư — dùng lệnh nào?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">Dùng lệnh <b>/question</b> trong DM với Bot. Bot sẽ forward câu hỏi lên CEO và nhắc CEO phản hồi nếu sau 30 phút chưa có reply. Câu trả lời của CEO sẽ được Bot DM riêng về bạn — không ai khác thấy.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            📎 Gửi file cho sếp qua Bot được không?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">Có — bạn có thể gửi <b>file đính kèm</b> trực tiếp vào DM với Bot. Bot sẽ tự lưu lại và chuyển thông báo cho CEO biết. CEO có thể gõ <b>file @username</b> để xem lại danh sách file đã nhận từ bạn.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            👁️ Sếp có biết tôi đã đọc tin nhắn chưa?
+            <span class="arrow">▼</span>
+          </div>
+          <div class="faq-a">Bot theo dõi theo <b>phản hồi</b>, không phải đọc. Nếu sau <b>30 phút</b> bạn không trả lời, Bot nhắc lần 1. Sau <b>60 phút</b> nhắc lần 2. Sau <b>3 tiếng</b> không phản hồi → Bot báo leo thang CEO. Vì vậy hãy phản hồi sớm!</div>
+        </div>
+
       </div>
     </div>
 
   </main>
 
   <script>
-    // ── Dữ liệu phân quyền theo bộ phận ──
+    // ── Dữ liệu phân quyền theo bộ phận (theo code bot thực tế) ──
+    // /daily:   Dev, Design, Content, QC, Edu (HR không theo dõi standup ngày)
+    // /weekly:  HR, Content, Design, QC (Dev/Edu/Tester KHÔNG dùng)
+    // /monthly: HR, Dev, Design, Content, QC, Edu, Tester
     const deptData = {
       dev:     { label: '💻 Dev', commands: ['daily', 'monthly'], badge: 'Bộ phận Dev' },
       design:  { label: '🎨 Design', commands: ['daily', 'weekly', 'monthly'], badge: 'Bộ phận Design' },
       content: { label: '✍️ Content', commands: ['daily', 'weekly', 'monthly'], badge: 'Bộ phận Content' },
       hr:      { label: '👥 HR', commands: ['weekly', 'monthly'], badge: 'Bộ phận HR' },
       qc:      { label: '🔍 QC', commands: ['daily', 'weekly', 'monthly'], badge: 'Bộ phận QC' },
-      edu:     { label: '📚 Edu', commands: ['daily', 'weekly', 'monthly'], badge: 'Bộ phận Edu' },
-      tester:  { label: '🧪 Tester', commands: ['daily', 'weekly', 'monthly'], badge: 'Bộ phận Tester' },
+      edu:     { label: '📚 Edu', commands: ['daily', 'monthly'], badge: 'Bộ phận Edu' },
+      tester:  { label: '🧪 Tester', commands: ['monthly'], badge: 'Bộ phận Tester' },
       hdqt:    { label: '🏛️ HĐQT', commands: [], badge: 'HĐQT / Mentor' },
     };
 
