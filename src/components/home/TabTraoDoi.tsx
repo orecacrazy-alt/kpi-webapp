@@ -1,32 +1,58 @@
 // ═══════════════════════════════════════════════════════════════════
 // TabTraoDoi — Tab "💬 Giao Tiếp Với Sếp"
-// Hiển thị 3 cards lệnh: /question, /urgent, /help
+// Lệnh: /question, /urgent, /help
+// Font sizes & bold đồng bộ mockup
 // ═══════════════════════════════════════════════════════════════════
+
+const BAR: Record<string, string> = {
+  blue:  "#3b82f6",
+  red:   "#ef4444",
+  green: "#10b981",
+};
+
+const CMD_STYLE: React.CSSProperties = {
+  fontFamily: "'JetBrains Mono', monospace",
+  fontSize: "14px",
+  fontWeight: 700,
+  background: "#f1f5f9",
+  color: "#1e3a5f",
+  padding: "4px 10px",
+  borderRadius: "7px",
+  border: "1px solid #e2e8f0",
+};
+
+const WARN_STYLE: React.CSSProperties = {
+  background: "#fff7ed", border: "1px solid #fed7aa", color: "#9a3412",
+  borderRadius: "8px", padding: "7px 10px", fontSize: "11px", fontWeight: 600,
+  minHeight: "48px", display: "flex", alignItems: "center", gap: "6px", marginTop: "auto",
+};
+const TIP_STYLE: React.CSSProperties = {
+  background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534",
+  borderRadius: "8px", padding: "7px 10px", fontSize: "11px", fontWeight: 600,
+  minHeight: "48px", display: "flex", alignItems: "center", gap: "6px", marginTop: "auto",
+};
 
 interface CardData {
   cmd: string;
   color: "blue" | "red" | "green";
+  badgeDept: string;
   title: string;
   desc: string;
-  steps: string[];
+  steps: string[];   // Nhúng <b> HTML trực tiếp vào chuỗi
   warning?: string;
   tip?: string;
 }
 
-const C = {
-  blue:  { border: "border-blue-200",    cmd: "text-blue-700 bg-blue-100",     step: "bg-blue-500",    tip: "bg-blue-50 text-blue-700",     warn: "bg-amber-50 border-amber-200 text-amber-800" },
-  red:   { border: "border-red-200",     cmd: "text-red-700 bg-red-100",       step: "bg-red-500",     tip: "bg-red-50 text-red-700",       warn: "bg-red-50 border-red-200 text-red-800" },
-  green: { border: "border-emerald-200", cmd: "text-emerald-700 bg-emerald-100",step:"bg-emerald-500", tip: "bg-emerald-50 text-emerald-700",warn: "bg-amber-50 border-amber-200 text-amber-800" },
-};
-
+// Dữ liệu step dùng HTML để bôi đậm đúng như mockup
 const CARDS: CardData[] = [
   {
     cmd: "/question",
     color: "blue",
+    badgeDept: "Tất cả NV",
     title: "Hỏi hoặc đề xuất lên sếp",
     desc: "Gửi câu hỏi hoặc đề xuất đến CEO. Bot sẽ chuyển tiếp và nhắc sếp phản hồi.",
     steps: [
-      "Gõ /question → Nhập nội dung câu hỏi",
+      "Gõ <b>/question</b> → Nhập nội dung câu hỏi",
       "Bot forward ngay cho CEO",
       "CEO phản hồi → Bot DM câu trả lời về bạn",
     ],
@@ -35,47 +61,80 @@ const CARDS: CardData[] = [
   {
     cmd: "/urgent",
     color: "red",
+    badgeDept: "Tất cả NV",
     title: "Báo việc khẩn cấp",
     desc: "Dùng khi có sự cố nghiêm trọng cần CEO xử lý ngay lập tức.",
     steps: [
-      "Gõ /urgent → Mô tả tình huống",
-      "Bot ping CEO ngay lập tức với độ ưu tiên cao",
+      "Gõ <b>/urgent</b> → Mô tả tình huống",
+      "Bot ping CEO <b>ngay lập tức</b> với độ ưu tiên cao",  // ← bôi đậm như mockup
     ],
     warning: "⚠️ Chỉ dùng khi thực sự khẩn cấp — lỗi nghiêm trọng, sự cố kỹ thuật...",
   },
   {
     cmd: "/help",
     color: "green",
+    badgeDept: "Tất cả NV",
     title: "Xem danh sách lệnh",
     desc: "Hiển thị tất cả lệnh bạn được phép dùng kèm mô tả ngắn trực tiếp trong Discord.",
     steps: [
-      "Gõ /help trong DM Bot",
+      "Gõ <b>/help</b> trong DM Bot",
       "Bot liệt kê tất cả lệnh của bạn",
     ],
     tip: "✅ Dùng khi quên lệnh — Bot sẽ nhắc đúng lệnh bạn có quyền dùng",
   },
 ];
 
+import React from "react";
+
 function Card({ d }: { d: CardData }) {
-  const c = C[d.color];
   return (
-    <div className={`rounded-2xl border ${c.border} bg-white shadow-sm hover:shadow-md transition-shadow p-5`}>
-      <div className="flex items-center justify-between mb-3">
-        <code className={`text-sm font-bold px-2.5 py-1 rounded-lg ${c.cmd}`}>{d.cmd}</code>
-        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">Tất cả NV</span>
-      </div>
-      <p className="font-bold text-slate-800 mb-1">{d.title}</p>
-      <p className="text-sm text-slate-500 mb-3 leading-relaxed">{d.desc}</p>
-      <div className="space-y-1.5 mb-3">
-        {d.steps.map((s, i) => (
-          <div key={i} className="flex items-start gap-2 text-sm text-slate-600">
-            <span className={`shrink-0 w-5 h-5 rounded-full ${c.step} text-white text-[10px] font-black flex items-center justify-center mt-0.5`}>{i + 1}</span>
-            <span dangerouslySetInnerHTML={{ __html: s.replace(/\/([\w]+)/g, '<b>/$1</b>') }} />
+    <div
+      className="hover:-translate-y-0.5 hover:shadow-xl hover:border-blue-400"
+      style={{
+        background: "#fff",
+        borderRadius: "14px",
+        border: "1.5px solid #e2e8f0",
+        padding: "18px 20px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",      // ← fill grid cell → bằng nhau trong cùng hàng
+        transition: "all 0.2s",
+      }}
+    >
+      {/* Left color bar */}
+      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", borderRadius: "14px 0 0 14px", background: BAR[d.color] }} />
+      <div style={{ paddingLeft: "8px" }}>
+        {/* cmd-header */}
+        <div className="flex items-center justify-between mb-3" style={{ flexWrap: "wrap", gap: "6px" }}>
+          <code style={CMD_STYLE}>{d.cmd}</code>
+          <div className="flex items-center" style={{ gap: "5px" }}>
+            <span style={{ fontSize: "10px", fontWeight: 700, padding: "3px 8px", borderRadius: "20px", background: "#dcfce7", color: "#166534", textTransform: "uppercase", letterSpacing: "0.3px" }}>
+              {d.badgeDept}
+            </span>
           </div>
-        ))}
+        </div>
+        {/* cmd-title: 14px/700 */}
+        <p style={{ fontSize: "14px", fontWeight: 700, color: "#0f172a", marginBottom: "6px" }}>{d.title}</p>
+        {/* cmd-desc: 12.5px */}
+        <p style={{ fontSize: "12.5px", color: "#64748b", lineHeight: 1.5, marginBottom: "12px" }}>{d.desc}</p>
+        {/* cmd-steps: 12px, step-num navy */}
+        <div className="flex flex-col mb-4" style={{ gap: "5px" }}>
+          {d.steps.map((s, i) => (
+            <div key={i} className="flex items-start" style={{ gap: "8px", fontSize: "12px", color: "#374151" }}>
+              <span className="shrink-0 flex items-center justify-center rounded-full"
+                style={{ width: "18px", height: "18px", background: "#1e3a5f", color: "#fff", fontSize: "10px", fontWeight: 800, marginTop: "1px" }}>
+                {i + 1}
+              </span>
+              <span dangerouslySetInnerHTML={{ __html: s }} />
+            </div>
+          ))}
+        </div>
+        {d.warning && <div style={WARN_STYLE}>{d.warning}</div>}
+        {d.tip    && <div style={TIP_STYLE}>{d.tip}</div>}
       </div>
-      {d.warning && <div className={`text-xs rounded-xl p-2.5 border mb-2 ${c.warn}`}>{d.warning}</div>}
-      {d.tip    && <div className={`text-xs rounded-xl p-2.5 ${c.tip}`}>{d.tip}</div>}
     </div>
   );
 }
@@ -83,7 +142,7 @@ function Card({ d }: { d: CardData }) {
 export default function TabTraoDoi({ selectedDept }: { selectedDept: string }) {
   void selectedDept;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: "14px" }}>
       {CARDS.map((d) => <Card key={d.cmd} d={d} />)}
     </div>
   );

@@ -70,23 +70,45 @@ export default function FaqAccordion() {
   return (
     <div className="space-y-2">
       {FAQS.map((faq, i) => (
-        <div key={i} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div
+          key={i}
+          style={{
+            background: "#fff",
+            border: open === i ? "1.5px solid #bfdbfe" : "1.5px solid #e2e8f0",
+            borderRadius: "12px",
+            overflow: "hidden",
+            transition: "all 0.15s",
+          }}
+        >
+          {/* faq-q: 14px / 600 */}
           <button
             onClick={() => setOpen(open === i ? null : i)}
-            className="w-full flex items-center justify-between px-5 py-4 text-left font-semibold text-slate-800 text-sm hover:bg-slate-50 transition-colors"
+            className="w-full flex items-center justify-between text-left transition-colors"
+            style={{
+              padding: "14px 18px",
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "#1e293b",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              userSelect: "none",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
           >
             <span>{faq.q}</span>
             <span
-              className={`ml-4 shrink-0 text-slate-400 text-xs transition-transform duration-200 ${
-                open === i ? "rotate-180" : ""
-              }`}
+              className="ml-4 shrink-0 transition-transform duration-200"
+              style={{ fontSize: "12px", color: "#94a3b8", display: "inline-block", transform: open === i ? "rotate(180deg)" : "rotate(0deg)" }}
             >
               ▼
             </span>
           </button>
+          {/* faq-a: 13px / 1.6 */}
           {open === i && (
             <div
-              className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3"
+              style={{ padding: "0 18px 14px", fontSize: "13px", color: "#64748b", lineHeight: 1.6 }}
               dangerouslySetInnerHTML={{ __html: faq.a }}
             />
           )}

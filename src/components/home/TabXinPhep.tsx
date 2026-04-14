@@ -1,28 +1,49 @@
+import React from "react";
 // ═══════════════════════════════════════════════════════════════════
 // TabXinPhep — Tab "📅 Xin Phép & Điều Chỉnh"
-// Hiển thị 4 cards lệnh: /leave, /late, /early, /mystatus
+// Lệnh: /leave, /late, /early, /mystatus
+// Font sizes & bold đồng bộ mockup
 // ═══════════════════════════════════════════════════════════════════
 
-// ─── Kiểu dữ liệu ───────────────────────────────────────────────────────────
+const BAR: Record<string, string> = {
+  green: "#10b981",
+  blue:  "#3b82f6",
+  navy:  "#1e3a5f",
+  teal:  "#14b8a6",
+};
+
+const CMD_STYLE: React.CSSProperties = {
+  fontFamily: "'JetBrains Mono', monospace",
+  fontSize: "14px",
+  fontWeight: 700,
+  background: "#f1f5f9",
+  color: "#1e3a5f",
+  padding: "4px 10px",
+  borderRadius: "7px",
+  border: "1px solid #e2e8f0",
+};
+
+const WARN_STYLE: React.CSSProperties = {
+  background: "#fff7ed", border: "1px solid #fed7aa", color: "#9a3412",
+  borderRadius: "8px", padding: "7px 10px", fontSize: "11px", fontWeight: 600,
+  minHeight: "48px", display: "flex", alignItems: "center", gap: "6px", marginTop: "auto",
+};
+const TIP_STYLE: React.CSSProperties = {
+  background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534",
+  borderRadius: "8px", padding: "7px 10px", fontSize: "11px", fontWeight: 600,
+  minHeight: "48px", display: "flex", alignItems: "center", gap: "6px", marginTop: "auto",
+};
+
 interface CardData {
   cmd: string;
   color: "green" | "blue" | "navy" | "teal";
   title: string;
   desc: string;
-  steps: string[];
+  steps: string[];   // HTML string — dùng <b> trực tiếp
   warning?: string;
   tip?: string;
 }
 
-// ─── Màu theo theme ──────────────────────────────────────────────────────────
-const C = {
-  green: { border: "border-emerald-200", cmd: "text-emerald-700 bg-emerald-100", step: "bg-emerald-500", warn: "bg-amber-50 border-amber-200 text-amber-800", tip: "bg-emerald-50 text-emerald-700" },
-  blue:  { border: "border-blue-200",    cmd: "text-blue-700 bg-blue-100",       step: "bg-blue-500",    warn: "bg-amber-50 border-amber-200 text-amber-800", tip: "bg-blue-50 text-blue-700" },
-  navy:  { border: "border-slate-200",   cmd: "text-slate-700 bg-slate-100",     step: "bg-slate-600",   warn: "bg-amber-50 border-amber-200 text-amber-800", tip: "bg-slate-50 text-slate-600" },
-  teal:  { border: "border-teal-200",    cmd: "text-teal-700 bg-teal-100",       step: "bg-teal-500",    warn: "bg-amber-50 border-amber-200 text-amber-800", tip: "bg-teal-50 text-teal-700" },
-};
-
-// ─── Dữ liệu thẻ lệnh ────────────────────────────────────────────────────────
 const CARDS: CardData[] = [
   {
     cmd: "/leave",
@@ -30,7 +51,7 @@ const CARDS: CardData[] = [
     title: "Xin nghỉ phép",
     desc: "Tạo đơn xin nghỉ phép có lương, không lương hoặc nghỉ bù. CEO duyệt ngay trên Discord.",
     steps: [
-      "Gõ /leave → Điền ngày nghỉ + loại nghỉ + lý do",
+      "Gõ <b>/leave</b> → Điền ngày nghỉ + loại nghỉ + lý do",
       "Bot gửi đơn lên CEO để duyệt",
       "Bot DM kết quả duyệt/từ chối về cho bạn",
     ],
@@ -42,7 +63,7 @@ const CARDS: CardData[] = [
     title: "Xin đi muộn",
     desc: "Báo đi muộn trước khi đến. Điền giờ đến + lý do cụ thể.",
     steps: [
-      "Gõ /late → Điền giờ đến và lý do",
+      "Gõ <b>/late</b> → Điền giờ đến và lý do",
       "Bot chuyển thông tin lên CEO",
       "Bot xác nhận đã ghi nhận cho bạn",
     ],
@@ -54,7 +75,7 @@ const CARDS: CardData[] = [
     title: "Xin về sớm",
     desc: "Báo về sớm và lý do. Điền giờ dự kiến về.",
     steps: [
-      "Gõ /early → Điền giờ về và lý do",
+      "Gõ <b>/early</b> → Điền giờ về và lý do",
       "Bot chuyển thông tin lên CEO",
       "Bot xác nhận đã ghi nhận cho bạn",
     ],
@@ -66,46 +87,68 @@ const CARDS: CardData[] = [
     title: "Xem trạng thái đơn của tôi",
     desc: "Kiểm tra tất cả đơn xin phép đang chờ duyệt hoặc đã được xử lý.",
     steps: [
-      "Gõ /mystatus trong DM Bot",
+      "Gõ <b>/mystatus</b> trong DM Bot",
       "Bot hiện danh sách đơn + trạng thái (Chờ / Duyệt / Từ chối)",
     ],
     tip: "✅ Dùng khi muốn kiểm tra đơn đã được CEO duyệt chưa",
   },
 ];
 
-// ─── Component phụ: một card ─────────────────────────────────────────────────
 function Card({ d }: { d: CardData }) {
-  const c = C[d.color];
   return (
-    <div className={`rounded-2xl border ${c.border} bg-white shadow-sm hover:shadow-md transition-shadow p-5`}>
-      <div className="flex items-center justify-between mb-3">
-        <code className={`text-sm font-bold px-2.5 py-1 rounded-lg ${c.cmd}`}>{d.cmd}</code>
-        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">Tất cả NV</span>
+    <div
+      className="hover:-translate-y-0.5 hover:shadow-xl hover:border-blue-400"
+      style={{
+        background: "#fff",
+        borderRadius: "14px",
+        border: "1.5px solid #e2e8f0",
+        padding: "18px 20px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",      // ← fill grid cell → bằng nhau trong cùng hàng
+        transition: "all 0.2s",
+      }}
+    >
+      {/* Left color bar */}
+      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "4px", borderRadius: "14px 0 0 14px", background: BAR[d.color] }} />
+      <div style={{ paddingLeft: "8px" }}>
+        {/* cmd-header */}
+        <div className="flex items-center justify-between mb-3" style={{ flexWrap: "wrap", gap: "6px" }}>
+          <code style={CMD_STYLE}>{d.cmd}</code>
+          <span style={{ fontSize: "10px", fontWeight: 700, padding: "3px 8px", borderRadius: "20px", background: "#dcfce7", color: "#166534", textTransform: "uppercase", letterSpacing: "0.3px" }}>
+            Tất cả NV
+          </span>
+        </div>
+        {/* cmd-title: 14px/700 */}
+        <p style={{ fontSize: "14px", fontWeight: 700, color: "#0f172a", marginBottom: "6px" }}>{d.title}</p>
+        {/* cmd-desc: 12.5px */}
+        <p style={{ fontSize: "12.5px", color: "#64748b", lineHeight: 1.5, marginBottom: "12px" }}>{d.desc}</p>
+        {/* cmd-steps: 12px */}
+        <div className="flex flex-col mb-4" style={{ gap: "5px" }}>
+          {d.steps.map((s, i) => (
+            <div key={i} className="flex items-start" style={{ gap: "8px", fontSize: "12px", color: "#374151" }}>
+              <span className="shrink-0 flex items-center justify-center rounded-full"
+                style={{ width: "18px", height: "18px", background: "#1e3a5f", color: "#fff", fontSize: "10px", fontWeight: 800, marginTop: "1px" }}>
+                {i + 1}
+              </span>
+              <span dangerouslySetInnerHTML={{ __html: s }} />
+            </div>
+          ))}
+        </div>
+        {d.warning && <div style={WARN_STYLE}>{d.warning}</div>}
+        {d.tip    && <div style={TIP_STYLE}>{d.tip}</div>}
       </div>
-
-      <p className="font-bold text-slate-800 mb-1">{d.title}</p>
-      <p className="text-sm text-slate-500 mb-3 leading-relaxed">{d.desc}</p>
-
-      <div className="space-y-1.5 mb-3">
-        {d.steps.map((s, i) => (
-          <div key={i} className="flex items-start gap-2 text-sm text-slate-600">
-            <span className={`shrink-0 w-5 h-5 rounded-full ${c.step} text-white text-[10px] font-black flex items-center justify-center mt-0.5`}>{i + 1}</span>
-            <span dangerouslySetInnerHTML={{ __html: s.replace(/\/([\w]+)/g, '<b>/$1</b>') }} />
-          </div>
-        ))}
-      </div>
-
-      {d.warning && <div className={`text-xs rounded-xl p-2.5 border mb-2 ${c.warn}`}>{d.warning}</div>}
-      {d.tip && <div className={`text-xs rounded-xl p-2.5 ${c.tip}`}>{d.tip}</div>}
     </div>
   );
 }
 
-// ─── Component chính ─────────────────────────────────────────────────────────
 export default function TabXinPhep({ selectedDept }: { selectedDept: string }) {
   void selectedDept;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: "14px" }}>
       {CARDS.map((d) => <Card key={d.cmd} d={d} />)}
     </div>
   );
