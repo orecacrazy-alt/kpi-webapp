@@ -21,7 +21,7 @@ const RULES = [
   { icon: "📊", color: "red",    text: "Báo cáo tuần trước 24h Chủ Nhật",      sub: "Áp dụng HR · Content · Design · QC — trễ phạt 50k" },
   { icon: "📋", color: "purple", text: "Kế hoạch tháng trước 24h mùng 4",      sub: "Bot chốt 9:00 sáng mùng 5, gửi CEO — trễ phạt 100k" },
   { icon: "🏖️", color: "green",  text: "Xin phép trước ít nhất 1 ngày",        sub: "Xin cùng ngày sẽ không được chấp nhận tự động" },
-  { icon: "💻", color: "orange", text: "Git push trước khi về",                 sub: "Bot kiểm tra lúc 17:00 và 17:30 — chưa push sẽ bị tag nhắc" },
+  { icon: "💻", color: "orange", text: "Git push trước khi về",                 sub: "Bot kiểm tra lúc 17:00 và tổng kết 18:00 — chưa push sẽ bị tag nhắc" },
   { icon: "❌", color: "red",    text: "Không ghi chung chung \"đang làm\"",     sub: "Mỗi đầu việc cần: tên cụ thể + số lượng + trạng thái" },
   { icon: "📲", color: "yellow", text: "Phản hồi Bot trong 30 phút",             sub: "Sau 3 tiếng không phản hồi → Bot báo leo thang CEO" },
   { icon: "🚨", color: "orange", text: "/urgent chỉ dùng khi thực sự khẩn",      sub: "Sự cố kỹ thuật, lỗi nghiêm trọng — không lạm dụng" },

@@ -35,11 +35,11 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "📊 Tôi là Dev — có phải nộp /weekly không?",
-    a: "<b>Không</b> — Dev không cần nộp /weekly. Dev chỉ cần: <b>/daily</b> (mỗi sáng) + <b>/monthly</b> (đầu tháng). Bot còn theo dõi thêm <b>lịch sử git push</b> của Dev vào lúc 17:00 và 17:30 hàng ngày.",
+    a: "<b>Không</b> — Dev không cần nộp /weekly. Dev chỉ cần: <b>/daily</b> (mỗi sáng) + <b>/monthly</b> (đầu tháng). Bot còn theo dõi thêm <b>lịch sử git push</b> của Dev vào lúc 17:00 và 18:00 hàng ngày.",
   },
   {
     q: "⚡ Git push phải làm trước mấy giờ?",
-    a: "Bot kiểm tra git push lúc <b>17:00</b> (nhắc lần 1) và <b>17:30</b> (nhắc lần 2) hàng ngày Thứ 2 - Thứ 7. Kết quả được gửi vào kênh standup để CEO theo dõi.",
+    a: "Bot kiểm tra git push lúc <b>17:00</b> (nhắc lần 1) và tổng kết <b>18:00</b> hàng ngày Thứ 2 - Thứ 7. Kết quả được gửi vào kênh standup để CEO theo dõi.",
   },
   {
     q: "🏖️ Tôi được bao nhiêu ngày phép mỗi tháng?",
