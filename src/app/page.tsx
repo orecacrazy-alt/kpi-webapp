@@ -1,146 +1,260 @@
-import Link from 'next/link';
-import { Terminal, CalendarPlus, FileSpreadsheet, FileBarChart, AlertTriangle, ArrowRight, BookOpenCheck } from 'lucide-react';
+"use client";
+// ═══════════════════════════════════════════════════════════════════
+// Trang Chủ — IruKa Staff Portal
+// Vai trò: Cổng thông tin nội bộ trung tâm — lệnh Discord, lịch báo cáo,
+//          nội quy và FAQ.
+// Luồng:  Hero (chọn phòng ban) → Timeline Deadline → 4 Tabs Lệnh Discord
+//         → Nội Quy nhanh → FAQ
+// ═══════════════════════════════════════════════════════════════════
 
-export default function Home() {
-  const currentDate = new Date().toLocaleDateString('vi-VN', { 
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-  });
+import { useState } from "react";
+import Image from "next/image";
+import TabBaoCao from "@/components/home/TabBaoCao";
+import TabXinPhep from "@/components/home/TabXinPhep";
+import TabTraoDoi from "@/components/home/TabTraoDoi";
+import TabHrCeo from "@/components/home/TabHrCeo";
+import FaqAccordion from "@/components/home/FaqAccordion";
+
+// ─── Kiểu dữ liệu ───────────────────────────────────────────────────────────
+type TabKey = "bao-cao" | "xin-phep" | "trao-doi" | "hr-ceo";
+type Dept = "" | "dev" | "design" | "content" | "hr" | "qc" | "edu" | "tester" | "hdqt";
+
+// ─── Nội Quy cards ──────────────────────────────────────────────────────────
+const RULES = [
+  { icon: "⏰", color: "blue",   text: "Báo cáo ngày đúng giờ",              sub: "Nộp trước 9:00 sáng — trễ sau 9h30 Bot báo lên CEO" },
+  { icon: "📊", color: "red",    text: "Báo cáo tuần nộp trước 24h Chủ Nhật", sub: "Áp dụng HR · Content · Design · QC — trễ phạt 50k" },
+  { icon: "📋", color: "purple", text: "Kế hoạch tháng nộp trước 24h mùng 4", sub: "Bot chốt 9:00 sáng mùng 5, gửi CEO — trễ phạt 100k" },
+  { icon: "🏖️", color: "green",  text: "Xin phép trước ít nhất 1 ngày",       sub: "Xin cùng ngày sẽ không được chấp nhận tự động" },
+  { icon: "💻", color: "orange", text: "Staff phải git push trước khi về",      sub: "Bot kiểm tra lúc 17:00 và 17:30 — chưa push sẽ bị tag nhắc" },
+  { icon: "❌", color: "red",    text: "Không ghi chung chung \"đang làm\"",    sub: "Mỗi đầu việc cần: tên cụ thể + số lượng + trạng thái" },
+  { icon: "📲", color: "yellow", text: "Phản hồi Bot trong 30 phút",            sub: "Sau 3 tiếng không phản hồi → Bot báo leo thang CEO" },
+  { icon: "🚨", color: "orange", text: "/urgent chỉ dùng khi thực sự khẩn",     sub: "Sự cố kỹ thuật, lỗi nghiêm trọng — không lạm dụng" },
+];
+
+// ─── Màu sắc rule icon ───────────────────────────────────────────────────────
+const RULE_COLOR: Record<string, string> = {
+  blue:   "bg-blue-100 text-blue-600",
+  red:    "bg-red-100 text-red-600",
+  purple: "bg-purple-100 text-purple-600",
+  green:  "bg-emerald-100 text-emerald-600",
+  orange: "bg-orange-100 text-orange-600",
+  yellow: "bg-amber-100 text-amber-600",
+};
+
+// ─── Tab cấu hình ────────────────────────────────────────────────────────────
+const TABS: { key: TabKey; label: string; isHr?: boolean }[] = [
+  { key: "bao-cao",   label: "📊 Lệnh Báo Cáo" },
+  { key: "xin-phep",  label: "📅 Xin Phép & Điều Chỉnh" },
+  { key: "trao-doi",  label: "💬 Giao Tiếp Với Sếp" },
+  { key: "hr-ceo",    label: "👑 Lệnh HR / CEO", isHr: true },
+];
+
+// ─── Bộ phận ─────────────────────────────────────────────────────────────────
+const DEPTS: { value: Dept; label: string }[] = [
+  { value: "",       label: "-- Chọn bộ phận --" },
+  { value: "dev",    label: "💻 Dev" },
+  { value: "design", label: "🎨 Design" },
+  { value: "content",label: "✍️ Content" },
+  { value: "hr",     label: "👥 HR" },
+  { value: "qc",     label: "🔍 QC" },
+  { value: "edu",    label: "📚 Edu" },
+  { value: "tester", label: "🧪 Tester" },
+  { value: "hdqt",   label: "🏛️ HĐQT / Mentor" },
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// Component chính
+// ═══════════════════════════════════════════════════════════════════
+export default function HomePage() {
+  // State: tab đang mở
+  const [activeTab, setActiveTab] = useState<TabKey>("bao-cao");
+  // State: bộ phận đã chọn (để các tab con lọc nội dung)
+  const [selectedDept, setSelectedDept] = useState<Dept>("");
 
   return (
-    <div className="min-h-screen p-6 md:p-10 max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
-      {/* ── Khối 1: Hero Welcome ── */}
-      <div className="mb-10">
-        <h1 className="text-3xl md:text-4xl font-black text-slate-800 tracking-tight mb-2">
-          Xin chào, Thành viên IruKa 👋
-        </h1>
-        <p className="text-slate-500 text-base md:text-lg">
-          Hôm nay là {currentDate}. Chúc bạn một ngày làm việc năng suất!
+    <div className="min-h-screen pb-20">
+
+      {/* ══════════════════════════════════════
+          KV1: HERO BANNER
+      ══════════════════════════════════════ */}
+      <div className="relative overflow-hidden rounded-2xl mb-8 bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#0ea5e9] p-7 md:p-9 shadow-xl">
+        {/* Logo chìm bên phải */}
+        <div className="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 opacity-[0.12] hidden md:block">
+          <Image src="/logo-iruka.svg" alt="" width={100} height={100} priority />
+        </div>
+
+        <p className="text-xs font-bold uppercase tracking-widest text-blue-300 mb-1">
+          IruKa Staff Portal
         </p>
-      </div>
+        <h1 className="text-2xl md:text-3xl font-black text-white mb-5 tracking-tight">
+          Cổng Thông Tin Nội Bộ IruKa
+        </h1>
 
-      {/* ── Khối 2: Status Banners (Vibe Dashboard) ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-xl shadow-blue-500/20 relative overflow-hidden group">
-          <BookOpenCheck className="absolute -right-6 -bottom-6 w-32 h-32 text-white/10 group-hover:scale-110 transition-transform duration-500" />
-          <div className="relative z-10">
-            <h3 className="font-bold text-xl mb-1">Cẩm nang Làm việc</h3>
-            <p className="text-blue-100 text-sm mb-4 max-w-[80%]">Quy định công ty, văn hóa IruKa và các quy trình xử lý công việc chuẩn.</p>
-            <Link href="/rules" className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl text-sm font-medium transition-colors backdrop-blur-sm">
-              Đọc quy định <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm flex flex-col justify-center">
-          <h3 className="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-            <AlertTriangle size={18} className="text-amber-500" /> Deadline Quan Trọng
-          </h3>
-          <ul className="space-y-3 mt-2">
-            <li className="flex justify-between items-center text-sm border-b border-slate-100 pb-2">
-              <span className="text-slate-600 font-medium">Báo cáo Standup Daily</span>
-              <span className="text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-md">Trước 09:00 sáng</span>
-            </li>
-            <li className="flex justify-between items-center text-sm border-b border-slate-100 pb-2">
-              <span className="text-slate-600 font-medium">Báo cáo KPI Tuần</span>
-              <span className="text-rose-600 font-bold bg-rose-50 px-2 py-1 rounded-md">24:00 Chủ Nhật</span>
-            </li>
-            <li className="flex justify-between items-center text-sm/2">
-              <span className="text-slate-600 font-medium">Báo cáo KPI Tháng</span>
-              <span className="text-purple-600 font-bold bg-purple-50 px-2 py-1 rounded-md">Ngày cuối tháng</span>
-            </li>
-          </ul>
+        {/* Bộ lọc phòng ban */}
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-blue-200 text-sm font-semibold">👤 Tôi thuộc bộ phận:</span>
+          <select
+            value={selectedDept}
+            onChange={(e) => setSelectedDept(e.target.value as Dept)}
+            className="bg-white/10 border border-white/20 text-white text-sm rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer backdrop-blur-sm"
+          >
+            {DEPTS.map((d) => (
+              <option key={d.value} value={d.value} className="text-slate-900">
+                {d.label}
+              </option>
+            ))}
+          </select>
+          {selectedDept && (
+            <span className="flex items-center gap-2 bg-white/15 text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/25">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Đã lưu
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="mb-6 flex items-center justify-between">
-         <h2 className="text-2xl font-bold text-slate-800">📋 Danh sách Lệnh Discord Bot</h2>
+      {/* ══════════════════════════════════════
+          KV2: LỊCH BÁO CÁO & DEADLINE
+      ══════════════════════════════════════ */}
+      <div className="mb-8">
+        <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800 mb-4">
+          <span>📅</span> Lịch Báo Cáo &amp; Deadline
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Card — Báo Cáo Ngày */}
+          <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-5 relative overflow-hidden">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-400/20 text-xl flex items-center justify-center">📬</div>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">Hàng Ngày</span>
+            </div>
+            <p className="font-bold text-slate-800 mb-0.5">Báo Cáo Ngày</p>
+            <code className="text-xs text-amber-700 font-mono bg-amber-100 px-2 py-0.5 rounded">/daily</code>
+            <p className="text-xs text-slate-500 mt-2 mb-0.5 font-semibold uppercase tracking-wide">Deadline nộp</p>
+            <p className="text-xl font-black text-amber-600 mb-3">Trước 09:00</p>
+            <ul className="space-y-1.5 text-xs text-slate-600 mb-3">
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0"/><span>Bot tổng hợp standup gửi kênh lúc <b>9:00</b></span></li>
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0"/><span>Bot gửi DM CEO lúc <b>9:30</b> (T2–T7)</span></li>
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0"/><span>Phiên chiều <b>14:00</b> — tag ai chưa nộp</span></li>
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0"/><span>Sửa được đến <b>10:00</b> — sau đó khóa</span></li>
+            </ul>
+            <div className="text-xs text-amber-800 bg-amber-100 rounded-xl p-2.5 border border-amber-200">
+              ⚠️ Nộp trễ sau 9h30: Bot báo cáo lên CEO.
+            </div>
+          </div>
+
+          {/* Card — Báo Cáo KPI Tuần */}
+          <div className="rounded-2xl border border-red-200 bg-red-50/60 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-red-400/20 text-xl flex items-center justify-center">📊</div>
+              <span className="text-xs font-bold uppercase tracking-wider text-red-700 bg-red-100 px-2 py-0.5 rounded-full">Hàng Tuần</span>
+            </div>
+            <p className="font-bold text-slate-800 mb-0.5">Báo Cáo KPI Tuần</p>
+            <code className="text-xs text-red-700 font-mono bg-red-100 px-2 py-0.5 rounded">/weekly</code>
+            <p className="text-xs text-slate-500 mt-2 mb-0.5 font-semibold uppercase tracking-wide">Deadline nộp</p>
+            <p className="text-xl font-black text-red-600 mb-3">24:00 Chủ Nhật</p>
+            <ul className="space-y-1.5 text-xs text-slate-600 mb-3">
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0"/><span>Bot DM nhắc lúc <b>20:00 Chủ Nhật</b> (còn 4 tiếng)</span></li>
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0"/><span>Bot tổng hợp <b>9:05 Thứ Hai</b> → gửi CEO</span></li>
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0"/><span>Bot DM xác nhận ngay khi bạn submit</span></li>
+            </ul>
+            <div className="text-xs text-red-800 bg-red-100 rounded-xl p-2.5 border border-red-200">
+              ⚠️ Nộp trễ: Phạt <b>50k</b>. Áp dụng: <b>HR · Content · Design · QC</b>
+            </div>
+          </div>
+
+          {/* Card — Báo Cáo & KH Tháng */}
+          <div className="rounded-2xl border border-purple-200 bg-purple-50/60 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-purple-400/20 text-xl flex items-center justify-center">📋</div>
+              <span className="text-xs font-bold uppercase tracking-wider text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">Hàng Tháng</span>
+            </div>
+            <p className="font-bold text-slate-800 mb-0.5">Báo Cáo &amp; KH Tháng</p>
+            <code className="text-xs text-purple-700 font-mono bg-purple-100 px-2 py-0.5 rounded">/monthly</code>
+            <p className="text-xs text-slate-500 mt-2 mb-0.5 font-semibold uppercase tracking-wide">Deadline nộp</p>
+            <p className="text-xl font-black text-purple-600 mb-3">24:00 ngày Mùng 4</p>
+            <ul className="space-y-1.5 text-xs text-slate-600 mb-3">
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0"/><span>Bot DM nhắc ngày <b>mùng 1</b> hàng tháng</span></li>
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0"/><span>Bot chốt danh sách lúc <b>9:00 mùng 5</b></span></li>
+              <li className="flex gap-2"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0"/><span>Danh sách trễ gửi thẳng về CEO</span></li>
+            </ul>
+            <div className="text-xs text-purple-800 bg-purple-100 rounded-xl p-2.5 border border-purple-200">
+              ⚠️ Nộp trễ: Phạt <b>100k</b>. Không áp dụng: <b>CEO, HĐQT/Mentor</b>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* ── Khối 3: Command Cards Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 pb-20">
-        
-        {/* Card 1: /standup */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl transition-all duration-300 group hover:border-amber-200">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 shrink-0 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-sm">
-              <Terminal size={26} strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="inline-flex items-center gap-2 mb-1">
-                <span className="bg-slate-100 text-slate-700 font-mono text-sm font-bold px-2.5 py-1 rounded-lg border border-slate-200">/standup</span>
-              </div>
-              <h3 className="text-lg font-bold text-slate-800 mb-2">Báo cáo hàng ngày</h3>
-              <p className="text-slate-500 text-sm leading-relaxed mb-4">Gõ lệnh này trên Discord vào mỗi buổi sáng để báo cáo tiến độ công việc hôm qua và dự định hôm nay.</p>
-              
-              <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-3 text-xs text-amber-800 font-medium">
-                ⚠️ Cảnh báo: Quên nộp trước 09:00 sáng sẽ bị phạt đóng quỹ 50K!
-              </div>
-            </div>
-          </div>
+      {/* ══════════════════════════════════════
+          KV3: LỆNH DISCORD — HỆ THỐNG TABS
+      ══════════════════════════════════════ */}
+      <div className="mb-8">
+        <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800 mb-4">
+          <span>🤖</span> Lệnh Discord Bot Của Bạn
+        </h2>
+
+        {/* Tab buttons */}
+        <div className="flex flex-wrap gap-2 mb-5">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-150 border ${
+                activeTab === tab.key
+                  ? tab.isHr
+                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200"
+                    : "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200"
+                  : tab.isHr
+                    ? "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100"
+                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Card 2: /weekly */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl transition-all duration-300 group hover:border-blue-200 relative overflow-hidden">
-          <div className="flex items-start gap-4 relative z-10">
-            <div className="w-14 h-14 shrink-0 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300 shadow-sm">
-              <FileSpreadsheet size={26} strokeWidth={2.5} />
-            </div>
-            <div className="w-full">
-              <div className="inline-flex items-center gap-2 mb-1">
-                <span className="bg-slate-100 text-slate-700 font-mono text-sm font-bold px-2.5 py-1 rounded-lg border border-slate-200">/weekly</span>
-              </div>
-              <h3 className="text-lg font-bold text-slate-800 mb-2">Form Báo cáo KPI Tuần</h3>
-              <p className="text-slate-500 text-sm leading-relaxed mb-4">Lệnh này giúp bạn lấy đường link bảo mật cá nhân để truy cập vào hệ thống điền dữ liệu Kế hoạch Tuần.</p>
-              
-              <Link href="/weekly" className="flex items-center justify-center gap-2 w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-2.5 rounded-xl transition-colors text-sm">
-                Đến Form Báo Tuần (Dự phòng) <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
+        {/* Tab content */}
+        <div>
+          {activeTab === "bao-cao"  && <TabBaoCao  selectedDept={selectedDept} />}
+          {activeTab === "xin-phep" && <TabXinPhep selectedDept={selectedDept} />}
+          {activeTab === "trao-doi" && <TabTraoDoi selectedDept={selectedDept} />}
+          {activeTab === "hr-ceo"   && <TabHrCeo   selectedDept={selectedDept} />}
         </div>
-
-        {/* Card 3: /monthly */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl transition-all duration-300 group hover:border-purple-200 relative overflow-hidden">
-          <div className="flex items-start gap-4 relative z-10">
-            <div className="w-14 h-14 shrink-0 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300 shadow-sm">
-              <FileBarChart size={26} strokeWidth={2.5} />
-            </div>
-            <div className="w-full">
-              <div className="inline-flex items-center gap-2 mb-1">
-                <span className="bg-slate-100 text-slate-700 font-mono text-sm font-bold px-2.5 py-1 rounded-lg border border-slate-200">/monthly</span>
-              </div>
-              <h3 className="text-lg font-bold text-slate-800 mb-2">Form Báo cáo Tháng</h3>
-              <p className="text-slate-500 text-sm leading-relaxed mb-4">Dùng vào dịp cuối tháng để tổng kết điểm nhấn, nhận xét tự thân và thiết lập mục tiêu tháng tiếp theo.</p>
-              
-              <Link href="/monthly" className="flex items-center justify-center gap-2 w-full bg-purple-50 hover:bg-purple-100 text-purple-600 font-bold py-2.5 rounded-xl transition-colors text-sm">
-                Đến Form Báo Tháng (Dự phòng) <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 4: /leave_create */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-xl transition-all duration-300 group hover:border-rose-200">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 shrink-0 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-rose-500 group-hover:text-white transition-all duration-300 shadow-sm">
-              <CalendarPlus size={26} strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="inline-flex items-center gap-2 mb-1">
-                <span className="bg-slate-100 text-slate-700 font-mono text-sm font-bold px-2.5 py-1 rounded-lg border border-slate-200">/leave_create</span>
-              </div>
-              <h3 className="text-lg font-bold text-slate-800 mb-2">Xin nghỉ phép</h3>
-              <p className="text-slate-500 text-sm leading-relaxed mb-4">Tạo đơn xin nghỉ phép (Có lương/Không lương), báo nghỉ ốm, đi trễ, về sớm. Leader và HR sẽ duyệt ngay trên luồng.</p>
-              
-              <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-xs text-slate-600 font-medium flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-rose-500"></span> Lưu ý báo trước theo đúng nội quy.
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
+
+      {/* ══════════════════════════════════════
+          KV4: NỘI QUY CẦN NHỚ
+      ══════════════════════════════════════ */}
+      <div className="mb-8">
+        <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800 mb-4">
+          <span>📜</span> Nội Quy Cần Nhớ
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {RULES.map((r, i) => (
+            <div key={i} className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex items-start gap-3">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 ${RULE_COLOR[r.color]}`}>
+                {r.icon}
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-800 leading-snug mb-0.5">{r.text}</p>
+                <p className="text-xs text-slate-500 leading-relaxed">{r.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════
+          KV5: FAQ
+      ══════════════════════════════════════ */}
+      <div>
+        <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800 mb-4">
+          <span>❓</span> Câu Hỏi Thường Gặp
+        </h2>
+        <FaqAccordion />
+      </div>
+
     </div>
   );
 }

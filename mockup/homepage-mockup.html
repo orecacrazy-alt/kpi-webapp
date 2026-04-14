@@ -106,10 +106,10 @@
     .hero::after {
       content: '';
       position: absolute;
-      right: 32px; top: 50%;
+      right: 40px; top: 50%;
       transform: translateY(-50%);
-      width: 140px;
-      height: 140px;
+      width: 100px;
+      height: 100px;
       background-image: url('./logo-iruka.svg');
       background-size: contain;
       background-position: center;
@@ -241,7 +241,16 @@
       padding: 4px;
       border-radius: 12px;
       width: fit-content;
+      flex-wrap: wrap;
     }
+    .tab-btn.hr-tab.active {
+      background: #1e3a5f;
+      color: #fff;
+      box-shadow: 0 1px 4px rgba(30,58,95,0.3);
+    }
+    /* Lệnh CEO Badge */
+    .badge-ceo-only { background: #1e3a5f; color: #93c5fd; }
+    .badge-hr-ceo { background: #ede9fe; color: #5b21b6; }
     .tab-btn {
       padding: 7px 16px;
       border-radius: 8px;
@@ -462,7 +471,7 @@
 
     <!-- KV1: HERO BANNER -->
     <div class="hero">
-      <div class="hero-date">Thứ Hai, 14 Tháng 4, 2026</div>
+
       <div class="hero-title">Cổng Thông Tin Nội Bộ IruKa</div>
       <div class="dept-selector-wrap">
         <span class="dept-label">👤 Tôi thuộc bộ phận:</span>
@@ -503,7 +512,7 @@
           <div class="tc-row"><span class="bul amber"></span><span>Bot gửi thêm Embed standup phiên chiều lúc <b>14:00</b> (tag ai chưa nộp)</span></div>
           <div class="tc-row"><span class="bul amber"></span><span>Có thể sửa báo cáo đã nộp trước <b>10:00</b> — sau 10:00 khóa hoàn toàn</span></div>
         </div>
-        <div class="tc-warning">⚠️ Nộp trễ sau 9:30: Bot báo cáo riêng về CEO, bị phạt đóng quỹ <b>50,000đ</b></div>
+        <div class="tc-warning">⚠️ Nộp trễ sau 9h30: Bot báo cáo lên CEO.</div>
       </div>
 
       <div class="timeline-card tc-red">
@@ -520,7 +529,7 @@
           <div class="tc-row"><span class="bul red"></span><span>Bot quét & tổng hợp ai đã nộp lúc <b>9:05 Thứ Hai</b> → gửi CEO</span></div>
           <div class="tc-row"><span class="bul red"></span><span>Bot DM xác nhận "Nộp thành công" ngay khi phát hiện bạn đã submit</span></div>
         </div>
-        <div class="tc-warning">⚠️ Chỉ áp dụng: <b>HR · Content · Design · QC</b> (Dev báo cáo qua /monthly)</div>
+        <div class="tc-warning">⚠️ Nộp trễ: Phạt <b>50k</b>. Áp dụng: <b>HR · Content · Design · QC</b></div>
       </div>
 
       <div class="timeline-card tc-purple">
@@ -537,7 +546,7 @@
           <div class="tc-row"><span class="bul purple"></span><span>Bot chốt danh sách lúc <b>9:00 ngày mùng 5</b></span></div>
           <div class="tc-row"><span class="bul purple"></span><span>Danh sách trễ được gửi thẳng về CEO</span></div>
         </div>
-        <div class="tc-warning">⚠️ Không áp dụng cho: <b>CEO, HĐQT/Mentor</b></div>
+        <div class="tc-warning">⚠️ Nộp trễ: Phạt <b>100k</b>. Không áp dụng cho: <b>CEO, HĐQT/Mentor</b></div>
       </div>
 
     </div>
@@ -546,14 +555,11 @@
     <div class="commands-section">
       <div class="section-title"><span>🤖</span> Lệnh Discord Bot Của Bạn</div>
 
-      <div class="dept-info-banner" id="deptInfoBanner">
-        ℹ️ Chọn bộ phận ở trên để lọc đúng các lệnh bạn được sử dụng. Đang hiển thị tất cả lệnh.
-      </div>
-
       <div class="tabs-wrap">
         <button class="tab-btn active" onclick="switchTab('bao-cao', this)">📊 Lệnh Báo Cáo</button>
         <button class="tab-btn" onclick="switchTab('xin-phep', this)">📅 Xin Phép & Điều Chỉnh</button>
         <button class="tab-btn" onclick="switchTab('trao-doi', this)">💬 Giao Tiếp Với Sếp</button>
+        <button class="tab-btn hr-tab" onclick="switchTab('hr-lenhnh', this)">👑 Lệnh HR / CEO</button>
       </div>
 
       <!-- Tab 1: Báo cáo -->
@@ -762,6 +768,243 @@
 
         </div>
       </div>
+
+      <!-- Tab 4: Lệnh HR / CEO -->
+      <div id="tab-hr-lenhnh" class="tab-content">
+
+        <div style="background:linear-gradient(135deg,#1e3a5f,#2563eb);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <span style="font-size:22px;">👑</span>
+          <div>
+            <div style="color:#fff;font-size:14px;font-weight:800;">Khu vực quản lý HR &amp; CEO</div>
+            <div style="color:rgba(255,255,255,0.7);font-size:12px;">Các lệnh bên dưới chỉ dành cho CEO và HR. Nhân viên thường không có quyền sử dụng.</div>
+          </div>
+        </div>
+
+        <div class="commands-grid">
+
+          <!-- /staff -->
+          <div class="cmd-card navy">
+            <div class="cmd-header">
+              <span class="cmd-name">/staff</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO · HR</span>
+              </div>
+            </div>
+            <div class="cmd-title">Quản lý nhân viên</div>
+            <div class="cmd-desc">Thêm, sửa, xóa, và tra cứu thông tin nhân viên trong hệ thống. Tất cả thay đổi lưu vào cơ sở dữ liệu nhân sự.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span><b>/staff add @user</b> — Thêm nhân viên mới (điền họ tên, phòng ban, loại HĐ, GitHub)</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span><b>/staff update @user</b> — Cập nhật thông tin nhân viên hiện có</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span><b>/staff remove @user</b> — Đánh dấu nhân viên nghỉ việc (inactive)</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">4</span><span><b>/staff restore @user</b> — Kích hoạt lại nhân viên cũ đã inactive</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">5</span><span><b>/staff list</b> — Xem toàn bộ danh sách theo phòng ban</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">6</span><span><b>/staff info @user</b> — Xem chi tiết 1 nhân viên cụ thể</span></div>
+            </div>
+            <div class="cmd-tip">✅ Dùng trong <b>kênh server</b>, không dùng trong DM. Bot tự đồng bộ Discord Role sau khi thêm/sửa.</div>
+          </div>
+
+          <!-- /dept -->
+          <div class="cmd-card blue">
+            <div class="cmd-header">
+              <span class="cmd-name">/dept</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO · HR</span>
+              </div>
+            </div>
+            <div class="cmd-title">Quản lý phòng ban</div>
+            <div class="cmd-desc">Thêm mới, đổi tên, xóa và liệt kê phòng ban trong hệ thống. Khi đổi tên, Bot tự cập nhật luôn cho tất cả nhân viên thuộc phòng đó.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span><b>/dept add</b> — Thêm phòng ban mới (tên + emoji + mô tả)</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span><b>/dept rename [tên]</b> — Đổi tên phòng ban, tự cập nhật hết nhân viên</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span><b>/dept remove [tên]</b> — Xóa phòng ban (chỉ được xóa khi không còn nhân viên active)</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">4</span><span><b>/dept list</b> — Xem danh sách phòng ban + số nhân viên</span></div>
+            </div>
+            <div class="cmd-warning">⚠️ Không thể xóa phòng ban còn nhân viên active — phải chuyển hết sang phòng khác trước bằng <b>/staff update</b></div>
+          </div>
+
+          <!-- /approve -->
+          <div class="cmd-card green">
+            <div class="cmd-header">
+              <span class="cmd-name">/approve</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Duyệt đơn xin phép</div>
+            <div class="cmd-desc">Xem danh sách đơn đang chờ duyệt (nghỉ phép / đi muộn / về sớm) và duyệt theo ID. Bot tự DM thông báo đến nhân viên sau khi duyệt.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/approve</b> (không nhập ID) → Bot liệt kê tất cả đơn đang chờ kèm ID</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Gõ <b>/approve request_id:[ID]</b> → Duyệt đơn theo ID cụ thể</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span>Bot tự DM "Đơn đã được duyệt" về nhân viên</span></div>
+            </div>
+            <div class="cmd-tip">✅ Có thể duyệt nhanh ngay trên DM Bot bằng nút <b>✅ Duyệt</b> — không cần gõ lệnh</div>
+          </div>
+
+          <!-- /reject -->
+          <div class="cmd-card red">
+            <div class="cmd-header">
+              <span class="cmd-name">/reject</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Từ chối đơn xin phép</div>
+            <div class="cmd-desc">Từ chối đơn xin phép / đi muộn / về sớm và ghi rõ lý do. Bot gửi lý do từ chối về nhân viên qua DM.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/reject</b> (không nhập ID) → Xem danh sách đơn chờ</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Gõ <b>/reject request_id:[ID]</b> → Mở form điền lý do từ chối</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span>Bot cập nhật trạng thái + DM nhân viên kèm lý do</span></div>
+            </div>
+            <div class="cmd-warning">⚠️ Bắt buộc phải điền lý do — nhân viên sẽ nhận được lý do từ chối qua DM</div>
+          </div>
+
+          <!-- /meeting -->
+          <div class="cmd-card purple">
+            <div class="cmd-header">
+              <span class="cmd-name">/meeting</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Book lịch họp</div>
+            <div class="cmd-desc">Tạo lịch họp và thông báo tự động đến từng thành viên qua DM. Bot gửi nút xác nhận tham gia cho từng người và cập nhật bảng danh sách tham dự cho CEO.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/meeting</b> → Điền: Tiêu đề · Thời gian · Thành viên · Địa điểm</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Bot DM đến từng người kèm nút <b>✅ Xác nhận tham gia</b></span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span>CEO thấy bảng trạng thái xác nhận cập nhật theo thời gian thực</span></div>
+            </div>
+            <div class="cmd-tip">✅ Dùng định dạng thời gian: <b>10h30 ngày 15/04/2026</b> — Bot tự nhắc trước giờ họp 15 phút</div>
+          </div>
+
+          <!-- /broadcast -->
+          <div class="cmd-card amber">
+            <div class="cmd-header">
+              <span class="cmd-name">/broadcast</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Gửi thông báo hàng loạt</div>
+            <div class="cmd-desc">Gửi thông báo tức thì qua DM đến tất cả nhân viên hoặc theo từng nhóm phòng ban. Chỉ nhân viên active mới nhận được.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/broadcast</b> → Điền: Gửi đến (Tất cả / Edu / Dev...) và Nội dung</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Bot gửi DM đến từng thành viên trong nhóm</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span>Bot báo lại số người nhận thành công</span></div>
+            </div>
+            <div class="cmd-warning">⚠️ Nhân viên inactive hoặc đã chặn DM Bot sẽ không nhận được thông báo</div>
+          </div>
+
+          <!-- /remind -->
+          <div class="cmd-card blue">
+            <div class="cmd-header">
+              <span class="cmd-name">/remind</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Đặt hẹn giờ nhắc việc</div>
+            <div class="cmd-desc">Lên lịch nhắc nhở tự động đến cá nhân hoặc nhóm tại một thời điểm cụ thể trong tương lai. Bot tự gửi DM đúng giờ đã hẹn.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/remind</b> → Điền: Đối tượng (tên/nhóm) · Thời gian · Nội dung nhắc</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Dùng định dạng: <b>07/04/2026 lúc 09:00</b></span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span>Bot tự gửi DM nhắc đúng thời điểm đã hẹn</span></div>
+            </div>
+            <div class="cmd-tip">✅ Hỗ trợ nhắc tên cá nhân hoặc cả nhóm: <b>Thùy Anh / Tất cả / Edu</b></div>
+          </div>
+
+          <!-- /onboard -->
+          <div class="cmd-card green">
+            <div class="cmd-header">
+              <span class="cmd-name">/onboard</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Kích hoạt onboarding nhân viên mới</div>
+            <div class="cmd-desc">Gửi tin nhắn chào mừng kèm checklist onboarding đến nhân viên mới. Bot cập nhật phòng ban và loại hợp đồng cho nhân viên đó.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/onboard</b> → Điền: Tên nhân viên · Bộ phận · Loại hợp đồng</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Bot DM checklist onboarding đến nhân viên: khai báo thông tin · chào hỏi · hướng dẫn dùng /daily</span></div>
+            </div>
+            <div class="cmd-tip">✅ Nhân viên cần được thêm vào danh sách bằng <b>/staff add</b> trước khi dùng lệnh này</div>
+          </div>
+
+          <!-- /comment -->
+          <div class="cmd-card purple">
+            <div class="cmd-header">
+              <span class="cmd-name">/comment</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Phản hồi kế hoạch nhân viên</div>
+            <div class="cmd-desc">Gửi nhận xét, góp ý hoặc phản hồi riêng cho kế hoạch/báo cáo của từng nhân viên qua DM. Đảm bảo bảo mật — không ai khác thấy.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/comment [tên nhân viên]</b> → Chọn tên từ gợi ý autocomplete</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Điền nội dung phản hồi vào form</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span>Bot gửi phản hồi riêng tư đến nhân viên qua DM</span></div>
+            </div>
+            <div class="cmd-tip">✅ Bot gợi ý tên nhân viên tự động — gõ 1-2 ký tự đầu là ra ngay</div>
+          </div>
+
+          <!-- /standup -->
+          <div class="cmd-card navy">
+            <div class="cmd-header">
+              <span class="cmd-name">/standup</span>
+              <div class="cmd-badges">
+                <span class="badge badge-hr-ceo">HR · CEO</span>
+              </div>
+            </div>
+            <div class="cmd-title">Quản trị standup &amp; chấm công</div>
+            <div class="cmd-desc">Bộ lệnh quản trị standup dành cho HR và CEO. Kiểm tra báo cáo tức thì, xem Git Push, đánh dấu nghỉ phép ngay trong ngày.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span><b>/standup check</b> — Kích hoạt báo cáo tổng hợp standup ngay lập tức</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span><b>/standup git</b> — Xem danh sách Dev đã/chưa git push hôm nay (CEO thấy)</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span><b>/standup leave @user</b> — HR/CEO đánh dấu nhân viên nghỉ phép hôm nay, Bot không nhắc họ nữa</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">4</span><span><b>/standup dm</b> — Gửi toàn bộ báo cáo /daily hôm nay vào DM CEO (CEO only)</span></div>
+            </div>
+            <div class="cmd-tip">✅ <b>/standup check</b> và <b>/standup git</b> ai cũng dùng được, 2 lệnh còn lại cần quyền HR/CEO</div>
+          </div>
+
+          <!-- /assign -->
+          <div class="cmd-card amber">
+            <div class="cmd-header">
+              <span class="cmd-name">/assign</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Giao task có cấu trúc</div>
+            <div class="cmd-desc">Giao việc cho nhân viên với đầy đủ thông tin: tên task, deadline, độ ưu tiên. Bot lưu vào hệ thống và theo dõi trạng thái hoàn thành.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Gõ <b>/assign</b> → Chọn nhân viên từ danh sách autocomplete</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Điền: Tên task · Deadline · Độ ưu tiên</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span>Bot DM giao việc đến nhân viên + lưu vào hệ thống theo dõi</span></div>
+            </div>
+            <div class="cmd-tip">✅ Dùng <b>task @username</b> trong DM Bot để xem tất cả task đã giao + trạng thái</div>
+          </div>
+
+          <!-- @poll -->
+          <div class="cmd-card blue">
+            <div class="cmd-header">
+              <span class="cmd-name">@poll</span>
+              <div class="cmd-badges">
+                <span class="badge badge-ceo-only">CEO only</span>
+              </div>
+            </div>
+            <div class="cmd-title">Khảo sát nhanh toàn team</div>
+            <div class="cmd-desc">Tạo poll gửi đến tất cả nhân viên qua DM. Bot tự tổng hợp kết quả sau 24h và báo về CEO.</div>
+            <div class="cmd-steps">
+              <div class="cmd-step"><span class="cmd-step-num">1</span><span>Trong DM Bot, gõ: <b>@poll [Câu hỏi] | [Lựa chọn 1] | [Lựa chọn 2]</b></span></div>
+              <div class="cmd-step"><span class="cmd-step-num">2</span><span>Bot gửi poll đến toàn bộ nhân viên</span></div>
+              <div class="cmd-step"><span class="cmd-step-num">3</span><span>Bot tổng hợp + gửi kết quả về CEO sau 24h</span></div>
+            </div>
+            <div class="cmd-tip">✅ VD: <b>@poll Giờ họp nào tiện? | Thứ 2 9h | Thứ 4 10h | Thứ 6 14h</b></div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
 
     <!-- KV4: NỘI QUY NHANH -->
@@ -773,7 +1016,23 @@
           <div class="rule-icon blue">⏰</div>
           <div>
             <div class="rule-text">Báo cáo ngày đúng giờ</div>
-            <div class="rule-sub">Nộp trước 9:00 sáng — trễ bị phạt 50,000đ</div>
+            <div class="rule-sub">Nộp trước 9:00 sáng — trễ sau 9h30 Bot báo lên CEO</div>
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-icon red">📊</div>
+          <div>
+            <div class="rule-text">Báo cáo tuần nộp trước 24h Chủ Nhật</div>
+            <div class="rule-sub">Áp dụng HR · Content · Design · QC — trễ phạt 50k</div>
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <div class="rule-icon purple">📋</div>
+          <div>
+            <div class="rule-text">Kế hoạch tháng nộp trước 24h mùng 4</div>
+            <div class="rule-sub">Bot chốt 9:00 sáng mùng 5, gửi CEO — trễ phạt 100k</div>
           </div>
         </div>
 
@@ -781,15 +1040,15 @@
           <div class="rule-icon green">🏖️</div>
           <div>
             <div class="rule-text">Xin phép trước ít nhất 1 ngày</div>
-            <div class="rule-sub">Xin ngày hôm đó sẽ không được chấp nhận tự động</div>
+            <div class="rule-sub">Xin cùng ngày sẽ không được chấp nhận tự động</div>
           </div>
         </div>
 
         <div class="rule-card">
-          <div class="rule-icon purple">📋</div>
+          <div class="rule-icon orange">💻</div>
           <div>
-            <div class="rule-text">Kế hoạch tháng nộp trước mùng 5</div>
-            <div class="rule-sub">Bot chốt lúc 9:00 sáng mùng 5, trễ báo CEO</div>
+            <div class="rule-text">Staff phải git push trước khi về</div>
+            <div class="rule-sub">Bot kiểm tra lúc 17:00 và 17:30 — chưa push sẽ bị tag nhắc</div>
           </div>
         </div>
 
@@ -991,6 +1250,10 @@
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tab-' + tabId).classList.add('active');
       btn.classList.add('active');
+      // Thêm class đặc biệt cho tab HR
+      if (tabId === 'hr-lenhnh') {
+        btn.classList.add('hr-tab');
+      }
     }
 
     function toggleFaq(el) {
