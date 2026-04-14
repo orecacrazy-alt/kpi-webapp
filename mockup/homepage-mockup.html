@@ -104,12 +104,17 @@
       overflow: hidden;
     }
     .hero::after {
-      content: '🐬';
+      content: '';
       position: absolute;
       right: 32px; top: 50%;
       transform: translateY(-50%);
-      font-size: 80px;
-      opacity: 0.12;
+      width: 140px;
+      height: 140px;
+      background-image: url('./logo-iruka.svg');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.15;
     }
     .hero-date { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
     .hero-title { font-size: 26px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; }
@@ -166,6 +171,8 @@
       position: relative;
       overflow: hidden;
       transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
     }
     .timeline-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.09); }
     .timeline-card::before {
@@ -201,7 +208,7 @@
     .tc-deadline-val.amber { color: #d97706; }
     .tc-deadline-val.red { color: #dc2626; }
     .tc-deadline-val.purple { color: #7c3aed; }
-    .tc-rows { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+    .tc-rows { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; margin-bottom: 16px; }
     .tc-row { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; color: #475569; }
     .tc-row .bul { width: 5px; height: 5px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
     .tc-row .bul.amber { background: #f59e0b; }
@@ -212,7 +219,8 @@
       background: #fff7ed; border: 1px solid #fed7aa;
       border-radius: 8px; padding: 8px 10px;
       font-size: 11.5px; color: #9a3412; font-weight: 600;
-      margin-top: 10px;
+      margin-top: auto;
+      min-height: 52px;
     }
 
     /* ── KV3: COMMANDS ── */
@@ -264,6 +272,8 @@
       transition: all 0.2s;
       position: relative;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     .cmd-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.09); border-color: var(--blue); }
     .cmd-card::before {
@@ -300,7 +310,7 @@
     .badge-deadline { background: #fee2e2; color: #991b1b; }
     .cmd-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
     .cmd-desc { font-size: 12.5px; color: #64748b; line-height: 1.5; margin-bottom: 12px; }
-    .cmd-steps { display: flex; flex-direction: column; gap: 5px; }
+    .cmd-steps { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
     .cmd-step {
       display: flex; align-items: flex-start; gap: 8px;
       font-size: 12px; color: #374151;
@@ -317,14 +327,16 @@
       background: #fff7ed; border: 1px solid #fed7aa;
       border-radius: 8px; padding: 7px 10px;
       font-size: 11px; color: #9a3412; font-weight: 600;
-      margin-top: 10px;
+      margin-top: auto;
+      min-height: 48px;
     }
     .cmd-tip {
       display: flex; align-items: center; gap: 6px;
       background: #f0fdf4; border: 1px solid #bbf7d0;
       border-radius: 8px; padding: 7px 10px;
       font-size: 11px; color: #166534; font-weight: 600;
-      margin-top: 10px;
+      margin-top: auto;
+      min-height: 48px;
     }
 
     /* ── KV4: NỘI QUY NHANH ── */
@@ -451,8 +463,7 @@
     <!-- KV1: HERO BANNER -->
     <div class="hero">
       <div class="hero-date">Thứ Hai, 14 Tháng 4, 2026</div>
-      <div class="hero-title">Cổng Thông Tin Nội Bộ IruKa 🐬</div>
-      <div class="hero-sub">Chào mừng đến với hệ thống quản lý nội bộ. Chọn bộ phận để xem lệnh phù hợp với bạn.</div>
+      <div class="hero-title">Cổng Thông Tin Nội Bộ IruKa</div>
       <div class="dept-selector-wrap">
         <span class="dept-label">👤 Tôi thuộc bộ phận:</span>
         <select class="dept-select" id="deptSelect" onchange="onDeptChange(this.value)">
@@ -520,7 +531,7 @@
         <div class="tc-name">Báo Cáo & KH Tháng</div>
         <div class="tc-cmd">/monthly</div>
         <div class="tc-deadline-label">Deadline nộp</div>
-        <div class="tc-deadline-val purple">24:00 ngày Mùng 5</div>
+        <div class="tc-deadline-val purple">24:00 ngày Mùng 4</div>
         <div class="tc-rows">
           <div class="tc-row"><span class="bul purple"></span><span>Bot DM nhắc nhở ngày <b>mùng 1</b> hàng tháng</span></div>
           <div class="tc-row"><span class="bul purple"></span><span>Bot chốt danh sách lúc <b>9:00 ngày mùng 5</b></span></div>
@@ -590,7 +601,7 @@
               <span class="cmd-name">/monthly</span>
               <div class="cmd-badges">
                 <span class="badge badge-dept">HR · Dev · Design · Content · QC · Edu · Tester</span>
-                <span class="badge badge-deadline">⏰ Mùng 5</span>
+                <span class="badge badge-deadline">⏰ Mùng 4</span>
               </div>
             </div>
             <div class="cmd-title">Báo cáo & kế hoạch tháng</div>
@@ -600,7 +611,7 @@
               <div class="cmd-step"><span class="cmd-step-num">2</span><span>Gõ <b>/monthly</b> → Bot gửi link Google Sheets</span></div>
               <div class="cmd-step"><span class="cmd-step-num">3</span><span>Điền: Đầu việc · Số lượng · Deadline · Độ ưu tiên</span></div>
             </div>
-            <div class="cmd-warning">⚠️ Nộp trước ngày mùng 5 lúc 9:00 — Bot chốt danh sách và báo CEO</div>
+            <div class="cmd-warning">⚠️ Nộp trước 24:00 ngày mùng 4 — 9:00 ngày mùng 5 Bot chốt danh sách báo cáo cho CEO</div>
           </div>
 
           <div class="cmd-card green">
