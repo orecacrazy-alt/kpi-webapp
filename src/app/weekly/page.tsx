@@ -93,43 +93,39 @@ function SkeletonLoader({ name }: { name: string }) {
 
 // ── Màn hình lỗi Token hết hạn / Truy cập không qua Discord (F5) ──
 function TokenExpiredScreen() {
+  // Logic mở Discord: thử deep link app trước, fallback web sau 1.5s
+  function openDiscord() {
+    const fallbackTimer = setTimeout(() => {
+      window.open('https://discord.com/app', '_blank');
+    }, 1500);
+    // discord:// → nếu app cài thì app bắt, cửa sổ blur → clear timer
+    window.location.href = 'discord://';
+    window.addEventListener('blur', () => clearTimeout(fallbackTimer), { once: true });
+  }
+
   return (
-    <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-xl p-10 max-w-md w-full text-center mx-4">
-        {/* Icon chain link */}
-        <div className="text-7xl mb-6">🔗</div>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, background: '#f0f4f8', fontFamily: 'Inter,sans-serif' }}>
+      <div style={{ background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.12)', padding: '48px 40px', maxWidth: 480, textAlign: 'center', width: '100%' }}>
+        {/* Icon */}
+        <div style={{ fontSize: 72, marginBottom: 16 }}>🔗</div>
 
         {/* Tiêu đề */}
-        <h2 className="text-2xl font-extrabold text-[#1e3a5f] mb-4">
+        <div style={{ fontSize: 22, fontWeight: 900, color: '#1e3a5f', marginBottom: 12 }}>
           Cần link từ Discord
-        </h2>
-
-        {/* Mô tả ngắn */}
-        <p className="text-gray-500 text-sm leading-relaxed mb-2">
-          Trang báo cáo tuần chỉ mở được qua link cá nhân từ Discord.
-        </p>
-
-        {/* Đường kẻ ngăn cách */}
-        <div className="flex items-center justify-center my-4">
-          <div className="border-l-2 border-gray-200 h-6" />
         </div>
 
-        {/* Hướng dẫn lấy link */}
-        <p className="text-gray-500 text-sm leading-relaxed mb-6">
-          Vào Discord → Nhắn tin trực tiếp cho CEO - IruKa<br />
-          hoặc nhóm <strong className="text-gray-700">Plan-Report</strong> → gõ lệnh <strong className="text-gray-700">/weekly</strong><br />
-          → bấm link trong tin nhắn để gửi báo cáo.
-        </p>
+        {/* Mô tả & hướng dẫn */}
+        <div style={{ fontSize: 14, color: '#4b5563', lineHeight: 1.7, whiteSpace: 'pre-line', marginBottom: 28 }}>
+          {`Trang báo cáo tuần chỉ mở được qua link cá nhân từ Discord.\n\nVào Discord → Nhắn tin trực tiếp cho CEO - IruKa\nhoặc nhóm Plan-Report → gõ lệnh /weekly\n→ bấm link trong tin nhắn để gửi báo cáo.`}
+        </div>
 
-        {/* Nút Mở Discord */}
-        <a
-          href="https://discord.com/channels/@me"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 bg-[#1e3a5f] hover:bg-[#162d4a] text-white font-bold rounded-xl text-base transition-colors"
+        {/* Nút — cùng kích thước với báo cáo tháng */}
+        <button
+          onClick={openDiscord}
+          style={{ padding: '12px 36px', borderRadius: 10, fontWeight: 800, fontSize: 15, background: '#1e3a5f', color: '#fff', border: 'none', cursor: 'pointer', fontFamily: 'Inter,sans-serif' }}
         >
           💬 Mở Discord
-        </a>
+        </button>
       </div>
     </div>
   );
