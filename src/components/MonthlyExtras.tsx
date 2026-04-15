@@ -7,7 +7,8 @@ import React from 'react';
 import { useKpiStore } from '@/store/kpiStore';
 import { Trophy, Star, Lightbulb, Target, Ban, MessageSquare } from 'lucide-react';
 
-const starLabels = ['', '1 / 5 — Chưa đạt', '2 / 5 — Đạt', '3 / 5 — Tốt', '4 / 5 — Rất tốt', '5 / 5 — Xuất sắc'];
+// Labels tự đánh giá — đúng spec mockup (Yếu → Kém → Trung Bình → Khá → Đạt)
+const starLabels = ['', '1 / 5 — Yếu', '2 / 5 — Kém', '3 / 5 — Trung Bình', '4 / 5 — Khá', '5 / 5 — Đạt'];
 
 export default function MonthlyExtras() {
   const { monthlyData, updateMonthlyField } = useKpiStore();
@@ -83,7 +84,7 @@ export default function MonthlyExtras() {
         <div className="p-6 flex items-center gap-8 flex-wrap">
           <div>
             <div className="text-[14px] font-bold text-[#1e3a5f]">Bạn tự chấm điểm tháng này:</div>
-            <div className="text-[12px] text-gray-400 mt-1 font-medium">1 = Chưa đạt · 2 = Đạt · 3 = Tốt · 4 = Rất tốt · 5 = Xuất sắc</div>
+            <div className="text-[12px] text-gray-400 mt-1 font-medium">1 = Yếu · 2 = Kém · 3 = Trung Bình · 4 = Khá · 5 = Đạt</div>
           </div>
 
           <div className="flex gap-2">

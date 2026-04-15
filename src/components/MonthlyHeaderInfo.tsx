@@ -84,6 +84,50 @@ export default function MonthlyHeaderInfo({ name, role, dept, date, reportMonth,
           </tbody>
         </table>
       </div>
+      {/* Guide Box 3 cột — Hướng dẫn làm báo cáo tháng */}
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Bước 1 */}
+        <div className="rounded-xl border-2 border-blue-200 bg-blue-50/60 p-4 flex flex-col gap-2">
+          <div className="flex items-center gap-2 font-black text-blue-900 text-[13px]">
+            <span className="text-lg">① </span>
+            <span>Điền cột Thực hiện</span>
+          </div>
+          <p className="text-[12px] text-blue-700 leading-relaxed font-medium">
+            Xem lại từng đầu việc tháng trước và điền số <strong>đã thực hiện thực tế</strong> vào ô màu vàng. Không điền = bỏ qua = 0 điểm.
+          </p>
+          <div className="mt-auto text-[11px] text-blue-400 font-semibold uppercase tracking-wide">
+            📋 Bảng 1 — Báo cáo {reportMonth}
+          </div>
+        </div>
+
+        {/* Bước 2 */}
+        <div className="rounded-xl border-2 border-amber-200 bg-amber-50/60 p-4 flex flex-col gap-2">
+          <div className="flex items-center gap-2 font-black text-amber-900 text-[13px]">
+            <span className="text-lg">② </span>
+            <span>Thêm kế hoạch mới</span>
+          </div>
+          <p className="text-[12px] text-amber-700 leading-relaxed font-medium">
+            Lên danh sách <strong>đầu việc tháng tới</strong> ở bảng bên dưới. Đừng quên chọn Trọng số (1 = nhỏ · 2 = vừa · 3 = quan trọng).
+          </p>
+          <div className="mt-auto text-[11px] text-amber-400 font-semibold uppercase tracking-wide">
+            🗓️ Bảng 2 — Kế hoạch {planMonth}
+          </div>
+        </div>
+
+        {/* Bước 3 */}
+        <div className="rounded-xl border-2 border-green-200 bg-green-50/60 p-4 flex flex-col gap-2">
+          <div className="flex items-center gap-2 font-black text-green-900 text-[13px]">
+            <span className="text-lg">③ </span>
+            <span>Thành tựu &amp; Gửi báo cáo</span>
+          </div>
+          <p className="text-[12px] text-green-700 leading-relaxed font-medium">
+            Ghi <strong>thành tựu nổi bật</strong> và <strong>mục tiêu tháng tới</strong> ở phần phía dưới, tự đánh giá sao, rồi bấm <strong>NỘP BÁO CÁO</strong>.
+          </p>
+          <div className="mt-auto text-[11px] text-green-400 font-semibold uppercase tracking-wide">
+            📤 Gửi → CEO nhận thông báo
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
