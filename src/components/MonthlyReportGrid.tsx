@@ -198,8 +198,8 @@ function TableHeader2() {
         <th style={{ ...thBase, minWidth: 230, textAlign: "left" }}>Ghi chú / Mục tiêu cụ thể</th>
         <th style={{ ...thBase, minWidth: 70 }}>Đơn vị <Req /></th>
         <th style={{ ...thBase, minWidth: 110 }}>Số lượng (KH) <Req /></th>
-        {/* Cột Thực hiện bảng 2: nền xám đậm, KHÔNG nghiêng, KHÔNG dấu * */}
-        <th style={{ ...thBase, minWidth: 115, background: "#4b5563" }}>Thực hiện</th>
+        {/* Cột Thực hiện bảng 2: nền vàng đồng bộ bảng 1, chữ nghiêng (chưa chốt) */}
+        <th style={{ ...thBase, minWidth: 115, background: "#ca8a04", fontStyle: "italic" }}>Tháng sau chốt</th>
         <th style={{ ...thBase, minWidth: 110 }}>% Hoàn Thành</th>
         <th style={{ ...thBase, minWidth: 80 }}>Trọng số <Req /></th>
         <th style={{ ...thBase, minWidth: 80 }}>Đạt được</th>
@@ -649,22 +649,7 @@ export default function MonthlyReportGrid({
             <TableHeader2 />
             <tbody>
 
-              {/* Dòng placeholder khi bảng 2 trống */}
-              {newTasks.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={10}
-                    style={{
-                      padding: 32, textAlign: "center", color: "#9ca3af",
-                      fontStyle: "italic", fontSize: 13,
-                      background: planEmpty ? "#fff5f5" : "#fafafa",
-                      border: `1px dashed ${planEmpty ? "#fca5a5" : BORDER}`,
-                    }}
-                  >
-                    Chưa có đầu việc nào — Bấm nút bên dưới để thêm
-                  </td>
-                </tr>
-              )}
+              {/* Dòng placeholder chỉ hiện khi hoàn toàn trống (không có task nào) — đã có addTask tự động */}
 
               {/* Các dòng bảng 2 */}
               {newTasks.map((t, idx) => {

@@ -195,8 +195,12 @@ function MonthlyContent() {
 
         // Tải data server trước
         const serverTasks = [...(data.tasks || [])];
-        const allTasks = [...serverTasks, ...(data.planTasks || [])];
-        initTasks(allTasks);
+        const planFromServer = [...(data.planTasks || [])];
+        // Nếu chưa có kế hoạch tháng tới → tự thêm 1 dòng trống để nhân viên biết cần điền
+        const defaultPlan = planFromServer.length === 0
+          ? [{ id: `new_default_${Date.now()}`, noiDung: '', donVi: '', keHoach: '', trongSo: '' as const, ghiChu: '', thucHien: null, datDuoc: 0, phanTram: 0, isNhiemVuCu: false }]
+          : planFromServer;
+        initTasks([...serverTasks, ...defaultPlan]);
         if (data.monthlyData) initMonthlyData(data.monthlyData);
 
         // Kiểm tra draft — chỉ hỏi nếu draft < 72h

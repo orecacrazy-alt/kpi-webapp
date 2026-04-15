@@ -27,48 +27,62 @@ export default function MonthlyExtras() {
         </div>
         
         <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* ⭐ Thành tựu — BẮT BUỘC */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.1em] flex items-center gap-1.5">
-              <Star className="text-amber-500 w-3.5 h-3.5" /> ⭐ Thành tựu / Kết quả nổi bật
+            <label className="flex items-center gap-1.5" style={{ fontSize: 12, fontWeight: 800, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <Star className="text-amber-500 w-4 h-4" />
+              ⭐ Thành tựu / Kết quả nổi bật
+              <span style={{ color: '#dc2626', fontWeight: 900 }}> *</span>
             </label>
             <textarea
-              className="w-full min-h-[100px] p-3 text-sm font-semibold border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 transition placeholder:font-normal placeholder:text-gray-300"
+              className="w-full min-h-[110px] p-3 border-2 rounded-lg outline-none focus:border-blue-500 transition"
+              style={{ fontSize: 13.5, fontWeight: 500, color: '#111827', borderColor: '#d1d5db' }}
               placeholder="VD: Hoàn thành toàn bộ bộ banner tháng 3 trước deadline 2 ngày..."
               value={monthlyData.achievements}
               onChange={(e) => updateMonthlyField('achievements', e.target.value)}
             />
           </div>
 
+          {/* ⛔ Khó khăn */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.1em] flex items-center gap-1.5">
-              <Ban className="text-red-500 w-3.5 h-3.5" /> ⛔ Khó khăn / Vướng mắc gặp phải
+            <label className="flex items-center gap-1.5" style={{ fontSize: 12, fontWeight: 800, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <Ban className="text-red-500 w-4 h-4" />
+              ⛔ Khó khăn / Vướng mắc gặp phải
             </label>
             <textarea
-              className="w-full min-h-[100px] p-3 text-sm font-semibold border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 transition placeholder:font-normal placeholder:text-gray-300"
+              className="w-full min-h-[110px] p-3 border-2 rounded-lg outline-none focus:border-blue-500 transition"
+              style={{ fontSize: 13.5, fontWeight: 500, color: '#111827', borderColor: '#d1d5db' }}
               placeholder="VD: Video TikTok 2 clip bị trễ do chờ approval content..."
               value={monthlyData.difficulties}
               onChange={(e) => updateMonthlyField('difficulties', e.target.value)}
             />
           </div>
 
+          {/* 💡 Đề xuất */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.1em] flex items-center gap-1.5">
-              <Lightbulb className="text-blue-500 w-3.5 h-3.5" /> 💡 Đề xuất cải tiến / Cần hỗ trợ gì?
+            <label className="flex items-center gap-1.5" style={{ fontSize: 12, fontWeight: 800, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <Lightbulb className="text-blue-500 w-4 h-4" />
+              💡 Đề xuất cải tiến / Cần hỗ trợ gì?
             </label>
             <textarea
-              className="w-full min-h-[100px] p-3 text-sm font-semibold border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 transition placeholder:font-normal placeholder:text-gray-300"
+              className="w-full min-h-[110px] p-3 border-2 rounded-lg outline-none focus:border-blue-500 transition"
+              style={{ fontSize: 13.5, fontWeight: 500, color: '#111827', borderColor: '#d1d5db' }}
               placeholder="VD: Cần thêm account Canva Pro để sản xuất nhanh hơn..."
               value={monthlyData.proposals}
               onChange={(e) => updateMonthlyField('proposals', e.target.value)}
             />
           </div>
 
+          {/* 🎯 Mục tiêu — BẮT BUỘC */}
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[0.1em] flex items-center gap-1.5">
-              <Target className="text-green-600 w-3.5 h-3.5" /> 🎯 Mục tiêu ưu tiên tháng tới
+            <label className="flex items-center gap-1.5" style={{ fontSize: 12, fontWeight: 800, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <Target className="text-green-600 w-4 h-4" />
+              🎯 Mục tiêu ưu tiên tháng tới
+              <span style={{ color: '#dc2626', fontWeight: 900 }}> *</span>
             </label>
             <textarea
-              className="w-full min-h-[100px] p-3 text-sm font-semibold border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 transition placeholder:font-normal placeholder:text-gray-300"
+              className="w-full min-h-[110px] p-3 border-2 rounded-lg outline-none focus:border-blue-500 transition"
+              style={{ fontSize: 13.5, fontWeight: 500, color: '#111827', borderColor: '#d1d5db' }}
               placeholder="VD: Ra mắt series blog 5 bài về STEM, đạt 10k lượt đọc..."
               value={monthlyData.priorities}
               onChange={(e) => updateMonthlyField('priorities', e.target.value)}
