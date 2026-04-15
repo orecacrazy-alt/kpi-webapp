@@ -91,21 +91,45 @@ function SkeletonLoader({ name }: { name: string }) {
   );
 }
 
-// ── Màn hình lỗi Token hết hạn (F5) ─────────────────────────────
+// ── Màn hình lỗi Token hết hạn / Truy cập không qua Discord (F5) ──
 function TokenExpiredScreen() {
   return (
     <div className="min-h-screen bg-[#f0f4f8] flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-xl p-10 max-w-md w-full text-center mx-4">
-        <div className="text-6xl mb-4">🔗</div>
-        <h2 className="text-2xl font-bold text-[#1e3a5f] mb-3">Link đã hết hạn</h2>
-        <p className="text-gray-500 text-sm leading-relaxed mb-6">
-          Vì lý do bảo mật, link báo cáo chỉ có hiệu lực trong <strong>72 giờ</strong>.<br />
-          Link của bạn đã hết thời gian sử dụng.
+        {/* Icon chain link */}
+        <div className="text-7xl mb-6">🔗</div>
+
+        {/* Tiêu đề */}
+        <h2 className="text-2xl font-extrabold text-[#1e3a5f] mb-4">
+          Cần link từ Discord
+        </h2>
+
+        {/* Mô tả ngắn */}
+        <p className="text-gray-500 text-sm leading-relaxed mb-2">
+          Trang báo cáo tuần chỉ mở được qua link cá nhân từ Discord.
         </p>
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-blue-700 text-sm font-medium">
-          💬 Vui lòng nhắn Bot Discord: <strong>/weekly</strong><br />
-          để nhận link báo cáo mới nhé!
+
+        {/* Đường kẻ ngăn cách */}
+        <div className="flex items-center justify-center my-4">
+          <div className="border-l-2 border-gray-200 h-6" />
         </div>
+
+        {/* Hướng dẫn lấy link */}
+        <p className="text-gray-500 text-sm leading-relaxed mb-6">
+          Vào Discord → Nhắn tin trực tiếp cho CEO - IruKa<br />
+          hoặc nhóm <strong className="text-gray-700">Plan-Report</strong> → gõ lệnh <strong className="text-gray-700">/weekly</strong><br />
+          → bấm link trong tin nhắn để gửi báo cáo.
+        </p>
+
+        {/* Nút Mở Discord */}
+        <a
+          href="https://discord.com/channels/@me"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 w-full py-3 px-6 bg-[#1e3a5f] hover:bg-[#162d4a] text-white font-bold rounded-xl text-base transition-colors"
+        >
+          💬 Mở Discord
+        </a>
       </div>
     </div>
   );
