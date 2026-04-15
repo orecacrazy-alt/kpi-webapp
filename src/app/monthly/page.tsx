@@ -396,8 +396,18 @@ function MonthlyContent() {
         icon="🔗"
         title="Cần link từ Discord"
         desc={"Trang báo cáo tháng chỉ mở được qua link cá nhân từ Discord.\n\nVào Discord → Nhắn tin trực tiếp cho CEO - IruKa\nhoặc nhóm Plan-Report → gõ lệnh /monthly\n→ bấm link trong tin nhắn để gửi báo cáo."}
-        btnText="📖 Hướng dẫn"
-        onBtn={() => window.open("https://discord.com", "_blank")}
+        btnText="💬 Mở Discord"
+        onBtn={() => {
+          // Thử mở Discord app trước (deep link)
+          // Nếu sau 1.5s app không mở được → fallback mở web
+          const fallbackTimer = setTimeout(() => {
+            window.open("https://discord.com/app", "_blank");
+          }, 1500);
+          // Mở discord:// — nếu có app thì app tự bắt, timer bị clear nhờ blur
+          window.location.href = "discord://";
+          // Khi app mở → cửa sổ mất focus → clearTimeout để không mở web thêm
+          window.addEventListener("blur", () => clearTimeout(fallbackTimer), { once: true });
+        }}
       />
     );
   }
