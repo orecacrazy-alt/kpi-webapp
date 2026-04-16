@@ -1,607 +1,1143 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Sếp — IruKa KPI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #f0f4f8; color: #1a1a1a; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IruKa KPI Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── TOPBAR ── */
-    .topbar {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2d5a8e 100%);
-      color: white; padding: 0 32px; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 2px 12px rgba(30,58,95,0.25);
-      position: sticky; top: 0; z-index: 100;
-    }
-    .topbar-brand { display: flex; align-items: center; gap: 12px; }
-    .topbar-brand .logo { width: 36px; height: 36px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .topbar-brand h1 { font-size: 18px; font-weight: 800; }
-    .topbar-brand p { font-size: 12px; color: #93c5fd; font-weight: 500; margin-top: 1px; }
-    .topbar-right { display: flex; align-items: center; gap: 14px; }
-    .avatar { width: 36px; height: 36px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; border: 2px solid rgba(255,255,255,0.3); }
-    .notif-btn { width: 36px; height: 36px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; border: none; color: white; font-size: 16px; }
-    .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #f97316; border-radius: 50%; border: 1.5px solid #1e3a5f; }
+:root {
+  --bg: #0f1117;
+  --bg2: #161b27;
+  --bg3: #1e2436;
+  --border: rgba(255,255,255,0.07);
+  --accent: #6366f1;
+  --accent2: #818cf8;
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --radius: 12px;
+  --sidebar: 220px;
+}
 
-    /* ── LAYOUT ── */
-    .layout { display: flex; min-height: calc(100vh - 64px); }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  min-height: 100vh;
+  font-size: 14px;
+}
 
-    /* ── SIDEBAR ── */
-    .sidebar { width: 220px; background: white; border-right: 1px solid #e5e7eb; padding: 20px 0; flex-shrink: 0; display: flex; flex-direction: column; }
-    .sidebar-section-label { font-size: 10px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 20px 8px; margin-top: 8px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 13.5px; font-weight: 600; color: #4b5563; cursor: pointer; border-left: 3px solid transparent; text-decoration: none; transition: all 0.15s; }
-    .nav-item:hover { background: #f3f4f6; color: #1e3a5f; }
-    .nav-item.active { background: #eff6ff; color: #1e3a5f; border-left-color: #1e3a5f; }
-    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
-    .nav-badge { margin-left: auto; background: #ef4444; color: white; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 99px; min-width: 18px; text-align: center; }
-    .nav-badge.gray { background: #d1d5db; color: #6b7280; }
-    .nav-badge.soon { background: #f3f4f6; color: #9ca3af; font-size: 9px; padding: 1px 5px; border: 1px dashed #d1d5db; }
-    .sidebar-bottom { margin-top: auto; padding: 16px 20px; border-top: 1px solid #f3f4f6; }
-    .logout-btn { width: 100%; background: none; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: 600; color: #6b7280; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.15s; }
-    .logout-btn:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+/* ── SIDEBAR ── */
+#sidebar {
+  width: var(--sidebar);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+}
 
-    /* ── MAIN ── */
-    .main { flex: 1; padding: 28px 32px; overflow-x: hidden; }
+.logo {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.logo-text { font-weight: 700; font-size: 15px; color: var(--text); }
+.logo-sub { font-size: 10px; color: var(--text3); }
 
-    /* ── STAT CARDS ── */
-    .stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: white; border-radius: 12px; padding: 18px 20px; border: 1px solid #e5e7eb; }
-    .stat-label { font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .stat-value { font-size: 28px; font-weight: 900; color: #1e3a5f; line-height: 1; margin-bottom: 3px; }
-    .stat-sub { font-size: 12px; color: #6b7280; }
-    .stat-icon { font-size: 22px; float: right; margin-top: -2px; }
-    .stat-card.green .stat-value { color: #16a34a; }
-    .stat-card.orange .stat-value { color: #ea580c; }
-    .stat-card.red .stat-value { color: #dc2626; }
-    .stat-card.purple .stat-value { color: #7c3aed; }
+nav { padding: 12px 0; flex: 1; }
+.nav-section { padding: 0 10px 4px; font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
 
-    /* ── FILTER BAR ── */
-    .filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-    .filter-bar-title { font-size: 18px; font-weight: 800; color: #1e3a5f; margin-right: 4px; }
-    .tab-btn { padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 600; border: 1.5px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer; transition: all 0.15s; }
-    .tab-btn.active { background: #1e3a5f; color: white; border-color: #1e3a5f; }
-    .tab-btn:hover:not(.active) { border-color: #1e3a5f; color: #1e3a5f; }
-    .filter-select { padding: 6px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 13px; font-weight: 600; color: #374151; background: white; outline: none; }
-    .search-box { padding: 6px 12px 6px 32px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #374151; background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center; outline: none; width: 180px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; margin: 2px 8px;
+  border-radius: 8px; cursor: pointer;
+  color: var(--text2); font-size: 13px; font-weight: 500;
+  transition: all .2s;
+}
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: rgba(99,102,241,.15); color: var(--accent2); }
+.nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+.nav-badge {
+  margin-left: auto; background: var(--accent);
+  color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px;
+}
 
-    /* ── BADGE ── */
-    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 700; }
-    .badge.pending { background: #fef9c3; color: #92400e; border: 1px solid #fcd34d; }
-    .badge.approved { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-    .badge.returned { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-    .badge.fixed { background: #ede9fe; color: #5b21b6; border: 1px solid #c4b5fd; }
-    .badge.late { background: #fff7ed; color: #c2410c; border: 1px solid #fdba74; }
+.sidebar-footer {
+  padding: 14px;
+  border-top: 1px solid var(--border);
+}
+.user-card {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg3); border-radius: 10px; padding: 10px 12px; cursor: pointer;
+}
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.user-name { font-size: 12px; font-weight: 600; }
+.user-role { font-size: 10px; color: var(--text3); }
 
-    /* ── REPORT CARD ── */
-    .reports-grid { display: flex; flex-direction: column; gap: 16px; }
-    .report-card { background: white; border-radius: 14px; border: 1.5px solid #e5e7eb; overflow: hidden; transition: box-shadow 0.2s; }
-    .report-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    .report-card.pending { border-left: 4px solid #f59e0b; }
-    .report-card.approved { border-left: 4px solid #22c55e; }
-    .report-card.returned { border-left: 4px solid #ef4444; }
-    .report-card.fixed-by-boss { border-left: 4px solid #8b5cf6; }
+/* ── MAIN ── */
+#main {
+  margin-left: var(--sidebar);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
-    .card-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 18px 20px 12px; gap: 16px; }
-    .card-left { display: flex; align-items: center; gap: 14px; }
-    .card-avatar { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #1e3a5f, #2d5a8e); color: white; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .card-name { font-size: 16px; font-weight: 800; color: #1e3a5f; margin-bottom: 3px; }
-    .card-meta { font-size: 12.5px; color: #6b7280; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .card-meta .dot { color: #d1d5db; }
-    .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
-    .score-label { font-size: 10px; color: #9ca3af; font-weight: 600; text-transform: uppercase; margin-bottom: 2px; text-align:right; }
-    .score-value { font-size: 28px; font-weight: 900; line-height: 1; text-align:right; }
-    .score-value.good { color: #16a34a; }
-    .score-value.mid { color: #d97706; }
-    .score-value.bad { color: #dc2626; }
-    .score-max { font-size: 13px; color: #9ca3af; font-weight: 500; }
+/* ── TOPBAR ── */
+#topbar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 60px;
+  display: flex; align-items: center; gap: 16px;
+  position: sticky; top: 0; z-index: 90;
+}
+.topbar-title { font-size: 16px; font-weight: 700; }
+.topbar-sub { font-size: 12px; color: var(--text3); }
 
-    /* Progress bar */
-    .progress-bar { margin: 0 20px 14px; }
-    .progress-bg { background: #f3f4f6; border-radius: 99px; height: 5px; overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 99px; }
+.topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
 
-    /* ─────────────────────────────────────────
-       3-TAB ACTION PANEL (trái tim của mockup)
-    ───────────────────────────────────────── */
-    .action-panel { border-top: 1.5px solid #f3f4f6; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; cursor: pointer; border: none;
+  transition: all .2s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent2); }
+.btn-ghost { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.15); }
 
-    /* Tab selector */
-    .action-tabs { display: flex; border-bottom: 1.5px solid #f3f4f6; }
-    .action-tab {
-      flex: 1; padding: 11px 8px; text-align: center; font-size: 12.5px; font-weight: 700;
-      cursor: pointer; color: #9ca3af; border-bottom: 2.5px solid transparent;
-      transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 5px;
-      background: none; border-top: none; border-left: none; border-right: none;
-    }
-    .action-tab:hover { color: #374151; background: #fafafa; }
-    .action-tab.tab-approve.tab-active { color: #16a34a; border-bottom-color: #16a34a; background: #f0fdf4; }
-    .action-tab.tab-return.tab-active { color: #ef4444; border-bottom-color: #ef4444; background: #fff1f2; }
-    .action-tab.tab-fix.tab-active { color: #7c3aed; border-bottom-color: #7c3aed; background: #faf5ff; }
+.notif-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px; position: relative;
+}
+.notif-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--red);
+  position: absolute; top: 5px; right: 5px; border: 2px solid var(--bg2);
+}
 
-    /* Tab content panels */
-    .tab-content { display: none; padding: 16px 20px 18px; }
-    .tab-content.active { display: block; }
+/* ── CONTENT ── */
+#content { padding: 24px; flex: 1; }
 
-    /* --- PANEL 1: Duyệt --- */
-    .approve-note { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #166534; display: flex; align-items: flex-start; gap: 8px; margin-bottom: 14px; line-height: 1.5; }
-    .approve-comment-label { font-size: 11.5px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-    textarea.comment-input { width: 100%; border: 1.5px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 13.5px; color: #374151; resize: none; outline: none; transition: border-color 0.15s; line-height: 1.5; }
-    textarea.comment-input:focus { border-color: #1e3a5f; }
-    .action-btns { display: flex; gap: 10px; margin-top: 12px; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 20px; border-radius: 9px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; }
-    .btn-primary-green { background: #16a34a; color: white; flex: 1; }
-    .btn-primary-green:hover { background: #15803d; }
-    .btn-primary-red { background: #ef4444; color: white; flex: 1; }
-    .btn-primary-red:hover { background: #dc2626; }
-    .btn-primary-purple { background: #7c3aed; color: white; flex: 1; }
-    .btn-primary-purple:hover { background: #6d28d9; }
-    .btn-secondary { background: #f3f4f6; color: #374151; border: 1.5px solid #e5e7eb; padding: 10px 14px; }
-    .btn-secondary:hover { background: #e5e7eb; }
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 24px; flex-wrap: wrap;
+}
+.filter-label { font-size: 12px; color: var(--text3); font-weight: 500; }
 
-    /* --- PANEL 2: Trả về --- */
-    .return-note { background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #991b1b; display: flex; align-items: flex-start; gap: 8px; margin-bottom: 14px; line-height: 1.5; }
-    .return-flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; margin-bottom: 14px; }
-    .flow-step { background: white; border: 1.5px solid #fecdd3; border-radius: 7px; padding: 4px 10px; font-size: 11.5px; font-weight: 700; color: #991b1b; }
-    .flow-arrow { color: #f87171; font-weight: 900; font-size: 13px; }
+.select-wrap { position: relative; }
+.filter-select {
+  appearance: none;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text); padding: 7px 32px 7px 12px;
+  border-radius: 8px; font-size: 12px; font-family: inherit;
+  cursor: pointer; outline: none; transition: border-color .2s;
+}
+.filter-select:hover { border-color: rgba(99,102,241,.4); }
+.filter-select option { background: #1e2436; }
+.select-wrap::after {
+  content: '▾'; position: absolute; right: 10px; top: 50%;
+  transform: translateY(-50%); color: var(--text3); pointer-events: none; font-size: 11px;
+}
 
-    /* --- PANEL 3: Sếp ấn định --- */
-    .fix-note { background: #faf5ff; border: 1.5px solid #e9d5ff; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #5b21b6; display: flex; align-items: flex-start; gap: 8px; margin-bottom: 16px; line-height: 1.5; }
-    .fix-table-wrapper { overflow-x: auto; border: 1.5px solid #e9d5ff; border-radius: 10px; margin-bottom: 14px; }
-    .fix-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-    .fix-table th { background: #f5f3ff; color: #5b21b6; font-weight: 800; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.06em; padding: 9px 12px; text-align: left; border-bottom: 1.5px solid #e9d5ff; }
-    .fix-table td { padding: 9px 12px; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: middle; }
-    .fix-table tr:last-child td { border-bottom: none; }
-    .fix-table tr:hover td { background: #fdf4ff; }
-    .fix-input { width: 100%; border: 1.5px solid #e9d5ff; border-radius: 6px; padding: 5px 8px; font-size: 12.5px; font-weight: 700; color: #374151; outline: none; text-align: center; background: white; transition: border-color 0.15s; }
-    .fix-input:focus { border-color: #8b5cf6; background: #faf5ff; }
-    .fix-input.edited { border-color: #8b5cf6; background: #faf5ff; color: #7c3aed; font-weight: 800; }
-    .original-val { font-size: 11px; color: #9ca3af; text-decoration: line-through; margin-left: 4px; }
-    .fix-reason-label { font-size: 11.5px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
-    .fix-how-nv { background: #f5f3ff; border: 1.5px solid #e9d5ff; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
-    .fix-how-nv h4 { font-size: 12.5px; font-weight: 800; color: #5b21b6; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .fix-how-nv .step { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: #374151; line-height: 1.5; margin-bottom: 5px; }
-    .fix-how-nv .step-num { width: 20px; height: 20px; background: #8b5cf6; color: white; border-radius: 50%; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.filter-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
 
-    /* ── COMING SOON ── */
-    .cs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
-    .coming-soon-card { background: white; border-radius: 14px; border: 2px dashed #e5e7eb; padding: 40px 24px; text-align: center; }
-    .cs-icon { font-size: 40px; margin-bottom: 12px; }
-    .coming-soon-card h3 { font-size: 16px; font-weight: 800; color: #374151; margin-bottom: 6px; }
-    .coming-soon-card p { font-size: 13px; color: #6b7280; max-width: 260px; margin: 0 auto 16px; line-height: 1.6; }
-    .cs-badge { display: inline-block; background: #f3f4f6; color: #9ca3af; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 99px; border: 1px solid #e5e7eb; }
+.period-tabs {
+  display: flex; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.period-tab {
+  padding: 7px 14px; font-size: 12px; font-weight: 500; cursor: pointer;
+  color: var(--text3); transition: all .2s; border: none; background: none;
+  font-family: inherit;
+}
+.period-tab.active { background: var(--accent); color: #fff; }
 
-    /* section title */
-    .section-title { font-size: 18px; font-weight: 800; color: #1e3a5f; margin-bottom: 16px; margin-top: 36px; display: flex; align-items: center; gap: 8px; }
+/* ── STAT CARDS ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
 
-    /* Tooltip highlight */
-    .chip { display: inline-flex; align-items: center; gap: 4px; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #374151; }
-    .chip.purple { background: #f5f3ff; border-color: #e9d5ff; color: #5b21b6; }
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .2s, border-color .2s;
+}
+.stat-card:hover { transform: translateY(-2px); border-color: rgba(99,102,241,.3); }
+.stat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.stat-card.blue::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+.stat-card.green::before { background: linear-gradient(90deg, #22c55e, #16a34a); }
+.stat-card.yellow::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.stat-card.red::before { background: linear-gradient(90deg, #ef4444, #dc2626); }
 
-    .divider { height: 1px; background: #f3f4f6; margin: 0 20px 14px; }
-  </style>
+.stat-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.stat-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.stat-icon.blue { background: rgba(99,102,241,.15); }
+.stat-icon.green { background: rgba(34,197,94,.15); }
+.stat-icon.yellow { background: rgba(245,158,11,.15); }
+.stat-icon.red { background: rgba(239,68,68,.15); }
+
+.stat-badge {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; padding: 3px 8px;
+  border-radius: 20px;
+}
+.stat-badge.up { background: rgba(34,197,94,.15); color: var(--green); }
+.stat-badge.down { background: rgba(239,68,68,.15); color: var(--red); }
+
+.stat-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; line-height: 1; }
+.stat-label { font-size: 12px; color: var(--text3); }
+
+.stat-footer {
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+}
+.stat-progress-bar {
+  flex: 1; height: 4px; background: var(--bg3); border-radius: 4px; overflow: hidden;
+}
+.stat-progress-fill {
+  height: 100%; border-radius: 4px;
+  transition: width 0.8s ease;
+}
+.fill-blue { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+.fill-green { background: linear-gradient(90deg, #22c55e, #16a34a); }
+.fill-yellow { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.fill-red { background: linear-gradient(90deg, #ef4444, #dc2626); }
+.stat-progress-text { font-size: 11px; color: var(--text3); white-space: nowrap; }
+
+/* ── TABS ── */
+.main-tabs {
+  display: flex; gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.main-tab {
+  padding: 10px 18px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; background: none;
+  color: var(--text3); font-family: inherit;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all .2s; display: flex; align-items: center; gap: 6px;
+}
+.main-tab:hover { color: var(--text); }
+.main-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+.tab-count {
+  background: var(--bg3); border-radius: 10px;
+  padding: 1px 7px; font-size: 11px; color: var(--text3);
+}
+.main-tab.active .tab-count { background: rgba(99,102,241,.2); color: var(--accent2); }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title { font-size: 15px; font-weight: 700; }
+.section-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* ── PLACEHOLDER CONTENT ── */
+.placeholder-panel {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 40px;
+  text-align: center; color: var(--text3);
+}
+.placeholder-panel .big-icon { font-size: 40px; margin-bottom: 12px; }
+.placeholder-panel p { font-size: 13px; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 4px; }
+
+/* ── REPORT CARDS ── */
+.report-list { display: flex; flex-direction: column; gap: 12px; }
+
+.report-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 16px;
+  cursor: pointer; transition: all .2s;
+  position: relative; overflow: hidden;
+}
+.report-card:hover { border-color: rgba(99,102,241,.35); transform: translateX(3px); }
+.report-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+}
+.report-card.pending::before { background: var(--yellow); }
+.report-card.approved::before { background: var(--green); }
+.report-card.returned::before { background: var(--red); }
+.report-card.draft::before { background: var(--text3); }
+
+.rc-avatar {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: #fff;
+}
+
+.rc-info { flex: 1; min-width: 0; }
+.rc-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.rc-meta { font-size: 12px; color: var(--text3); display: flex; gap: 12px; flex-wrap: wrap; }
+.rc-meta span { display: flex; align-items: center; gap: 4px; }
+
+.rc-kpi {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.kpi-ring {
+  width: 52px; height: 52px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.kpi-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+.kpi-ring .kpi-pct { font-size: 12px; font-weight: 700; }
+
+.rc-status {
+  flex-shrink: 0; text-align: right;
+}
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.status-badge.pending { background: rgba(245,158,11,.15); color: var(--yellow); }
+.status-badge.approved { background: rgba(34,197,94,.15); color: var(--green); }
+.status-badge.returned { background: rgba(239,68,68,.15); color: var(--red); }
+.status-badge.draft { background: rgba(100,116,139,.15); color: var(--text3); }
+.rc-date { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+.rc-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.rc-btn {
+  padding: 6px 12px; border-radius: 7px; font-size: 11px;
+  font-weight: 600; cursor: pointer; border: 1px solid var(--border);
+  background: var(--bg3); color: var(--text2); font-family: inherit;
+  transition: all .2s;
+}
+.rc-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.rc-btn.approve { background: rgba(34,197,94,.12); color: var(--green); border-color: rgba(34,197,94,.3); }
+.rc-btn.approve:hover { background: var(--green); color: #fff; }
+.rc-btn.return-btn { background: rgba(239,68,68,.12); color: var(--red); border-color: rgba(239,68,68,.3); }
+.rc-btn.return-btn:hover { background: var(--red); color: #fff; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+  z-index: 1000; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; width: 100%; max-width: 780px;
+  max-height: 88vh; display: flex; flex-direction: column;
+  animation: modalIn .25s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.96) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0;
+}
+.modal-title { font-size: 16px; font-weight: 700; }
+.modal-sub { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text2); cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.modal-close:hover { background: var(--red); color: #fff; }
+
+.modal-tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.modal-tab {
+  padding: 11px 20px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; background: none;
+  color: var(--text3); font-family: inherit;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all .2s;
+}
+.modal-tab:hover { color: var(--text); }
+.modal-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+
+.modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+
+.modal-footer {
+  padding: 14px 24px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-shrink: 0;
+}
+
+/* ── MODAL CONTENT SECTIONS ── */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.info-item {
+  background: var(--bg3); border-radius: 9px; padding: 12px 14px;
+}
+.info-item label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 5px; }
+.info-item .val { font-size: 14px; font-weight: 600; }
+.info-item .val.green { color: var(--green); }
+.info-item .val.yellow { color: var(--yellow); }
+.info-item .val.red { color: var(--red); }
+
+.kpi-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.kpi-table th {
+  text-align: left; padding: 10px 12px;
+  font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px;
+  border-bottom: 1px solid var(--border); font-weight: 600;
+}
+.kpi-table td {
+  padding: 11px 12px; font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.kpi-table tr:hover td { background: rgba(255,255,255,.02); }
+.kpi-table .weight { color: var(--text3); font-size: 12px; }
+
+.pct-bar { display: flex; align-items: center; gap: 8px; }
+.mini-bar { flex: 1; height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+.mini-fill { height: 100%; border-radius: 3px; }
+.pct-num { font-size: 12px; font-weight: 700; width: 36px; text-align: right; }
+
+.section-divider {
+  font-size: 11px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin: 18px 0 12px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.task-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.task-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--bg3); border-radius: 9px; padding: 12px 14px;
+}
+.task-check { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.task-body { flex: 1; }
+.task-name { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+.task-meta { font-size: 11px; color: var(--text3); display: flex; gap: 10px; }
+.task-pct { flex-shrink: 0; font-size: 12px; font-weight: 700; }
+
+.note-box {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 9px; padding: 14px;
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.textarea-field {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 14px;
+  color: var(--text); font-size: 13px; font-family: inherit;
+  resize: vertical; min-height: 90px; outline: none;
+  transition: border-color .2s;
+}
+.textarea-field:focus { border-color: var(--accent); }
+
+/* ── EDIT KPI PANEL ── */
+.edit-kpi-row {
+  display: grid; grid-template-columns: 1fr 80px 80px; gap: 8px;
+  align-items: center; padding: 10px 12px;
+  background: var(--bg3); border-radius: 9px; margin-bottom: 8px;
+}
+.edit-kpi-row label { font-size: 13px; }
+.edit-input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 7px; padding: 7px 10px;
+  color: var(--text); font-size: 13px; font-family: inherit;
+  text-align: center; outline: none; transition: border-color .2s;
+}
+.edit-input:focus { border-color: var(--accent); }
+.edit-input-suffix { font-size: 11px; color: var(--text3); text-align: center; }
+
+.assign-task-row {
+  display: grid; grid-template-columns: 1fr 100px 80px 36px; gap: 8px;
+  align-items: center; padding: 10px 12px;
+  background: var(--bg3); border-radius: 9px; margin-bottom: 8px;
+}
+.assign-task-row .edit-input { text-align: left; }
+.icon-btn {
+  width: 32px; height: 32px; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--red); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  transition: background .2s;
+}
+.icon-btn:hover { background: rgba(239,68,68,.15); }
+.add-row-btn {
+  width: 100%; padding: 9px; border: 1px dashed rgba(99,102,241,.4);
+  background: transparent; border-radius: 9px; color: var(--accent2);
+  font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: background .2s;
+}
+.add-row-btn:hover { background: rgba(99,102,241,.08); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+</style>
 </head>
 <body>
 
-<!-- ══ TOPBAR ══════════════════════════ -->
-<div class="topbar">
-  <div class="topbar-brand">
-    <div class="logo">🦁</div>
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="logo">
+    <div class="logo-icon">🦁</div>
     <div>
-      <h1>IruKa KPI Dashboard</h1>
-      <p>Quản lý & duyệt báo cáo nhân sự</p>
-    </div>
-  </div>
-  <div class="topbar-right">
-    <button class="notif-btn">🔔<span class="notif-dot"></span></button>
-    <div style="text-align:right;font-size:12px;color:#93c5fd;">
-      <div style="font-weight:700;color:white;">Vũ Ngọc Đào</div>
-      <div>CEO / Founder</div>
-    </div>
-    <div class="avatar">VD</div>
-  </div>
-</div>
-
-<!-- ══ LAYOUT ══════════════════════════ -->
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-section-label">Báo cáo</div>
-    <a class="nav-item active" href="#">
-      <span class="nav-icon">📊</span> Báo cáo tuần
-      <span class="nav-badge">3</span>
-    </a>
-    <a class="nav-item" href="#">
-      <span class="nav-icon">📋</span> Báo cáo tháng
-      <span class="nav-badge gray">12</span>
-    </a>
-    <div class="sidebar-section-label">Đánh giá nhân sự</div>
-    <a class="nav-item" href="#" style="opacity:0.5;pointer-events:none;">
-      <span class="nav-icon">🎓</span> Thử việc 2 tháng
-      <span class="nav-badge soon">Sớm</span>
-    </a>
-    <a class="nav-item" href="#" style="opacity:0.5;pointer-events:none;">
-      <span class="nav-icon">💰</span> Tăng lương 6 tháng
-      <span class="nav-badge soon">Sớm</span>
-    </a>
-    <a class="nav-item" href="#" style="opacity:0.5;pointer-events:none;">
-      <span class="nav-icon">🏆</span> Đánh giá cuối năm
-      <span class="nav-badge soon">Sớm</span>
-    </a>
-    <div class="sidebar-section-label">Thống kê</div>
-    <a class="nav-item" href="#"><span class="nav-icon">📈</span> Tổng quan KPI</a>
-    <a class="nav-item" href="#"><span class="nav-icon">📤</span> Nộp muộn</a>
-    <div class="sidebar-bottom">
-      <button class="logout-btn">🚪 Đăng xuất</button>
+      <div class="logo-text">IruKa KPI</div>
+      <div class="logo-sub">Hệ thống quản lý</div>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
+  <nav>
+    <div class="nav-section">Tổng quan</div>
+    <div class="nav-item active" onclick="setNav(this)">
+      <span class="icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="icon">📋</span> Báo cáo KPI
+      <span class="nav-badge">8</span>
+    </div>
 
-    <!-- STAT CARDS -->
-    <div class="stat-cards">
-      <div class="stat-card">
-        <span class="stat-icon">📥</span>
-        <div class="stat-label">Chờ duyệt</div>
-        <div class="stat-value">3</div>
-        <div class="stat-sub">Tuần 15 · 2026</div>
-      </div>
-      <div class="stat-card green">
-        <span class="stat-icon">✅</span>
-        <div class="stat-label">Đã duyệt</div>
-        <div class="stat-value">8</div>
-        <div class="stat-sub">Tuần 15</div>
-      </div>
-      <div class="stat-card red">
-        <span class="stat-icon">↩️</span>
-        <div class="stat-label">Trả về</div>
-        <div class="stat-value">1</div>
-        <div class="stat-sub">NV cần sửa lại</div>
-      </div>
-      <div class="stat-card purple">
-        <span class="stat-icon">✏️</span>
-        <div class="stat-label">Sếp ấn định</div>
-        <div class="stat-value">2</div>
-        <div class="stat-sub">Sếp đã sửa & chốt</div>
+    <div class="nav-section">Quản lý</div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="icon">👥</span> Nhân viên
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="icon">🏢</span> Phòng ban
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="icon">🎯</span> Mục tiêu
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="icon">📅</span> Kế hoạch giao việc
+    </div>
+
+    <div class="nav-section">Cài đặt</div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="icon">⚙️</span> Cấu hình KPI
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+      <span class="icon">🔔</span> Thông báo
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">ĐS</div>
+      <div>
+        <div class="user-name">Đào Sếp</div>
+        <div class="user-role">CEO / Founder</div>
       </div>
     </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- TOPBAR -->
+  <header id="topbar">
+    <div>
+      <div class="topbar-title">Dashboard KPI</div>
+      <div class="topbar-sub">Tháng 4 / 2026 — Toàn công ty</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost">📥 Xuất báo cáo</button>
+      <button class="btn btn-primary">+ Tạo KPI mới</button>
+      <div class="notif-btn">
+        🔔
+        <span class="notif-dot"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div id="content">
 
     <!-- FILTER BAR -->
     <div class="filter-bar">
-      <span class="filter-bar-title">📊 Báo cáo tuần</span>
-      <button class="tab-btn active">Tuần 15</button>
-      <button class="tab-btn">Tuần 14</button>
-      <button class="tab-btn">Tuần 13</button>
-      <button class="tab-btn">Tất cả</button>
-      <select class="filter-select">
-        <option>Tất cả phòng ban</option>
-        <option>Content</option><option>Design</option><option>Tech</option>
-      </select>
-      <select class="filter-select">
-        <option>Tất cả trạng thái</option>
-        <option>Chờ duyệt</option><option>Đã duyệt</option>
-        <option>Trả về</option><option>Sếp ấn định</option>
-      </select>
-      <input class="search-box" type="text" placeholder="Tìm nhân viên..." />
-    </div>
+      <span class="filter-label">Lọc:</span>
 
-    <!-- ═══════════════════════════════════════
-         REPORTS GRID
-    ══════════════════════════════════════════ -->
-    <div class="reports-grid">
-
-      <!-- ═══ CARD 1: Chờ duyệt — hiển thị TAB đang ở Duyệt === -->
-      <div class="report-card pending">
-        <div class="card-header">
-          <div class="card-left">
-            <div class="card-avatar">NT</div>
-            <div>
-              <div class="card-name">Nguyễn Thị Hoa</div>
-              <div class="card-meta">
-                <span>Design</span><span class="dot">·</span>
-                <span>Graphic Designer</span><span class="dot">·</span>
-                <span>📊 Tuần 15</span>
-              </div>
-              <div class="card-meta" style="color:#9ca3af;margin-top:2px;">
-                🕐 Nộp: Thứ 7, 12/04 · 09:14
-              </div>
-            </div>
-          </div>
-          <div class="card-right">
-            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
-              <span class="badge pending">⏳ Chờ duyệt</span>
-              <button class="btn btn-secondary" style="padding:4px 10px;font-size:12px;">👁️ Xem full báo cáo</button>
-            </div>
-            <div>
-              <div class="score-label">Điểm KPI</div>
-              <div class="score-value good">8.75<span class="score-max">/10</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-bg"><div class="progress-fill" style="width:87.5%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
-        </div>
-        <div class="divider"></div>
-
-        <!-- 3-TAB ACTION PANEL -->
-        <div class="action-panel">
-          <div class="action-tabs">
-            <button class="action-tab tab-approve tab-active" onclick="switchTab(this,'approve','card1')">
-              ✅ Duyệt
-            </button>
-            <button class="action-tab tab-return" onclick="switchTab(this,'return','card1')">
-              ↩️ Trả về — NV sửa lại
-            </button>
-            <button class="action-tab tab-fix" onclick="switchTab(this,'fix','card1')">
-              ✏️ Sếp sửa & Ấn định
-            </button>
-          </div>
-
-          <!-- TAB 1: Duyệt -->
-          <div class="tab-content active" id="card1-approve">
-            <div class="approve-note">
-              ✅&nbsp; <div><strong>Duyệt nguyên trạng</strong> — Giữ nguyên số liệu NV nộp. Viết nhận xét (tuỳ chọn) rồi ấn Duyệt. Bot Discord sẽ gửi DM thông báo cho NV ngay.</div>
-            </div>
-            <div class="approve-comment-label">💬 Nhận xét cho nhân viên (tuỳ chọn)</div>
-            <textarea class="comment-input" rows="2" placeholder="VD: Tuần này hoàn thành tốt, tiếp tục phát huy nhé!"></textarea>
-            <div class="action-btns">
-              <button class="btn btn-primary-green">✅ Xác nhận Duyệt — Gửi thông báo cho NV</button>
-            </div>
-          </div>
-
-          <!-- TAB 2: Trả về -->
-          <div class="tab-content" id="card1-return">
-            <div class="return-note">
-              ↩️&nbsp; <div>
-                <strong>Trả về để NV chỉnh sửa</strong> — NV sẽ nhận DM Discord kèm lý do và link mở lại form. NV sửa xong gửi lại, bạn duyệt lại lần sau.
-                <div class="return-flow">
-                  <span class="flow-step">📝 Sếp viết lý do</span>
-                  <span class="flow-arrow">→</span>
-                  <span class="flow-step">🤖 Bot DM NV + link form</span>
-                  <span class="flow-arrow">→</span>
-                  <span class="flow-step">✏️ NV mở form sửa lại</span>
-                  <span class="flow-arrow">→</span>
-                  <span class="flow-step">📥 NV nộp lại → Sếp duyệt</span>
-                </div>
-              </div>
-            </div>
-            <div class="approve-comment-label" style="color:#dc2626;">❗ Lý do trả về (bắt buộc — gửi thẳng đến NV)</div>
-            <textarea class="comment-input" rows="3" style="border-color:#fca5a5;" placeholder="VD: Cột % hoàn thành chưa điền đầy đủ. Clip TikTok tuần này thiếu số liệu thực hiện. Bạn mở lại form và cập nhật nhé."></textarea>
-            <div class="action-btns">
-              <button class="btn btn-primary-red">↩️ Gửi trả về — Bot DM lý do cho NV ngay</button>
-            </div>
-          </div>
-
-          <!-- TAB 3: Sếp ấn định -->
-          <div class="tab-content" id="card1-fix">
-            <div class="fix-note">
-              ✏️&nbsp; <div>
-                <strong>Sếp trực tiếp chỉnh sửa & ấn định</strong> — Sửa số liệu KPI bên dưới rồi ấn "Ấn định". Bản sếp sửa sẽ là <strong>bản chính thức</strong>. NV nhận DM Discord kèm link xem báo cáo đã được ấn định (chỉ đọc).
-              </div>
-            </div>
-
-            <!-- Bảng chỉnh sửa KPI -->
-            <div class="fix-table-wrapper">
-              <table class="fix-table">
-                <thead>
-                  <tr>
-                    <th style="width:35%;">Đầu việc</th>
-                    <th style="width:12%;text-align:center;">KH</th>
-                    <th style="width:14%;text-align:center;">Thực hiện (NV)</th>
-                    <th style="width:14%;text-align:center;">Sếp điều chỉnh</th>
-                    <th style="width:11%;text-align:center;">% HT</th>
-                    <th style="width:9%;text-align:center;">Trọng số</th>
-                    <th style="width:5%;text-align:center;">Đạt</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Thiết kế banner sản phẩm tháng 4</td>
-                    <td style="text-align:center;font-weight:700;">10</td>
-                    <td style="text-align:center;color:#16a34a;font-weight:700;">10</td>
-                    <td style="text-align:center;"><input class="fix-input" type="number" value="10" /></td>
-                    <td style="text-align:center;font-weight:700;color:#16a34a;">100%</td>
-                    <td style="text-align:center;">3</td>
-                    <td style="text-align:center;color:#16a34a;font-weight:800;">3.0</td>
-                  </tr>
-                  <tr>
-                    <td>Làm video TikTok</td>
-                    <td style="text-align:center;font-weight:700;">4</td>
-                    <td style="text-align:center;color:#d97706;font-weight:700;">3</td>
-                    <td style="text-align:center;"><input class="fix-input edited" type="number" value="2" title="Sếp sửa từ 3 → 2 vì 1 clip không đạt yêu cầu" /></td>
-                    <td style="text-align:center;font-weight:700;color:#d97706;">50%</td>
-                    <td style="text-align:center;">2</td>
-                    <td style="text-align:center;color:#d97706;font-weight:800;">1.0</td>
-                  </tr>
-                  <tr>
-                    <td>Motion Design intro</td>
-                    <td style="text-align:center;font-weight:700;">2</td>
-                    <td style="text-align:center;color:#16a34a;font-weight:700;">2</td>
-                    <td style="text-align:center;"><input class="fix-input" type="number" value="2" /></td>
-                    <td style="text-align:center;font-weight:700;color:#16a34a;">100%</td>
-                    <td style="text-align:center;">2</td>
-                    <td style="text-align:center;color:#16a34a;font-weight:800;">2.0</td>
-                  </tr>
-                  <tr style="background:#faf5ff;">
-                    <td colspan="6" style="text-align:right;font-weight:800;color:#5b21b6;padding-right:16px;">Điểm KPI Sếp ấn định:</td>
-                    <td style="text-align:center;font-size:16px;font-weight:900;color:#7c3aed;">8.25</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Hướng NV sẽ nhận được gì -->
-            <div class="fix-how-nv">
-              <h4>📱 NV sẽ nhận được gì sau khi Sếp ấn định?</h4>
-              <div class="step">
-                <div class="step-num">1</div>
-                <div>Bot Discord gửi DM: <em>"Sếp đã điều chỉnh và ấn định báo cáo tuần 15 của bạn. Điểm KPI chính thức: <strong>8.25/10</strong>. Xem chi tiết tại: [link]"</em></div>
-              </div>
-              <div class="step">
-                <div class="step-num">2</div>
-                <div>NV mở link → xem <strong>bản báo cáo đã được Sếp điều chỉnh</strong> (chế độ chỉ đọc) + ghi chú lý do của Sếp.</div>
-              </div>
-              <div class="step">
-                <div class="step-num">3</div>
-                <div>Google Sheet ghi nhận bản ấn định là <strong>kết quả chính thức</strong> — dùng cho thống kê KPI tháng, quý.</div>
-              </div>
-            </div>
-
-            <div class="fix-reason-label">📝 Lý do điều chỉnh (gửi kèm cho NV)</div>
-            <textarea class="comment-input" rows="2" style="border-color:#e9d5ff;margin-bottom:12px;" placeholder="VD: Clip TikTok thứ 3 chất lượng chưa đạt, nội dung sai brief. Sếp đã điều chỉnh số thực hiện từ 3 → 2."></textarea>
-            <div class="action-btns">
-              <button class="btn btn-secondary">← Huỷ chỉnh sửa</button>
-              <button class="btn btn-primary-purple">✏️ Ấn định — Chốt bản Sếp sửa & Gửi DM NV</button>
-            </div>
-          </div>
-        </div><!-- end action-panel -->
-      </div><!-- end card 1 -->
-
-
-      <!-- ═══ CARD 2: Đã được Sếp ấn định (hiển thị kết quả) === -->
-      <div class="report-card fixed-by-boss">
-        <div class="card-header">
-          <div class="card-left">
-            <div class="card-avatar" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">LM</div>
-            <div>
-              <div class="card-name">Lê Minh Tuấn</div>
-              <div class="card-meta">
-                <span>Content</span><span class="dot">·</span>
-                <span>Content Creator</span><span class="dot">·</span>
-                <span>📊 Tuần 15</span>
-                <span class="dot">·</span>
-                <span style="color:#f97316;">⏰ Nộp muộn</span>
-              </div>
-              <div class="card-meta" style="color:#9ca3af;margin-top:2px;">
-                🕐 Nộp: Thứ 2, 14/04 · 10:32
-              </div>
-            </div>
-          </div>
-          <div class="card-right">
-            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
-              <span class="badge fixed">✏️ Sếp đã ấn định</span>
-              <button class="btn btn-secondary" style="padding:4px 10px;font-size:12px;">👁️ Xem full</button>
-            </div>
-            <div>
-              <div class="score-label">Điểm NV nộp → <strong style="color:#7c3aed;">Sếp ấn định</strong></div>
-              <div style="display:flex;align-items:baseline;gap:6px;">
-                <span style="font-size:16px;color:#9ca3af;font-weight:700;text-decoration:line-through;">7.20</span>
-                <span style="font-size:28px;font-weight:900;color:#7c3aed;">6.50<span class="score-max">/10</span></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-bg"><div class="progress-fill" style="width:65%;background:linear-gradient(90deg,#7c3aed,#a855f7);"></div></div>
-        </div>
-
-        <!-- Kết quả ấn định đã được lưu -->
-        <div style="padding: 0 20px 18px;">
-          <div style="background:#faf5ff;border:1.5px solid #e9d5ff;border-radius:10px;padding:14px 16px;">
-            <div style="font-size:11.5px;font-weight:800;color:#7c3aed;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">✏️ Ghi chú Sếp đã gửi cho NV</div>
-            <div style="font-size:13.5px;color:#374151;line-height:1.6;font-style:italic;">"Clip thumbnail tuần này chưa đủ số lượng theo brief (3 thay vì 4), nội dung 1 clip sai concept. Đã điều chỉnh thực hiện: 3 → 2. Tuần sau chú ý đọc kỹ brief trước."</div>
-            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-              <span class="chip purple">🤖 Đã gửi DM Discord cho NV</span>
-              <span class="chip">📅 14/04/2026 11:05</span>
-              <span class="chip">📊 Sheet đã cập nhật</span>
-            </div>
-          </div>
-          <div class="action-btns" style="margin-top:12px;">
-            <button class="btn btn-secondary" style="flex:1;">📝 Chỉnh sửa lại ghi chú</button>
-            <button class="btn btn-primary-green" style="flex:1;">✅ Duyệt & khoá báo cáo</button>
-          </div>
-        </div>
-      </div><!-- end card 2 -->
-
-
-      <!-- ═══ CARD 3: Đã trả về — NV đang sửa === -->
-      <div class="report-card returned">
-        <div class="card-header">
-          <div class="card-left">
-            <div class="card-avatar" style="background:linear-gradient(135deg,#dc2626,#ef4444);">TQ</div>
-            <div>
-              <div class="card-name">Trần Quốc Bảo</div>
-              <div class="card-meta">
-                <span>Content</span><span class="dot">·</span>
-                <span>Video Editor</span><span class="dot">·</span>
-                <span>📊 Tuần 15</span>
-              </div>
-              <div class="card-meta" style="color:#9ca3af;margin-top:2px;">
-                🕐 Nộp: Chủ Nhật, 13/04 · 23:11
-              </div>
-            </div>
-          </div>
-          <div class="card-right">
-            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
-              <span class="badge returned">↩️ Đã trả về</span>
-              <span style="font-size:11.5px;color:#ea580c;font-weight:700;padding:3px 8px;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;">⏳ Chờ NV gửi lại</span>
-            </div>
-            <div>
-              <div class="score-label">Điểm KPI</div>
-              <div class="score-value bad">4.50<span class="score-max">/10</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-bg"><div class="progress-fill" style="width:45%;background:linear-gradient(90deg,#dc2626,#ef4444);"></div></div>
-        </div>
-        <div style="padding: 0 20px 18px;">
-          <div style="background:#fff1f2;border:1.5px solid #fecdd3;border-radius:10px;padding:14px 16px;">
-            <div style="font-size:11.5px;font-weight:800;color:#dc2626;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">❗ Lý do trả về đã gửi NV</div>
-            <div style="font-size:13.5px;color:#374151;line-height:1.6;font-style:italic;">"Số liệu thực hiện chưa đủ, thiếu báo cáo clip TikTok tuần này. Cần điền đầy đủ % hoàn thành và gửi lại."</div>
-            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-              <span class="chip" style="background:#fff1f2;border-color:#fca5a5;color:#dc2626;">🤖 DM đã gửi 14/04 · 09:00</span>
-              <span class="chip">⏳ NV chưa gửi lại</span>
-            </div>
-          </div>
-          <div style="margin-top:12px;font-size:12.5px;color:#9ca3af;font-style:italic;">💡 Khi NV gửi lại, báo cáo sẽ xuất hiện lại ở tab "Chờ duyệt" — bạn duyệt hoặc ấn định lại.</div>
-        </div>
-      </div><!-- end card 3 -->
-
-    </div><!-- end reports-grid -->
-
-
-    <!-- COMING SOON -->
-    <div class="section-title">🧑‍💼 Đánh giá nhân sự</div>
-    <div class="cs-grid">
-      <div class="coming-soon-card">
-        <div class="cs-icon">🎓</div>
-        <h3>Thử việc 2 tháng</h3>
-        <p>Đánh giá kỹ năng, thái độ, mức độ phù hợp sau 2 tháng.</p>
-        <span class="cs-badge">Sắp ra mắt</span>
+      <div class="select-wrap">
+        <select class="filter-select" id="filterDept">
+          <option>Tất cả phòng ban</option>
+          <option>Kỹ thuật</option>
+          <option>Marketing</option>
+          <option>Kinh doanh</option>
+          <option>Nội dung</option>
+          <option>Hành chính</option>
+        </select>
       </div>
-      <div class="coming-soon-card">
-        <div class="cs-icon">💰</div>
-        <h3>Xét tăng lương 6 tháng</h3>
-        <p>Duyệt đề xuất tăng lương định kỳ dựa trên điểm KPI tích lũy.</p>
-        <span class="cs-badge">Sắp ra mắt</span>
+
+      <div class="select-wrap">
+        <select class="filter-select" id="filterStatus">
+          <option>Tất cả trạng thái</option>
+          <option>Chờ duyệt</option>
+          <option>Đã duyệt</option>
+          <option>Trả về</option>
+          <option>Hoàn thành</option>
+        </select>
       </div>
-      <div class="coming-soon-card">
-        <div class="cs-icon">🏆</div>
-        <h3>Đánh giá cuối năm</h3>
-        <p>Đánh giá toàn diện hiệu suất, phân hạng và bonus cuối năm.</p>
-        <span class="cs-badge">Sắp ra mắt</span>
+
+      <div class="select-wrap">
+        <select class="filter-select" id="filterMonth">
+          <option>Tháng 4 / 2026</option>
+          <option>Tháng 3 / 2026</option>
+          <option>Tháng 2 / 2026</option>
+          <option>Tháng 1 / 2026</option>
+        </select>
+      </div>
+
+      <div class="filter-sep"></div>
+
+      <div class="period-tabs">
+        <button class="period-tab active" onclick="setPeriod(this)">Tháng</button>
+        <button class="period-tab" onclick="setPeriod(this)">Quý</button>
+        <button class="period-tab" onclick="setPeriod(this)">Năm</button>
       </div>
     </div>
 
-  </div><!-- end main -->
-</div><!-- end layout -->
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+
+      <!-- Card 1 -->
+      <div class="stat-card blue">
+        <div class="stat-header">
+          <div class="stat-icon blue">📊</div>
+          <div class="stat-badge up">▲ 12%</div>
+        </div>
+        <div class="stat-value">87<span style="font-size:16px;color:var(--text3)">%</span></div>
+        <div class="stat-label">Hoàn thành KPI trung bình</div>
+        <div class="stat-footer">
+          <div class="stat-progress-bar">
+            <div class="stat-progress-fill fill-blue" style="width:87%"></div>
+          </div>
+          <span class="stat-progress-text">87 / 100</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="stat-card green">
+        <div class="stat-header">
+          <div class="stat-icon green">✅</div>
+          <div class="stat-badge up">▲ 3</div>
+        </div>
+        <div class="stat-value">24</div>
+        <div class="stat-label">Báo cáo đã duyệt tháng này</div>
+        <div class="stat-footer">
+          <div class="stat-progress-bar">
+            <div class="stat-progress-fill fill-green" style="width:75%"></div>
+          </div>
+          <span class="stat-progress-text">24 / 32 tổng</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="stat-card yellow">
+        <div class="stat-header">
+          <div class="stat-icon yellow">⏳</div>
+          <div class="stat-badge down">▼ 2</div>
+        </div>
+        <div class="stat-value">8</div>
+        <div class="stat-label">Chờ duyệt / Trả về</div>
+        <div class="stat-footer">
+          <div class="stat-progress-bar">
+            <div class="stat-progress-fill fill-yellow" style="width:25%"></div>
+          </div>
+          <span class="stat-progress-text">6 chờ · 2 trả về</span>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="stat-card red">
+        <div class="stat-header">
+          <div class="stat-icon red">⚠️</div>
+          <div class="stat-badge down">▼ 5%</div>
+        </div>
+        <div class="stat-value">3</div>
+        <div class="stat-label">Nhân viên KPI dưới 60%</div>
+        <div class="stat-footer">
+          <div class="stat-progress-bar">
+            <div class="stat-progress-fill fill-red" style="width:18%"></div>
+          </div>
+          <span class="stat-progress-text">3 / 17 nhân viên</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MAIN TABS -->
+    <div class="main-tabs">
+      <button class="main-tab active" onclick="setTab(this,'tab-baocao')">
+        📋 Báo cáo KPI <span class="tab-count">8</span>
+      </button>
+      <button class="main-tab" onclick="setTab(this,'tab-phongban')">
+        🏢 Phòng ban <span class="tab-count">5</span>
+      </button>
+      <button class="main-tab" onclick="setTab(this,'tab-nhanvien')">
+        👥 Nhân viên <span class="tab-count">17</span>
+      </button>
+    </div>
+
+    <!-- TAB PANELS -->
+    <div id="tab-baocao">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Danh sách báo cáo KPI</div>
+          <div class="section-sub">8 báo cáo — 6 chờ duyệt · 2 trả về</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <div class="select-wrap">
+            <select class="filter-select" style="padding:6px 28px 6px 10px">
+              <option>Mới nhất</option>
+              <option>KPI cao nhất</option>
+              <option>KPI thấp nhất</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="report-list" id="reportList"></div>
+    </div>
+
+    <div id="tab-phongban" style="display:none">
+      <div class="placeholder-panel">
+        <div class="big-icon">🏢</div>
+        <p>— Scope 3 sẽ điền bảng Phòng ban tại đây —</p>
+      </div>
+    </div>
+
+    <div id="tab-nhanvien" style="display:none">
+      <div class="placeholder-panel">
+        <div class="big-icon">👥</div>
+        <p>— Scope 3 sẽ điền danh sách Nhân viên + Modal hồ sơ tại đây —</p>
+      </div>
+    </div>
+
+  </div><!-- /#content -->
+</div><!-- /#main -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="mTitle">Chi tiết báo cáo KPI</div>
+        <div class="modal-sub" id="mSub">Nhân viên · Tháng 4/2026</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="setModalTab(this,'mt-detail')">📊 Tổng quan</button>
+      <button class="modal-tab" onclick="setModalTab(this,'mt-tasks')">📋 Kế hoạch công việc</button>
+      <button class="modal-tab" onclick="setModalTab(this,'mt-edit')">✏️ Sếp sửa KPI</button>
+      <button class="modal-tab" onclick="setModalTab(this,'mt-note')">💬 Ghi chú trả về</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- TAB: TỔNG QUAN -->
+      <div class="tab-panel active" id="mt-detail">
+        <div class="info-grid">
+          <div class="info-item"><label>Nhân viên</label><div class="val" id="mName">—</div></div>
+          <div class="info-item"><label>Phòng ban</label><div class="val" id="mDept">—</div></div>
+          <div class="info-item"><label>Tháng báo cáo</label><div class="val">Tháng 4/2026</div></div>
+          <div class="info-item"><label>Ngày nộp</label><div class="val" id="mDate">—</div></div>
+          <div class="info-item"><label>KPI tổng đạt</label><div class="val green" id="mKpi">—</div></div>
+          <div class="info-item"><label>Trạng thái</label><div class="val" id="mStatus">—</div></div>
+        </div>
+
+        <div class="section-divider">Chi tiết từng chỉ tiêu KPI</div>
+        <table class="kpi-table">
+          <thead><tr>
+            <th>Chỉ tiêu</th><th>Trọng số</th><th>Mục tiêu</th><th>Thực hiện</th><th>% Đạt</th>
+          </tr></thead>
+          <tbody id="mKpiRows"></tbody>
+        </table>
+
+        <div class="section-divider">Nhận xét của nhân viên</div>
+        <div class="note-box" id="mNote">—</div>
+      </div>
+
+      <!-- TAB: KẾ HOẠCH -->
+      <div class="tab-panel" id="mt-tasks">
+        <div class="section-divider">Kế hoạch công việc tháng này</div>
+        <div class="task-list" id="mTaskList"></div>
+      </div>
+
+      <!-- TAB: SẾP SỬA KPI -->
+      <div class="tab-panel" id="mt-edit">
+        <div class="section-divider">Sửa chỉ tiêu KPI</div>
+        <div style="display:grid;grid-template-columns:1fr 80px 80px;gap:8px;padding:0 12px;margin-bottom:8px">
+          <span style="font-size:11px;color:var(--text3);font-weight:600">CHỈ TIÊU</span>
+          <span style="font-size:11px;color:var(--text3);font-weight:600;text-align:center">MỤC TIÊU</span>
+          <span style="font-size:11px;color:var(--text3);font-weight:600;text-align:center">TRỌNG SỐ</span>
+        </div>
+        <div id="editKpiRows">
+          <div class="edit-kpi-row"><label>Doanh số bán hàng</label><input class="edit-input" value="50"><input class="edit-input" value="30%"></div>
+          <div class="edit-kpi-row"><label>Số khách hàng mới</label><input class="edit-input" value="20"><input class="edit-input" value="25%"></div>
+          <div class="edit-kpi-row"><label>Tỷ lệ giữ chân KH</label><input class="edit-input" value="85%"><input class="edit-input" value="20%"></div>
+          <div class="edit-kpi-row"><label>Hài lòng nội bộ</label><input class="edit-input" value="4.5"><input class="edit-input" value="15%"></div>
+          <div class="edit-kpi-row"><label>Đào tạo / học tập</label><input class="edit-input" value="2"><input class="edit-input" value="10%"></div>
+        </div>
+        <button class="add-row-btn" onclick="addKpiRow()">+ Thêm chỉ tiêu KPI</button>
+
+        <div class="section-divider" style="margin-top:24px">Sửa kế hoạch giao việc</div>
+        <div style="display:grid;grid-template-columns:1fr 100px 80px 36px;gap:8px;padding:0 12px;margin-bottom:8px">
+          <span style="font-size:11px;color:var(--text3);font-weight:600">NỘI DUNG CÔNG VIỆC</span>
+          <span style="font-size:11px;color:var(--text3);font-weight:600;text-align:center">DEADLINE</span>
+          <span style="font-size:11px;color:var(--text3);font-weight:600;text-align:center">ƯU TIÊN</span>
+          <span></span>
+        </div>
+        <div id="editTaskRows">
+          <div class="assign-task-row"><input class="edit-input" value="Gặp gỡ 5 khách hàng tiềm năng"><input class="edit-input" type="date" value="2026-04-20"><select class="edit-input filter-select" style="padding:6px 4px"><option>Cao</option><option>Trung bình</option><option>Thấp</option></select><button class="icon-btn" onclick="this.closest('.assign-task-row').remove()">🗑</button></div>
+          <div class="assign-task-row"><input class="edit-input" value="Hoàn thành báo cáo Q1"><input class="edit-input" type="date" value="2026-04-15"><select class="edit-input filter-select" style="padding:6px 4px"><option selected>Cao</option><option>Trung bình</option><option>Thấp</option></select><button class="icon-btn" onclick="this.closest('.assign-task-row').remove()">🗑</button></div>
+          <div class="assign-task-row"><input class="edit-input" value="Nghiên cứu thị trường tháng 4"><input class="edit-input" type="date" value="2026-04-25"><select class="edit-input filter-select" style="padding:6px 4px"><option>Cao</option><option selected>Trung bình</option><option>Thấp</option></select><button class="icon-btn" onclick="this.closest('.assign-task-row').remove()">🗑</button></div>
+        </div>
+        <button class="add-row-btn" onclick="addTaskRow()">+ Thêm công việc</button>
+
+        <div class="section-divider" style="margin-top:24px">Ghi chú của sếp khi sửa</div>
+        <textarea class="textarea-field" placeholder="Giải thích lý do điều chỉnh KPI / kế hoạch..."></textarea>
+      </div>
+
+      <!-- TAB: GHI CHÚ TRẢ VỀ -->
+      <div class="tab-panel" id="mt-note">
+        <div class="section-divider">Lý do trả về báo cáo</div>
+        <textarea class="textarea-field" style="min-height:120px" placeholder="Nhập lý do trả về, yêu cầu bổ sung..."></textarea>
+        <p style="font-size:12px;color:var(--text3);margin-top:8px">Nhân viên sẽ nhận được thông báo và phải chỉnh sửa lại báo cáo.</p>
+      </div>
+
+    </div><!-- /.modal-body -->
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Đóng</button>
+      <button class="btn" style="background:var(--red);color:#fff" onclick="doReturn()">↩ Trả về</button>
+      <button class="btn" style="background:rgba(99,102,241,.2);color:var(--accent2);border:1px solid rgba(99,102,241,.3)" onclick="doSave()">💾 Lưu chỉnh sửa</button>
+      <button class="btn btn-primary" onclick="doApprove()">✅ Duyệt báo cáo</button>
+    </div>
+  </div>
+</div>
 
 <script>
-  // Chuyển tab trong mỗi card
-  function switchTab(btn, tabName, cardId) {
-    // Reset tất cả tab của card này
-    const panel = btn.closest('.action-panel');
-    panel.querySelectorAll('.action-tab').forEach(t => t.classList.remove('tab-active'));
-    panel.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    // Kích hoạt tab được chọn
-    btn.classList.add('tab-active');
-    document.getElementById(cardId + '-' + tabName).classList.add('active');
-  }
+// ── DATA MẪU ──
+const reports = [
+  { id:1, name:'Nguyễn Văn An', avatar:'AN', dept:'Kinh doanh', kpi:92, status:'pending', date:'14/04/2026',
+    note:'Tháng này tôi đã hoàn thành vượt chỉ tiêu doanh số, số lượng khách hàng mới tăng tốt.',
+    kpiItems:[
+      {name:'Doanh số bán hàng',weight:'30%',target:'50tr',actual:'48tr',pct:96},
+      {name:'Số khách hàng mới',weight:'25%',target:'20 KH',actual:'22 KH',pct:110},
+      {name:'Tỷ lệ giữ chân KH',weight:'20%',target:'85%',actual:'82%',pct:96},
+      {name:'Hài lòng nội bộ',weight:'15%',target:'4.5',actual:'4.6',pct:102},
+      {name:'Đào tạo / học tập',weight:'10%',target:'2 khóa',actual:'2 khóa',pct:100},
+    ],
+    tasks:[
+      {name:'Gặp gỡ 5 khách hàng tiềm năng',done:true,deadline:'15/04',pct:100},
+      {name:'Hoàn thành báo cáo Q1',done:true,deadline:'10/04',pct:100},
+      {name:'Nghiên cứu thị trường tháng 4',done:false,deadline:'25/04',pct:60},
+    ]
+  },
+  { id:2, name:'Trần Thị Bình', avatar:'TB', dept:'Marketing', kpi:78, status:'pending', date:'13/04/2026',
+    note:'Chiến dịch Q1 đạt 78% mục tiêu. Ngân sách hạn chế ảnh hưởng đến kết quả.',
+    kpiItems:[
+      {name:'Leads mới',weight:'35%',target:'200',actual:'155',pct:78},
+      {name:'Tỷ lệ chuyển đổi',weight:'30%',target:'5%',actual:'4.2%',pct:84},
+      {name:'Content đăng tải',weight:'20%',target:'40 bài',actual:'38 bài',pct:95},
+      {name:'Chi phí/Lead',weight:'15%',target:'50k',actual:'62k',pct:80},
+    ],
+    tasks:[
+      {name:'Chạy chiến dịch Facebook Ads tháng 4',done:true,deadline:'05/04',pct:100},
+      {name:'Viết 10 bài blog SEO',done:false,deadline:'30/04',pct:70},
+      {name:'Báo cáo hiệu quả Q1',done:true,deadline:'12/04',pct:100},
+    ]
+  },
+  { id:3, name:'Lê Minh Khoa', avatar:'LK', dept:'Kỹ thuật', kpi:95, status:'approved', date:'11/04/2026',
+    note:'Sprint tháng 4 hoàn thành 100% các story điểm. Không có bug production.',
+    kpiItems:[
+      {name:'Story points hoàn thành',weight:'40%',target:'80sp',actual:'85sp',pct:106},
+      {name:'Bug production',weight:'25%',target:'0 bug',actual:'0 bug',pct:100},
+      {name:'Code review',weight:'20%',target:'20 PR',actual:'22 PR',pct:110},
+      {name:'Tài liệu kỹ thuật',weight:'15%',target:'5 doc',actual:'4 doc',pct:80},
+    ],
+    tasks:[
+      {name:'Deploy tính năng thanh toán',done:true,deadline:'10/04',pct:100},
+      {name:'Refactor module auth',done:true,deadline:'15/04',pct:100},
+      {name:'Viết unit test coverage 80%',done:true,deadline:'20/04',pct:100},
+    ]
+  },
+  { id:4, name:'Phạm Thu Hà', avatar:'PH', dept:'Nội dung', kpi:55, status:'returned', date:'12/04/2026',
+    note:'Tháng này gặp khó khăn về nhân sự, 1 thành viên nghỉ phép dài hạn.',
+    kpiItems:[
+      {name:'Bài viết xuất bản',weight:'40%',target:'30 bài',actual:'18 bài',pct:60},
+      {name:'Video sản xuất',weight:'30%',target:'8 video',actual:'4 video',pct:50},
+      {name:'Lượt xem trung bình',weight:'20%',target:'5000',actual:'3200',pct:64},
+      {name:'Tương tác',weight:'10%',target:'500',actual:'280',pct:56},
+    ],
+    tasks:[
+      {name:'Sản xuất 8 video khóa học',done:false,deadline:'30/04',pct:50},
+      {name:'Viết script 30 bài',done:false,deadline:'25/04',pct:60},
+      {name:'Kiểm duyệt nội dung cũ',done:true,deadline:'10/04',pct:100},
+    ]
+  },
+  { id:5, name:'Hoàng Văn Cường', avatar:'HC', dept:'Kinh doanh', kpi:83, status:'pending', date:'14/04/2026',
+    note:'Hoàn thành tốt chỉ tiêu miền Bắc, đang mở rộng kênh phân phối mới.',
+    kpiItems:[
+      {name:'Doanh số miền Bắc',weight:'40%',target:'80tr',actual:'68tr',pct:85},
+      {name:'KH mới miền Bắc',weight:'30%',target:'15',actual:'13',pct:87},
+      {name:'Giữ chân KH',weight:'20%',target:'90%',actual:'88%',pct:98},
+      {name:'Báo cáo định kỳ',weight:'10%',target:'4',actual:'4',pct:100},
+    ],
+    tasks:[
+      {name:'Mở kênh đại lý Hà Nội',done:false,deadline:'30/04',pct:65},
+      {name:'Họp với đối tác miền Bắc',done:true,deadline:'08/04',pct:100},
+    ]
+  },
+  { id:6, name:'Nguyễn Thị Lan', avatar:'NL', dept:'Hành chính', kpi:88, status:'pending', date:'13/04/2026',
+    note:'Hoàn thành xử lý hồ sơ nhân sự đúng hạn, không có khiếu nại.',
+    kpiItems:[
+      {name:'Hồ sơ xử lý đúng hạn',weight:'40%',target:'100%',actual:'95%',pct:95},
+      {name:'Tuyển dụng',weight:'30%',target:'3 vị trí',actual:'2 vị trí',pct:67},
+      {name:'Đào tạo nội bộ',weight:'20%',target:'2 buổi',actual:'2 buổi',pct:100},
+      {name:'Sự hài lòng nhân viên',weight:'10%',target:'4.0',actual:'4.2',pct:105},
+    ],
+    tasks:[
+      {name:'Hoàn thiện quy trình onboarding',done:true,deadline:'15/04',pct:100},
+      {name:'Tổ chức team building Q2',done:false,deadline:'28/04',pct:30},
+    ]
+  },
+  { id:7, name:'Đặng Minh Tuấn', avatar:'DT', dept:'Kỹ thuật', kpi:70, status:'returned', date:'10/04/2026',
+    note:'Sprint bị ảnh hưởng do thay đổi yêu cầu giữa chừng.',
+    kpiItems:[
+      {name:'Story points',weight:'40%',target:'60sp',actual:'44sp',pct:73},
+      {name:'Bug production',weight:'25%',target:'0',actual:'2',pct:60},
+      {name:'Code review',weight:'20%',target:'15 PR',actual:'12 PR',pct:80},
+      {name:'Tài liệu',weight:'15%',target:'3 doc',actual:'2 doc',pct:67},
+    ],
+    tasks:[
+      {name:'Build API tính năng game',done:false,deadline:'20/04',pct:70},
+      {name:'Fix 2 bug production',done:true,deadline:'12/04',pct:100},
+    ]
+  },
+  { id:8, name:'Vũ Thị Mai', avatar:'VM', dept:'Marketing', kpi:91, status:'pending', date:'14/04/2026',
+    note:'Đạt vượt chỉ tiêu email marketing và automation tháng này.',
+    kpiItems:[
+      {name:'Email open rate',weight:'30%',target:'25%',actual:'29%',pct:116},
+      {name:'Chiến dịch automation',weight:'30%',target:'3',actual:'3',pct:100},
+      {name:'CTR',weight:'25%',target:'3%',actual:'2.8%',pct:93},
+      {name:'Unsubscribe rate',weight:'15%',target:'<1%',actual:'0.8%',pct:100},
+    ],
+    tasks:[
+      {name:'Thiết lập email automation Q2',done:true,deadline:'10/04',pct:100},
+      {name:'A/B test subject line',done:true,deadline:'15/04',pct:100},
+      {name:'Báo cáo email performance',done:false,deadline:'30/04',pct:80},
+    ]
+  },
+];
+
+// ── RENDER CARDS ──
+function kpiColor(pct) {
+  if (pct >= 90) return 'var(--green)';
+  if (pct >= 70) return 'var(--yellow)';
+  return 'var(--red)';
+}
+
+function renderReports() {
+  const list = document.getElementById('reportList');
+  const statusMap = { pending:'⏳ Chờ duyệt', approved:'✅ Đã duyệt', returned:'↩ Trả về', draft:'📝 Nháp' };
+  list.innerHTML = reports.map(r => `
+    <div class="report-card ${r.status}" onclick="openModal(${r.id})">
+      <div class="rc-avatar">${r.avatar}</div>
+      <div class="rc-info">
+        <div class="rc-name">${r.name}</div>
+        <div class="rc-meta">
+          <span>🏢 ${r.dept}</span>
+          <span>📅 Nộp: ${r.date}</span>
+          <span>📊 ${r.kpiItems.length} chỉ tiêu</span>
+        </div>
+      </div>
+      <div class="rc-kpi">
+        <div class="kpi-ring">
+          <svg width="52" height="52" viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="20" fill="none" stroke="var(--bg3)" stroke-width="4"/>
+            <circle cx="26" cy="26" r="20" fill="none" stroke="${kpiColor(r.kpi)}" stroke-width="4"
+              stroke-dasharray="${Math.min(r.kpi,100)*1.257} 125.7" stroke-linecap="round"/>
+          </svg>
+          <span class="kpi-pct" style="color:${kpiColor(r.kpi)}">${r.kpi}%</span>
+        </div>
+      </div>
+      <div class="rc-status">
+        <span class="status-badge ${r.status}">${statusMap[r.status]}</span>
+        <div class="rc-date">Tháng 4/2026</div>
+      </div>
+      <div class="rc-actions" onclick="event.stopPropagation()">
+        <button class="rc-btn" onclick="openModal(${r.id})">👁 Xem</button>
+        ${r.status==='pending' ? `<button class="rc-btn approve" onclick="quickApprove(${r.id})">✅</button><button class="rc-btn return-btn" onclick="quickReturn(${r.id})">↩</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── MODAL ──
+let currentId = null;
+function openModal(id) {
+  currentId = id;
+  const r = reports.find(x => x.id === id);
+  document.getElementById('mTitle').textContent = `Báo cáo KPI — ${r.name}`;
+  document.getElementById('mSub').textContent = `${r.dept} · Tháng 4/2026`;
+  document.getElementById('mName').textContent = r.name;
+  document.getElementById('mDept').textContent = r.dept;
+  document.getElementById('mDate').textContent = r.date;
+  document.getElementById('mKpi').textContent = r.kpi + '%';
+  document.getElementById('mKpi').className = 'val ' + (r.kpi>=80?'green':r.kpi>=60?'yellow':'red');
+  const statusMap = { pending:'⏳ Chờ duyệt', approved:'✅ Đã duyệt', returned:'↩ Trả về' };
+  document.getElementById('mStatus').textContent = statusMap[r.status] || r.status;
+  document.getElementById('mNote').textContent = r.note;
+
+  // KPI rows
+  document.getElementById('mKpiRows').innerHTML = r.kpiItems.map(k => `
+    <tr>
+      <td>${k.name}</td>
+      <td class="weight">${k.weight}</td>
+      <td>${k.target}</td>
+      <td>${k.actual}</td>
+      <td>
+        <div class="pct-bar">
+          <div class="mini-bar"><div class="mini-fill" style="width:${Math.min(k.pct,100)}%;background:${kpiColor(k.pct)}"></div></div>
+          <span class="pct-num" style="color:${kpiColor(k.pct)}">${k.pct}%</span>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  // Task rows
+  document.getElementById('mTaskList').innerHTML = r.tasks.map(t => `
+    <div class="task-item">
+      <span class="task-check">${t.done ? '✅' : '🔲'}</span>
+      <div class="task-body">
+        <div class="task-name">${t.name}</div>
+        <div class="task-meta"><span>📅 Deadline: ${t.deadline}</span><span>${t.done?'Hoàn thành':'Đang làm'}</span></div>
+      </div>
+      <span class="task-pct" style="color:${kpiColor(t.pct)}">${t.pct}%</span>
+    </div>
+  `).join('');
+
+  // Reset tabs
+  setModalTab(document.querySelector('.modal-tab'), 'mt-detail');
+  document.getElementById('reportModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('reportModal').classList.remove('open');
+  currentId = null;
+}
+
+function setModalTab(el, panelId) {
+  document.querySelectorAll('.modal-tab').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+}
+
+function doApprove() {
+  if (!currentId) return;
+  const r = reports.find(x => x.id === currentId);
+  r.status = 'approved';
+  renderReports();
+  closeModal();
+  alert('✅ Đã duyệt báo cáo của ' + r.name);
+}
+function doReturn() {
+  if (!currentId) return;
+  const ta = document.querySelector('#mt-note textarea');
+  const r = reports.find(x => x.id === currentId);
+  r.status = 'returned';
+  renderReports();
+  closeModal();
+  alert('↩ Đã trả về báo cáo của ' + r.name + (ta.value ? '\nLý do: ' + ta.value : ''));
+}
+function doSave() {
+  alert('💾 Đã lưu chỉnh sửa KPI & kế hoạch công việc!');
+}
+function quickApprove(id) {
+  const r = reports.find(x => x.id === id); r.status='approved'; renderReports();
+}
+function quickReturn(id) {
+  const r = reports.find(x => x.id === id); r.status='returned'; renderReports();
+}
+
+function addKpiRow() {
+  const div = document.createElement('div'); div.className = 'edit-kpi-row';
+  div.innerHTML = `<input class="edit-input" placeholder="Tên chỉ tiêu..."><input class="edit-input" placeholder="Mục tiêu"><input class="edit-input" placeholder="Trọng số">`;
+  document.getElementById('editKpiRows').appendChild(div);
+}
+function addTaskRow() {
+  const div = document.createElement('div'); div.className = 'assign-task-row';
+  div.innerHTML = `<input class="edit-input" placeholder="Nội dung công việc..."><input class="edit-input" type="date"><select class="edit-input filter-select" style="padding:6px 4px"><option>Cao</option><option>Trung bình</option><option>Thấp</option></select><button class="icon-btn" onclick="this.closest('.assign-task-row').remove()">🗑</button>`;
+  document.getElementById('editTaskRows').appendChild(div);
+}
+
+// Close on overlay click
+document.getElementById('reportModal').addEventListener('click', e => {
+  if(e.target===e.currentTarget) closeModal();
+});
+
+// ── NAV / TABS ──
+function setNav(el) {
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+}
+function setPeriod(el) {
+  document.querySelectorAll('.period-tab').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+}
+function setTab(el, tabId) {
+  document.querySelectorAll('.main-tab').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  ['tab-baocao','tab-phongban','tab-nhanvien'].forEach(id => {
+    document.getElementById(id).style.display = id===tabId ? 'block' : 'none';
+  });
+}
+
+// ── INIT ──
+renderReports();
 </script>
 </body>
 </html>
