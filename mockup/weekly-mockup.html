@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockup — Báo Cáo KPI Tuần | IruKa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1e3a5f;
+      --green: #15803d;
+      --gray-border: #d1d5db;
+    }
+    html, body { background: #fff; color: #111; font-family: 'Inter', sans-serif; font-size: 14px; }
+
+    /* ── PAGE WRAPPER ─────────────────────────────── */
+    .page { max-width: 1600px; margin: 0 auto; padding: 0 16px 120px; }
+
+    /* ── STICKY HEADER ──────────────────────────────── */
+    .sticky-header {
+      position: sticky; top: 0; z-index: 50;
+      margin: 0 -16px 32px;
+      padding: 16px 16px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #f3f4f6;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border-radius: 0 0 8px 8px;
+    }
+    .sticky-header-inner {
+      display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
+    }
+    .sticky-header h1 { font-size: 26px; font-weight: 900; text-transform: uppercase; color: var(--navy); letter-spacing: 0.04em; }
+    @media(min-width:640px){ .sticky-header h1 { font-size: 30px; } }
+    .badge-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
+    .badge { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+    @media(min-width:640px){ .badge { font-size: 14px; } }
+    .badge-navy  { background: var(--navy); color: #fff; box-shadow: 0 2px 6px rgba(30,58,95,0.3); }
+    .badge-blue  { background: #dbeafe; color: #1e3a8a; border: 2px solid #bfdbfe; }
+    .badge-orange{ background: #ffedd5; color: #c2410c; border: 2px solid #fed7aa; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.65} }
+
+    /* ── INFO TABLE ──────────────────────────────────── */
+    .info-table { border-collapse: collapse; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-radius: 8px; overflow: hidden; margin-bottom: 32px; background: #fff; }
+    .info-table td { border: 1px solid var(--gray-border); padding: 8px 16px; }
+    .info-table .label { background: #f3f4f6; font-weight: 700; color: #374151; width: 140px; }
+    .info-table .value { color: var(--navy); font-weight: 400; min-width: 200px; }
+    .info-table .value.bold { font-weight: 900; }
+
+    /* ── CONTENT BLOCK ─────────────────────────────────── */
+    .content-block { width: 100%; }
+
+    /* ── SECTION BANNER ─────────────────────────────── */
+    .section-banner {
+      width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      padding: 12px 16px; border: 1px solid var(--gray-border); border-bottom: none;
+      border-radius: 8px 8px 0 0; font-size: 14px;
+    }
+    .banner-icon { font-size: 18px; }
+    .banner-label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; }
+    .banner-spacer { flex: 1; }
+    .banner-hint { font-size: 12px; opacity: 0.75; font-style: italic; margin-left: auto; }
+    .banner-navy { background: rgba(30,58,95,0.1); color: var(--navy); }
+    .banner-gray { background: #e5e7eb; color: #111; }
+
+    /* ── BLOCKS SCROLL ── */
+    .blocks-scroll { overflow-x: auto; width: 100%; }
+    .blocks-inner  { min-width: 1280px; display: flex; flex-direction: column; gap: 32px; }
+
+    /* ── TABLE SCROLL WRAPPER ───────────────────────── */
+    .table-scroll { width: 100%; }
+
+    /* ── KPI TABLE ──────────────────────────────────── */
+    .kpi-table { width: 100%; border-collapse: collapse; border: 1px solid var(--gray-border); font-size: 13px; }
+    .kpi-table thead tr { background: var(--navy); color: #fff; }
+    .kpi-table th { border: 1px solid rgba(255,255,255,0.15); padding: 10px 8px; text-align: center; white-space: nowrap; font-weight: 700; font-size: 13px; }
+    .kpi-table th.col-content { text-align: left; min-width: 400px; }
+    .kpi-table th.col-note    { text-align: left; min-width: 250px; }
+    .kpi-table th.col-unit    { min-width: 70px; }
+    .kpi-table th.col-qty     { min-width: 120px; }
+    .kpi-table th.col-actual  { min-width: 120px; background: #ca8a04; font-style: italic; }
+    .kpi-table th.col-actual-gray { min-width: 120px; background: #4b5563; }
+    .kpi-table th.col-pct     { min-width: 115px; font-size: 13px; }
+    .kpi-table th.col-weight  { min-width: 85px; font-size: 13px; }
+    .kpi-table th.col-score   { min-width: 85px; font-size: 13px; }
+    .kpi-table th.col-del     { width: 44px; }
+    .req { color: #fca5a5; }
+
+    .kpi-table td { border: 1px solid var(--gray-border); padding: 4px; vertical-align: middle; }
+    .row-old { background: rgba(239,246,255,0.2); }
+    .row-old:hover { background: rgba(239,246,255,0.5); }
+    .row-new:hover { background: #f9fafb; }
+
+    .cell-stt       { text-align: center; font-weight: 500; color: #111; padding: 8px; }
+    .cell-ro        { padding: 8px; color: #111; font-weight: 500; }
+    .cell-ro-center { padding: 8px; text-align: center; font-weight: 500; color: #111; }
+    .cell-pct   { background: rgba(240,253,244,0.6); border: 1px solid #bbf7d0 !important; border-radius: 2px; padding: 8px; text-align: center; font-weight: 700; color: var(--green); }
+    .cell-score { background: rgba(240,253,244,0.6); border: 1px solid #bbf7d0 !important; border-radius: 2px; padding: 8px; text-align: center; font-weight: 700; color: var(--green); }
+    .cell-dash  { background: #f3f4f6; border: 1px solid #e5e7eb !important; border-radius: 2px; padding: 8px; text-align: center; color: #9ca3af; font-weight: 700; }
+    .cell-pending { background: #f3f4f6; border: 1px solid #e5e7eb !important; border-radius: 2px; padding: 8px; text-align: center; color: #6b7280; font-size: 11px; font-style: italic; font-weight: 500; white-space: nowrap; }
+
+    /* Inputs */
+    textarea, input[type=text], input[type=number], select {
+      font-family: 'Inter', sans-serif; font-size: 13px;
+      border: 2px solid var(--gray-border); border-radius: 3px;
+      padding: 8px; outline: none; color: #111; font-weight: 400;
+      width: 100%; background: #fff; transition: border-color 0.15s;
+    }
+    textarea { resize: vertical; min-height: 60px; }
+    textarea:focus, input:focus, select:focus { border-color: #3b82f6; }
+
+    /* Ô Thực hiện — vàng */
+    input.actual-input {
+      background: #fefce8 !important; border-color: #eab308 !important;
+      font-weight: 700; text-align: center; font-size: 14px;
+    }
+    input.actual-input:focus { border-color: #ca8a04 !important; box-shadow: 0 0 0 3px rgba(234,179,8,0.25); }
+
+    /* Placeholder */
+    textarea::placeholder, input::placeholder {
+      color: #9ca3af !important; opacity: 0.8; font-style: italic; font-weight: 400;
+    }
+
+    /* Nút thêm dòng */
+    .add-row-td { border: 1px dashed #93c5fd !important; background: rgba(239,246,255,0.2); padding: 10px; text-align: center; }
+    .add-row-btn { color: var(--navy); font-weight: 600; font-size: 13px; cursor: pointer; background: none; border: none; font-family: 'Inter', sans-serif; display: inline-flex; align-items: center; gap: 6px; }
+    .add-row-btn:hover { color: #1d4ed8; }
+    .add-row-td.gray { border-color: #d1d5db !important; background: rgba(249,250,251,0.3); }
+    .add-row-btn.gray-btn { color: #2563eb; }
+
+    /* Nút xóa */
+    .del-btn { background: none; border: none; cursor: pointer; color: #f87171; padding: 8px; line-height: 1; transition: color 0.15s; display: flex; align-items: center; justify-content: center; margin: auto; }
+    .del-btn:hover { color: #b91c1c; }
+    .del-btn:disabled { color: #d1d5db; cursor: default; pointer-events: none; }
+
+    /* Summary */
+    .summary-row td { background: rgba(30,58,95,0.05); }
+    .summary-label { font-weight: 700; color: var(--navy); font-size: 13px; padding: 8px 12px; }
+    .summary-pct   { color: var(--green); font-weight: 700; font-size: 14px; text-align: center; padding: 8px; }
+
+    /* ── BOTTOM BAR ─────────────────────────────────── */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff; border-top: 2px solid var(--navy);
+      box-shadow: 0 -10px 20px -3px rgba(0,0,0,0.12);
+      padding: 16px 24px; display: flex; justify-content: flex-end; align-items: center; z-index: 50;
+    }
+    .bottom-bar-inner { display: flex; align-items: center; gap: 16px; }
+    @media(min-width:640px){ .bottom-bar-inner { gap: 32px; } }
+    .score-display { text-align: right; }
+    .score-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; }
+    .score-value { display: flex; align-items: baseline; gap: 6px; justify-content: flex-end; white-space: nowrap; }
+    .score-week { font-size: 14px; font-weight: 700; color: #4b5563; text-transform: uppercase; }
+    @media(min-width:640px){ .score-week { font-size: 18px; } }
+    .score-pct { font-size: 28px; font-weight: 900; color: var(--green); }
+    @media(min-width:640px){ .score-pct { font-size: 32px; } }
+    .score-kh  { font-size: 14px; font-weight: 900; color: var(--green); margin-left: 2px; }
+
+    .submit-btn {
+      position: relative; font-weight: 900; padding: 12px 24px; border-radius: 12px;
+      color: #fff; font-size: 14px; white-space: nowrap; border: none; cursor: pointer;
+      background: linear-gradient(135deg, #3b82f6 0%, var(--navy) 100%);
+      box-shadow: 0 10px 25px rgba(59,130,246,0.6);
+      border-bottom: 5px solid #1e3a5f; border-top: 1px solid rgba(255,255,255,0.3);
+      font-family: 'Inter', sans-serif; transition: all 0.15s; z-index: 10;
+    }
+    @media(min-width:640px){ .submit-btn { font-size: 18px; padding: 12px 56px; } }
+    .submit-btn:hover { transform: scale(1.05); box-shadow: 0 15px 35px rgba(59,130,246,0.9); }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn .glow { position: absolute; inset: -4px; border-radius: 14px; background: #60a5fa; filter: blur(12px); opacity: 0.5; z-index: -1; animation: pulse 2s infinite; }
+    .submit-btn .btn-label { position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; }
+    .submit-btn-loading { background: #9ca3af !important; cursor: not-allowed !important; box-shadow: none !important; border-bottom-color: #6b7280 !important; }
+
+    /* ── SCENARIO SYSTEM ── */
+    .sc-label {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      background: #1e3a5f; color: #fff;
+      padding: 10px 20px; border-radius: 10px 10px 0 0;
+      font-size: 13px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .sc-label .sc-num { background: #fbbf24; color: #111; font-size: 12px; font-weight: 900; padding: 2px 10px; border-radius: 999px; flex-shrink: 0; }
+    .sc-label .sc-note { font-size: 11px; font-weight: 500; opacity: 0.7; font-style: italic; text-transform: none; letter-spacing: 0; }
+    .sc-frame { border: 2px solid #1e3a5f; border-radius: 0 10px 10px 10px; overflow: hidden; background: #fff; }
+    .sc-frame.no-pad { padding: 0; }
+    .sc-frame.pad { padding: 24px; }
+    .sc-frame.bg-gray { background: #f0f4f8; }
+    .sc-wrapper { margin: 72px 0 0; max-width: 1600px; margin-left: auto; margin-right: auto; padding: 0 16px; }
+    .sc-diff-note { background: #fef9c3; border: 1px solid #fde047; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #713f12; margin-bottom: 16px; }
+    .sc-diff-note strong { font-weight: 800; color: #92400e; }
+
+    /* ── SKELETON ─────────────────────────────────────── */
+    .sk { background: #e5e7eb; border-radius: 6px; animation: skpulse 1.5s ease-in-out infinite; }
+    @keyframes skpulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .sk-h { height: 18px; } .sk-h2 { height: 14px; } .sk-h3 { height: 11px; }
+    .sk-row { display: flex; gap: 8px; align-items: center; }
+
+    /* ── FULL-SCREEN CARDS ───────────── */
+    .fsc { min-height: 420px; display: flex; align-items: center; justify-content: center; padding: 32px; }
+    .fsc-card { background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); padding: 48px 40px; max-width: 480px; width: 100%; text-align: center; }
+    .fsc-icon { font-size: 72px; line-height: 1; margin-bottom: 20px; }
+    .fsc-title { font-size: 22px; font-weight: 900; color: var(--navy); margin-bottom: 12px; }
+    .fsc-desc { font-size: 14px; color: #6b7280; line-height: 1.7; margin-bottom: 28px; }
+    .fsc-btn { padding: 12px 36px; border-radius: 10px; font-weight: 800; font-size: 15px; border: none; cursor: pointer; font-family: 'Inter',sans-serif; display: inline-flex; align-items: center; gap: 8px; }
+    .fsc-btn-navy { background: var(--navy); color: #fff; }
+    .fsc-btn-gray { background: #e5e7eb; color: #374151; margin-right: 10px; }
+    .fsc-btn-green { background: var(--green); color: #fff; }
+    .fsc-bg-success { background: linear-gradient(135deg,#ecfdf5,#dbeafe); }
+    .fsc-bg-error   { background: #fff0f0; }
+    .fsc-bg-neutral { background: #f0f4f8; }
+    .fsc-score-box { background: rgba(21,128,61,0.08); border: 2px solid #bbf7d0; border-radius: 14px; padding: 20px 32px; margin: 0 auto 28px; display: inline-block; }
+    .fsc-score-label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; }
+    .fsc-score-val { font-size: 48px; font-weight: 900; color: var(--green); line-height: 1; }
+    .fsc-score-sub  { font-size: 13px; color: #15803d; font-weight: 700; margin-top: 2px; }
+
+    /* ── MODAL ── */
+    .modal-wrapper { position: relative; min-height: 320px; background: rgba(0,0,0,0.45); border-radius: 0; display: flex; align-items: center; justify-content: center; padding: 32px; backdrop-filter: blur(2px); }
+    .modal-card { background: #fff; border-radius: 20px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); padding: 36px; max-width: 440px; width: 100%; }
+    .modal-icon { font-size: 36px; margin-bottom: 12px; }
+    .modal-title { font-size: 20px; font-weight: 900; color: var(--navy); margin-bottom: 10px; }
+    .modal-body { font-size: 14px; color: #4b5563; line-height: 1.7; margin-bottom: 28px; white-space: pre-line; }
+    .modal-body strong { color: #111; font-weight: 700; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+    .modal-btn { padding: 10px 22px; border-radius: 10px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; font-family: 'Inter',sans-serif; }
+    .modal-btn-cancel  { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+    .modal-btn-confirm { background: var(--navy); color: #fff; }
+    .modal-btn-amber   { background: #f59e0b; color: #111; }
+
+    /* ── TOAST ── */
+    .toast-stage { position: relative; background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 12px; padding: 20px; min-height: 80px; display: flex; align-items: center; justify-content: flex-end; }
+    .toast-stage-label { position: absolute; top: 10px; left: 14px; font-size: 11px; color: #9ca3af; font-style: italic; }
+    .toast { display: inline-flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 40px rgba(0,0,0,0.18); max-width: 420px; }
+    .toast-error   { background: #dc2626; color: #fff; }
+    .toast-success { background: var(--green); color: #fff; }
+    .toast-close { font-size: 18px; opacity: 0.75; cursor: pointer; margin-left: 6px; }
+
+    /* ── VALIDATE ERR ── */
+    .row-field-err { border-color: #dc2626 !important; background: #fef2f2 !important; box-shadow: 0 0 0 2px rgba(220,38,38,0.15) !important; }
+
+    /* ── DRAFT BANNER ── */
+    .draft-banner { background: #fffbeb; border: 2px solid #f59e0b; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .draft-banner-text .dt { font-weight: 800; font-size: 14px; color: #92400e; }
+    .draft-banner-text .dd { font-size: 13px; color: #78350f; margin-top: 2px; }
+    .draft-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .draft-btn-restore { background: #f59e0b; color: #111; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+    .draft-btn-discard { background: none; color: #6b7280; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
+
+    /* ── FIRST TIME BANNER ── */
+    .ft-banner { background: linear-gradient(135deg,#eff6ff,#f0fdf4); border: 2px solid #93c5fd; border-radius: 12px; padding: 24px 28px; margin-bottom: 28px; display: flex; align-items: flex-start; gap: 16px; }
+    .ft-banner .ft-icon { font-size: 40px; flex-shrink: 0; }
+    .ft-banner .ft-title { font-size: 16px; font-weight: 900; color: var(--navy); margin-bottom: 6px; }
+    .ft-banner .ft-desc { font-size: 13px; color: #374151; line-height: 1.7; }
+    .ft-banner .ft-step { display: inline-flex; align-items: center; gap: 6px; background: #dbeafe; color: #1e40af; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; margin: 4px 4px 0 0; }
+
+    /* ── MINI HEADER (preview) ── */
+    .mini-header { background: rgba(255,255,255,0.95); padding: 16px; border: 1px solid #f3f4f6; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+    /* ── BOTTOM BAR DEMO (inline) ── */
+    .bb-demo { border-top: 2px solid var(--navy); background: #fff; padding: 16px 24px; display: flex; justify-content: flex-end; align-items: center; box-shadow: 0 -4px 12px rgba(0,0,0,0.07); border-radius: 8px; margin-top: 8px; }
+    .bb-inner { display: flex; align-items: center; gap: 32px; }
+
+    /* ── INLINE VALIDATE ERR HINT ── */
+    .err-hint { font-size: 11px; color: #dc2626; font-weight: 700; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+    .plan-err-msg { background: #fef2f2; border: 1px solid #fca5a5; border-top: none; border-radius: 0 0 8px 8px; padding: 10px 16px; font-size: 13px; color: #dc2626; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ LABEL CHO FORM HIỆN TẠI (F2 — FORM CHÍNH) ══ -->
+<div style="background:#1e3a5f;color:#fff;padding:12px 24px;font-size:13px;font-weight:800;letter-spacing:0.05em;display:flex;align-items:center;gap:12px;">
+  <span style="background:#22c55e;color:#fff;padding:3px 12px;border-radius:999px;font-size:12px;">F2</span>
+  FORM BÌNH THƯỜNG — Có dữ liệu tuần trước từ server (màn hình chính, đang dùng)
+  <span style="opacity:0.6;font-style:italic;font-size:11px;font-weight:500;text-transform:none;letter-spacing:0;">↓ scroll xuống để xem tất cả tình huống F1 → F10</span>
+</div>
+
+<div class="page">
+
+  <!-- ══ STICKY HEADER ══ -->
+  <div class="sticky-header">
+    <div class="sticky-header-inner">
+      <h1>Báo Cáo &amp; Kế Hoạch Tuần</h1>
+      <div class="badge-row">
+        <span class="badge badge-navy">📋 BC: Tuần 15 (07/04 – 13/04)</span>
+        <span class="badge badge-blue">🗓️ KH: Tuần 16 (14/04 – 20/04)</span>
+        <!-- Badge cam chỉ xuất hiện khi nộp muộn -->
+        <!-- <span class="badge badge-orange">⏰ Nộp muộn</span> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── INFO TABLE + HƯỚNG DẪN ──────────────── -->
+  <div style="display:flex; gap:20px; align-items:stretch; margin-bottom:32px; flex-wrap:wrap;">
+
+    <!-- Bảng thông tin NV -->
+    <table class="info-table" style="margin-bottom:0; flex-shrink:0;">
+      <tbody>
+        <tr><td class="label">Họ tên</td><td class="value bold">Nguyễn Văn A</td></tr>
+        <tr><td class="label">Báo cáo cho</td><td class="value">CEO</td></tr>
+        <tr><td class="label">Phòng ban</td><td class="value">Dev</td></tr>
+        <tr><td class="label">Ngày đánh giá</td><td class="value">15/04/2026</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Bảng hướng dẫn — chiều cao khớp bảng tên -->
+    <div style="flex:1; min-width:320px; border:1px solid var(--gray-border); border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.06); display:flex; flex-direction:column;">
+      <div style="background:rgba(30,58,95,0.08); border-bottom:1px solid var(--gray-border); padding:6px 12px; display:flex; align-items:center; gap:6px; flex-shrink:0;">
+        <span style="font-size:14px;">📌</span>
+        <span style="font-weight:800; text-transform:uppercase; letter-spacing:0.05em; color:var(--navy); font-size:13px;">Hướng dẫn làm báo cáo tuần</span>
+      </div>
+      <div style="flex:1; background:#fff; display:grid; grid-template-columns:1fr 1fr 1fr; align-items:stretch;">
+
+        <div style="border-right:1px solid #e5e7eb; padding:12px 12px 12px 12px; display:flex; flex-direction:column;">
+          <div style="font-weight:700; color:var(--navy); font-size:14px; margin-bottom:5px;">📋 Báo cáo tuần trước</div>
+          <div style="font-size:13.5px; color:#374151; line-height:1.7;">
+            Điền đủ: nội dung, đơn vị, KH, <span style="background:#fefce8;border:1px solid #eab308;border-radius:2px;padding:0 4px;font-weight:600;">Thực hiện</span>, trọng số.<br>
+            % &amp; Điểm tự động tính.<br>
+            Lần đầu: copy từ Excel cũ.<br>
+            Lần sau: tự lấy KH tuần trước.
+          </div>
+        </div>
+
+        <div style="border-right:1px solid #e5e7eb; padding:12px; display:flex; flex-direction:column;">
+          <div style="font-weight:700; color:var(--navy); font-size:14px; margin-bottom:5px;">🗓️ Kế hoạch tuần tới</div>
+          <div style="font-size:13.5px; color:#374151; line-height:1.7;">
+            Liệt kê đầu việc dự kiến.<br>
+            Số lượng KH phải cụ thể, đo lường được.<br>
+            Cột Thực hiện bỏ trống.<br>
+            Đánh trọng số cao vào các việc quan trọng.
+          </div>
+        </div>
+
+        <div style="padding:12px; display:flex; flex-direction:column;">
+          <div style="font-weight:700; color:var(--navy); font-size:14px; margin-bottom:5px;">⚖️ Trọng số</div>
+          <div style="font-size:13.5px; color:#374151; line-height:1.7;">
+            <strong>1</strong> — Việc không quá quan trọng<br>
+            <strong>2</strong> — Việc bình thường<br>
+            <strong>3</strong> — Việc cốt lõi, cần chú tâm
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ WRAPPER SCROLL ══ -->
+  <div class="blocks-scroll">
+  <div class="blocks-inner">
+
+  <!-- ══════════════════════════════════════════════
+       BẢNG 1 — BÁO CÁO TUẦN TRƯỚC
+       Bình thường: dữ liệu load từ server (isFirstTime=false)
+       NV chỉ điền cột "Thực hiện" (vàng), các cột khác read-only
+  ══════════════════════════════════════════════ -->
+  <div class="content-block">
+    <div class="section-banner banner-navy">
+      <span class="banner-icon">📋</span>
+      <span class="banner-label">Báo Cáo Tuần 15 (07/04 – 13/04)</span>
+      <span class="banner-spacer"></span>
+      <span class="banner-hint">Điền số vào cột Thực hiện để chốt kết quả</span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="kpi-table">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th class="col-content">Nội dung công việc <span class="req">*</span></th>
+            <th class="col-note">Ghi chú tiến độ</th>
+            <th class="col-unit">Đơn vị <span class="req">*</span></th>
+            <th class="col-qty">Số lượng (KH) <span class="req">*</span></th>
+            <th class="col-actual">Thực hiện <span class="req">*</span></th>
+            <th class="col-pct">% Hoàn Thành</th>
+            <th class="col-weight">Trọng số <span class="req">*</span></th>
+            <th class="col-score">Đạt được</th>
+            <th class="col-del">Xóa</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Dòng 1: load từ server — read-only trừ Thực hiện -->
+          <tr class="row-old" data-kh="5" data-ts="3">
+            <td class="cell-stt">1</td>
+            <td><div class="cell-ro">Fix bug login màn hình Phụ Huynh IruKa App</div></td>
+            <td><div class="cell-ro">Đã fix xong 4/5 bug, còn 1 bug SSO chưa reproduce được</div></td>
+            <td><div class="cell-ro-center">Bug</div></td>
+            <td><div class="cell-ro-center">5</div></td>
+            <td><input type="number" class="actual-input" min="0" step="0.5" placeholder="?" value="4" /></td>
+            <td><div class="cell-pct">80%</div></td>
+            <td><div class="cell-ro-center">3</div></td>
+            <td><div class="cell-score">2.4</div></td>
+            <td><span style="color:#d1d5db;display:flex;align-items:center;justify-content:center;padding:8px;">—</span></td>
+          </tr>
+
+          <!-- Dòng 2 -->
+          <tr class="row-old" data-kh="3" data-ts="3">
+            <td class="cell-stt">2</td>
+            <td><div class="cell-ro">Hoàn thành Game SDK v2 — module scoring tuần</div></td>
+            <td><div class="cell-ro">Đã merge PR, đang chờ QA review lần cuối</div></td>
+            <td><div class="cell-ro-center">Module</div></td>
+            <td><div class="cell-ro-center">3</div></td>
+            <td><input type="number" class="actual-input" min="0" step="0.5" placeholder="?" value="3" /></td>
+            <td><div class="cell-pct">100%</div></td>
+            <td><div class="cell-ro-center">3</div></td>
+            <td><div class="cell-score">3.0</div></td>
+            <td><span style="color:#d1d5db;display:flex;align-items:center;justify-content:center;padding:8px;">—</span></td>
+          </tr>
+
+          <!-- Dòng 3 -->
+          <tr class="row-old" data-kh="4" data-ts="2">
+            <td class="cell-stt">3</td>
+            <td><div class="cell-ro">Viết tài liệu API endpoint báo cáo KPI</div></td>
+            <td><div class="cell-ro">Hoàn thành 3/4 endpoint, còn POST /submit chưa xong</div></td>
+            <td><div class="cell-ro-center">Endpoint</div></td>
+            <td><div class="cell-ro-center">4</div></td>
+            <td><input type="number" class="actual-input" min="0" step="0.5" placeholder="?" value="3" /></td>
+            <td><div class="cell-pct">75%</div></td>
+            <td><div class="cell-ro-center">2</div></td>
+            <td><div class="cell-score">1.5</div></td>
+            <td><span style="color:#d1d5db;display:flex;align-items:center;justify-content:center;padding:8px;">—</span></td>
+          </tr>
+
+          <!-- Dòng 4 -->
+          <tr class="row-old" data-kh="2" data-ts="1">
+            <td class="cell-stt">4</td>
+            <td><div class="cell-ro">Review code PR của teammate (Dev)</div></td>
+            <td><div class="cell-ro">Đã review đủ 2 PR, comment chi tiết</div></td>
+            <td><div class="cell-ro-center">PR</div></td>
+            <td><div class="cell-ro-center">2</div></td>
+            <td><input type="number" class="actual-input" min="0" step="0.5" placeholder="?" value="2" /></td>
+            <td><div class="cell-pct">100%</div></td>
+            <td><div class="cell-ro-center">1</div></td>
+            <td><div class="cell-score">1.0</div></td>
+            <td><span style="color:#d1d5db;display:flex;align-items:center;justify-content:center;padding:8px;">—</span></td>
+          </tr>
+
+          <!-- Summary row -->
+          <tr class="summary-row">
+            <td colspan="6" class="summary-label">📊 Tổng kết Tuần 15</td>
+            <td class="summary-pct" colspan="2">Tổng trọng số: <strong>9</strong></td>
+            <td class="summary-pct" colspan="2">Đạt: <strong>7.9 / 9</strong> → <span style="color:#15803d;font-size:15px;font-weight:900;">87.8% KH</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /content-block bảng 1 -->
+
+  <!-- ══════════════════════════════════════════════
+       BẢNG 2 — KẾ HOẠCH TUẦN TỚI
+       NV điền tự do, cột Thực hiện bị khoá "Tuần sau chốt"
+  ══════════════════════════════════════════════ -->
+  <div class="content-block">
+    <div class="section-banner banner-gray">
+      <span class="banner-icon">🗓️</span>
+      <span class="banner-label">Kế Hoạch Tuần 16 (14/04 – 20/04)</span>
+      <span class="banner-spacer"></span>
+      <span class="banner-hint">Đặt mục tiêu cho tuần tới — Điền đủ các cột</span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="kpi-table">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th class="col-content">Nội dung công việc <span class="req">*</span></th>
+            <th class="col-note">Ghi chú / Mục tiêu cụ thể</th>
+            <th class="col-unit">Đơn vị <span class="req">*</span></th>
+            <th class="col-qty">Số lượng (KH) <span class="req">*</span></th>
+            <th class="col-actual-gray">Thực hiện</th>
+            <th class="col-pct">% Hoàn Thành</th>
+            <th class="col-weight">Trọng số <span class="req">*</span></th>
+            <th class="col-score">Đạt được</th>
+            <th class="col-del">Xóa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Kế hoạch dòng 1 -->
+          <tr class="row-new">
+            <td class="cell-stt">1</td>
+            <td><textarea placeholder="Tên đầu việc tuần tới..."></textarea></td>
+            <td><textarea placeholder="Mô tả chi tiết..."></textarea></td>
+            <td><input type="text" placeholder="VD: Bài" style="text-align:center" /></td>
+            <td><input type="number" min="0" step="1" placeholder="VD: 5" style="text-align:center;font-weight:700" /></td>
+            <td><div class="cell-pending">Tuần sau chốt</div></td>
+            <td><div class="cell-dash">—</div></td>
+            <td>
+              <select>
+                <option value="" disabled selected>-- chọn --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </td>
+            <td><div class="cell-dash">—</div></td>
+            <td>
+              <button class="del-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Nút thêm dòng bảng 2 -->
+          <tr>
+            <td colspan="10" class="add-row-td gray">
+              <button class="add-row-btn gray-btn">＋ Thêm đầu việc mới</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /content-block bảng 2 -->
+
+  </div><!-- /blocks-inner -->
+  </div><!-- /blocks-scroll -->
+
+</div><!-- /page -->
+
+<!-- Bottom bar dính -->
+<div class="bottom-bar">
+  <div class="bottom-bar-inner">
+    <div class="score-display">
+      <div class="score-label">Kết quả hoàn thành</div>
+      <div class="score-value">
+        <span class="score-week">Tuần 15 Đạt</span>
+        <span class="score-pct">87.8%</span>
+        <span class="score-kh">KH</span>
+      </div>
+    </div>
+    <button class="submit-btn">
+      <div class="glow"></div>
+      <div class="btn-label">📤 NỘP BÁO CÁO</div>
+    </button>
+  </div>
+</div>
+
+
+<!-- ████████████████████████████████████████████████████
+     TẤT CẢ TÌNH HUỐNG — F1 → F10
+████████████████████████████████████████████████████ -->
+
+<div style="background:#111;color:#fff;text-align:center;padding:20px;font-size:15px;font-weight:900;letter-spacing:0.07em;text-transform:uppercase;margin-top:120px;">
+  📋 Tất Cả Tình Huống — Weekly KPI Report (F1 → F10)
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F6 — LOADING / SKELETON
+     Đây là màn hình đầu tiên NV thấy khi mở link
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper" style="margin-top:48px;">
+  <div class="sc-label">
+    <span class="sc-num">F6</span>
+    Loading / Skeleton — Đang tải dữ liệu từ server
+    <span class="sc-note">— Hiển thị ngay khi NV mở link, trước khi API trả về. Chặn toàn bộ form, animation pulse.</span>
+  </div>
+  <div class="sc-frame pad" style="background:#fff;">
+    <!-- Skeleton: sticky header area -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-bottom:24px;border-bottom:1px solid #f3f4f6;margin-bottom:24px;">
+      <div class="sk sk-h" style="width:300px;"></div>
+      <div style="display:flex;gap:10px;">
+        <div class="sk sk-h2" style="width:150px;border-radius:999px;"></div>
+        <div class="sk sk-h2" style="width:150px;border-radius:999px;"></div>
+      </div>
+    </div>
+    <!-- Skeleton: info table -->
+    <div style="display:flex;gap:16px;margin-bottom:28px;">
+      <div style="width:320px;flex-shrink:0;">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="sk-row"><div class="sk sk-h3" style="width:90px;flex-shrink:0;"></div><div class="sk sk-h3" style="flex:1;"></div></div>
+          <div class="sk-row"><div class="sk sk-h3" style="width:90px;flex-shrink:0;"></div><div class="sk sk-h3" style="flex:1;"></div></div>
+          <div class="sk-row"><div class="sk sk-h3" style="width:90px;flex-shrink:0;"></div><div class="sk sk-h3" style="flex:1;"></div></div>
+          <div class="sk-row"><div class="sk sk-h3" style="width:90px;flex-shrink:0;"></div><div class="sk sk-h3" style="flex:1;"></div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Skeleton: table rows -->
+    <div class="sk" style="height:44px;border-radius:6px 6px 0 0;margin-bottom:2px;"></div>
+    <div style="display:flex;flex-direction:column;gap:2px;">
+      <div class="sk sk-h" style="height:40px;border-radius:0;opacity:0.85;"></div>
+      <div class="sk sk-h" style="height:40px;border-radius:0;opacity:0.65;"></div>
+      <div class="sk sk-h" style="height:40px;border-radius:0;opacity:0.45;"></div>
+      <div class="sk sk-h" style="height:40px;border-radius:0;opacity:0.28;"></div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:#9ca3af;margin-top:20px;font-style:italic;">
+      ⏳ Đang tải dữ liệu của Nguyễn Văn A...
+    </p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F1 — FORM LẦN ĐẦU (isFirstTime=true)
+     Chưa nộp bao giờ, không có data tuần cũ
+████████████════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F1</span>
+    Form Lần Đầu — Chưa có dữ liệu tuần trước
+    <span class="sc-note">— NV tự điền cả bảng 1 từ Excel cũ. Toàn bộ cột đều editable (không read-only). Có banner chào.</span>
+  </div>
+  <div class="sc-frame no-pad">
+    <div style="padding:24px;">
+
+      <div class="sc-diff-note">
+        <strong>📌 Phần khác so với F2:</strong> Có banner chào 👋 (màu xanh) ở trên. Bảng 1 được tạo sẵn 1 dòng trống, toàn bộ cột đều có input (không read-only). Có nút "Thêm đầu việc tuần trước". Bảng 2 giữ nguyên.
+      </div>
+
+      <!-- Banner chào lần đầu -->
+      <div class="ft-banner">
+        <div class="ft-icon">👋</div>
+        <div>
+          <div class="ft-title">Chào mừng bạn lần đầu dùng hệ thống!</div>
+          <div class="ft-desc">
+            Bảng <strong>Báo cáo tuần trước</strong> đang trống — bạn cần tự điền kết quả từ file Excel cũ.<br/>
+            <span class="ft-step">① Nhớ lại KH và thực hiện tuần trước</span>
+            <span class="ft-step">② Bấm "Thêm đầu việc tuần trước"</span>
+            <span class="ft-step">③ Điền đủ các cột rồi nộp</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner bảng 1 (lần đầu) -->
+      <div class="section-banner banner-navy" style="margin-bottom:0;">
+        <span class="banner-icon">📋</span>
+        <span class="banner-label">Báo Cáo Tuần 15 (07/04 – 13/04)</span>
+        <span class="banner-spacer"></span>
+        <span class="banner-hint">Lần đầu: Tự điền kết quả từ Excel của bạn</span>
+      </div>
+      <table class="kpi-table" style="width:100%;margin-bottom:28px;">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th class="col-content">Nội dung công việc <span class="req">*</span></th>
+            <th class="col-note">Ghi chú tiến độ</th>
+            <th class="col-unit">Đơn vị <span class="req">*</span></th>
+            <th class="col-qty">Số lượng (KH) <span class="req">*</span></th>
+            <th class="col-actual">Thực hiện <span class="req">*</span></th>
+            <th class="col-pct">% Hoàn Thành</th>
+            <th class="col-weight">Trọng số <span class="req">*</span></th>
+            <th class="col-score">Đạt được</th>
+            <th class="col-del">Xóa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dòng trống tự seed — tất cả cột đều input -->
+          <tr class="row-old">
+            <td class="cell-stt">1</td>
+            <td><textarea placeholder="Tên đầu việc tuần trước..."></textarea></td>
+            <td><textarea placeholder="Ghi chú tiến độ..."></textarea></td>
+            <td><input type="text" placeholder="VD: Bug" style="text-align:center" /></td>
+            <td><input type="number" min="0" step="1" placeholder="VD: 5" style="text-align:center;font-weight:700" /></td>
+            <td><input type="number" class="actual-input" min="0" step="0.5" placeholder="?" /></td>
+            <td><div class="cell-dash">—</div></td>
+            <td>
+              <select>
+                <option value="" disabled selected>-- chọn --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </td>
+            <td><div class="cell-dash">—</div></td>
+            <td>
+              <button class="del-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+              </button>
+            </td>
+          </tr>
+          <!-- Nút thêm dòng — chỉ hiện lần đầu -->
+          <tr>
+            <td colspan="10" class="add-row-td">
+              <button class="add-row-btn">＋ Thêm đầu việc tuần trước</button>
+            </td>
+          </tr>
+          <!-- Summary (trống) -->
+          <tr class="summary-row">
+            <td colspan="6" class="summary-label">📊 Tổng kết Tuần 15</td>
+            <td class="summary-pct" colspan="2">Tổng trọng số: <strong>0</strong></td>
+            <td class="summary-pct" colspan="2">Đạt: <strong>0 / 0</strong> → <span style="color:#15803d;font-size:15px;font-weight:900;">0% KH</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F4 — CÓ DRAFT LOCALSTORAGE — Modal hỏi khôi phục
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F4</span>
+    Phát hiện bản nháp (Draft) — Modal hỏi khôi phục
+    <span class="sc-note">— NV đã điền dở trước đó, đóng tab. Khi mở lại → modal hỏi khôi phục hay bỏ qua.</span>
+  </div>
+  <div class="sc-frame no-pad">
+    <div class="sc-diff-note" style="margin:16px 16px 0;">
+      <strong>📌 Form phía sau (F2) bị mờ + blur.</strong> Modal nổi lên giữa màn hình. NV phải chọn "Khôi phục" hoặc "Bỏ qua" trước khi dùng form.
+    </div>
+    <div class="modal-wrapper">
+      <div class="modal-card">
+        <div class="modal-icon">💾</div>
+        <div class="modal-title">Phát hiện bản nháp</div>
+        <div class="modal-body">Bạn có bản nháp được lưu cách đây <strong>23 phút</strong> (<strong>2 đầu việc</strong> đã điền).
+
+Bạn có muốn khôi phục không?</div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-cancel">Bỏ qua</button>
+          <button class="modal-btn modal-btn-amber">💾 Khôi phục</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F3 — NỘP LẦN 2 — Modal xác nhận ghi đè
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F3</span>
+    Nộp lần 2 — Modal xác nhận ghi đè dữ liệu cũ
+    <span class="sc-note">— NV đã nộp tuần này rồi nhưng bấm Nộp lại. Modal cảnh báo dữ liệu cũ sẽ bị ghi đè.</span>
+  </div>
+  <div class="sc-frame no-pad">
+    <div class="sc-diff-note" style="margin:16px 16px 0;">
+      <strong>📌 Modal xuất hiện trước khi gửi lên server.</strong> NV chọn "Nộp báo cáo" → ghi đè. Chọn "Xem lại" → quay về form không mất data.
+    </div>
+    <div class="modal-wrapper">
+      <div class="modal-card">
+        <div class="modal-icon">📤</div>
+        <div class="modal-title">Xác nhận nộp báo cáo</div>
+        <div class="modal-body">Nếu bạn đã nộp tuần này rồi, dữ liệu cũ sẽ bị <strong>GHI ĐÈ</strong> bằng dữ liệu mới.
+
+Bạn chắc chắn muốn nộp báo cáo?</div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-cancel">Xem lại</button>
+          <button class="modal-btn modal-btn-confirm">📤 Nộp báo cáo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F5 — TOKEN HẾT HẠN (403)
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F5</span>
+    Token hết hạn — Link báo cáo quá 72 giờ hoặc sai
+    <span class="sc-note">— API trả về 403. Chặn toàn bộ trang, không render form.</span>
+  </div>
+  <div class="sc-frame no-pad">
+    <div class="fsc fsc-bg-neutral">
+      <div class="fsc-card">
+        <div class="fsc-icon">🔗</div>
+        <div class="fsc-title">Cần link từ Discord</div>
+        <div class="fsc-desc" style="line-height:2;">
+          Trang báo cáo tuần chỉ mở được qua link cá nhân từ Discord.<br/><br/>
+          Vào Discord → Nhắn tin trực tiếp cho CEO - IruKa<br/>
+          hoặc nhóm <strong>Plan-Report</strong> → gõ lệnh <strong>/weekly</strong><br/>
+          → bấm link trong tin nhắn để gửi báo cáo.<br/><br/>
+          <a href="discord://app" style="text-decoration:none;"><button class="fsc-btn fsc-btn-navy">💬 Mở Discord</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F7 — LỖI API / MẠNG KHI LOAD
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F7</span>
+    Lỗi API / Mạng khi load dữ liệu
+    <span class="sc-note">— Fetch thất bại (GAS lỗi hoặc mất kết nối). Chặn toàn trang, cho thử lại.</span>
+  </div>
+  <div class="sc-frame no-pad">
+    <div class="fsc fsc-bg-error">
+      <div class="fsc-card">
+        <div class="fsc-icon">⚠️</div>
+        <div class="fsc-title" style="color:#dc2626;">Hệ thống gặp sự cố</div>
+        <div class="fsc-desc">
+          Không thể tải dữ liệu báo cáo.<br/>
+          Có thể do mạng không ổn định hoặc server đang bảo trì.<br/><br/>
+          <span style="background:#fee2e2;padding:6px 12px;border-radius:6px;color:#991b1b;font-family:monospace;font-size:12px;">Lỗi kết nối mạng — 503</span>
+        </div>
+        <button class="fsc-btn fsc-btn-navy" style="width:100%;justify-content:center;">🔄 Thử tải lại</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F8 — VALIDATE LỖI — Bấm Nộp khi thiếu dữ liệu
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F8</span>
+    Validate lỗi — Bấm Nộp khi thiếu dữ liệu bắt buộc
+    <span class="sc-note">— Toast đỏ xuất hiện góc trên phải. Các ô thiếu hiện border đỏ + background hồng. 2 loại lỗi: ① ô trong bảng 1 (Thực hiện trống), ② bảng 2 thiếu đầu việc.</span>
+  </div>
+  <div class="sc-frame pad">
+
+    <div class="sc-diff-note">
+      <strong>📌 Tất cả lỗi highlight đồng thời</strong> khi bấm Nộp. Toast xuất hiện góc trên phải. Các ô đỏ tự xóa khi NV điền vào.
+    </div>
+
+    <!-- Toast mô phỏng (fixed → demo inline) -->
+    <div class="toast-stage" style="margin-bottom:20px;">
+      <div class="toast-stage-label">Toast xuất hiện góc trên phải (fixed)</div>
+      <div class="toast toast-error">
+        <span>⚠️ Còn 2 dòng chưa điền đầy đủ! Bao gồm 1 ô "Thực hiện" chưa chốt. Các ô đỏ là những chỗ còn thiếu.</span>
+        <span class="toast-close">×</span>
+      </div>
+    </div>
+
+    <!-- ── LỖI LOẠI 1: Ô Thực hiện trong bảng 1 trống ── -->
+    <p style="font-size:13px;font-weight:800;color:#dc2626;margin:0 0 10px;display:flex;align-items:center;gap:6px;">
+      ① Ô "Thực hiện" trong bảng báo cáo bị bỏ trống
+    </p>
+    <div class="table-scroll" style="margin-bottom:28px;">
+      <table class="kpi-table" style="width:100%;">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th class="col-content">Nội dung công việc</th>
+            <th class="col-note">Ghi chú</th>
+            <th class="col-unit">Đơn vị</th>
+            <th class="col-qty">Số lượng (KH)</th>
+            <th class="col-actual">Thực hiện <span class="req">*</span></th>
+            <th class="col-pct">%</th>
+            <th class="col-weight">Trọng số</th>
+            <th class="col-score">Đạt</th>
+            <th class="col-del">Xóa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dòng 1: bình thường -->
+          <tr class="row-old">
+            <td class="cell-stt">1</td>
+            <td><div class="cell-ro">Fix bug login màn hình Phụ Huynh</div></td>
+            <td><div class="cell-ro">Đã fix xong 4/5 bug</div></td>
+            <td><div class="cell-ro-center">Bug</div></td>
+            <td><div class="cell-ro-center">5</div></td>
+            <td><input type="number" class="actual-input" value="4" /></td>
+            <td><div class="cell-pct">80%</div></td>
+            <td><div class="cell-ro-center">3</div></td>
+            <td><div class="cell-score">2.4</div></td>
+            <td><span style="color:#d1d5db;display:flex;align-items:center;justify-content:center;padding:8px;">—</span></td>
+          </tr>
+          <!-- Dòng 2: lỗi — Thực hiện bỏ trống → đỏ -->
+          <tr class="row-old">
+            <td class="cell-stt">2</td>
+            <td><div class="cell-ro">Hoàn thành Game SDK v2 scoring tuần</div></td>
+            <td><div class="cell-ro">Đang review</div></td>
+            <td><div class="cell-ro-center">Module</div></td>
+            <td><div class="cell-ro-center">3</div></td>
+            <!-- Ô Thực hiện đỏ vì trống -->
+            <td>
+              <input type="number" class="actual-input row-field-err" placeholder="⚠️" style="border-color:#dc2626!important;background:#fef2f2!important;box-shadow:0 0 0 2px rgba(220,38,38,0.15)!important;" />
+              <div class="err-hint">⚠️ Chưa điền!</div>
+            </td>
+            <td><div class="cell-dash">—</div></td>
+            <td><div class="cell-ro-center">3</div></td>
+            <td><div class="cell-dash">—</div></td>
+            <td><span style="color:#d1d5db;display:flex;align-items:center;justify-content:center;padding:8px;">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── LỖI LOẠI 2: Bảng kế hoạch không có đầu việc hoặc thiếu trường ── -->
+    <p style="font-size:13px;font-weight:800;color:#dc2626;margin:0 0 10px;display:flex;align-items:center;gap:6px;">
+      ② Bảng kế hoạch tuần tới — dòng thiếu trường bắt buộc
+    </p>
+    <div class="section-banner" style="border-color:#fca5a5;background:#fef2f2;color:#991b1b;border-bottom:none;">
+      <span class="banner-icon">🗓️</span>
+      <span class="banner-label" style="color:#991b1b;">Kế Hoạch Tuần 16</span>
+      <span class="banner-spacer"></span>
+      <span style="font-size:12px;font-style:italic;color:#dc2626;">⚠️ Vui lòng thêm ít nhất một đầu việc!</span>
+    </div>
+    <table class="kpi-table" style="width:100%;border-color:#fca5a5;">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th class="col-content">Nội dung công việc <span class="req">*</span></th>
+          <th class="col-note">Ghi chú</th>
+          <th class="col-unit">Đơn vị <span class="req">*</span></th>
+          <th class="col-qty">Số lượng (KH) <span class="req">*</span></th>
+          <th class="col-actual-gray">Thực hiện</th>
+          <th class="col-pct">%</th>
+          <th class="col-weight">Trọng số <span class="req">*</span></th>
+          <th class="col-score">Đạt</th>
+          <th class="col-del">Xóa</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dòng thiếu nội dung và trọng số -->
+        <tr class="row-new">
+          <td class="cell-stt">1</td>
+          <!-- Nội dung bỏ trống → đỏ -->
+          <td><textarea class="row-field-err" placeholder="Tên đầu việc tuần tới..." style="border-color:#dc2626!important;background:#fef2f2!important;"></textarea></td>
+          <td><textarea placeholder="Mô tả..."></textarea></td>
+          <!-- Đơn vị bỏ trống → đỏ -->
+          <td><input type="text" class="row-field-err" placeholder="VD: Bug" style="text-align:center;border-color:#dc2626!important;background:#fef2f2!important;" /></td>
+          <td><input type="number" value="5" style="text-align:center;font-weight:700;" /></td>
+          <td><div class="cell-pending">Tuần sau chốt</div></td>
+          <td><div class="cell-dash">—</div></td>
+          <!-- Trọng số chưa chọn → đỏ -->
+          <td>
+            <select class="row-field-err" style="border-color:#dc2626!important;background:#fef2f2!important;">
+              <option value="" disabled selected>-- chọn --</option>
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            </select>
+          </td>
+          <td><div class="cell-dash">—</div></td>
+          <td><button class="del-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button></td>
+        </tr>
+        <tr><td colspan="10" class="add-row-td gray"><button class="add-row-btn gray-btn">＋ Thêm đầu việc mới</button></td></tr>
+      </tbody>
+    </table>
+    <div class="plan-err-msg">⚠️ Vui lòng điền đủ các cột bắt buộc (*) cho tất cả đầu việc.</div>
+
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F7-b — NỘP MUỘN (Badge ⏰ xuất hiện)
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F7-b</span>
+    Nộp muộn — Badge ⏰ xuất hiện trên sticky header
+    <span class="sc-note">— Toàn bộ form giống F2. Chỉ thêm badge cam nhấp nháy "⏰ Nộp muộn" trên header.</span>
+  </div>
+  <div class="sc-frame pad">
+    <div class="sc-diff-note">
+      <strong>📌 Chỉ sticky header thay đổi:</strong> Badge cam "⏰ Nộp muộn" (animation pulse) xuất hiện thêm. Form phía dưới y hệt F2.
+    </div>
+    <!-- Mini header preview -->
+    <div class="mini-header">
+      <h1 style="font-size:26px;font-weight:900;text-transform:uppercase;color:var(--navy);letter-spacing:0.04em;">Báo Cáo &amp; Kế Hoạch Tuần</h1>
+      <div class="badge-row">
+        <span class="badge badge-navy">📋 BC: Tuần 15 (07/04 – 13/04)</span>
+        <span class="badge badge-blue">🗓️ KH: Tuần 16 (14/04 – 20/04)</span>
+        <span class="badge badge-orange">⏰ Nộp muộn</span>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:12px;font-style:italic;">↕ Phần còn lại bên dưới giữ nguyên như F2</p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F3-b — ĐANG NỘP (Button loading state)
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F3-b</span>
+    Đang nộp — Button loading, disabled
+    <span class="sc-note">— NV bấm Nộp, đang chờ API. Nút chuyển xám → "⏳ Đang nộp...", click không được.</span>
+  </div>
+  <div class="sc-frame pad">
+    <div class="sc-diff-note">
+      <strong>📌 Chỉ bottom bar thay đổi.</strong> Nút disabled + màu xám + text "⏳ Đang nộp...". Không có glow. Form phía trên không thay đổi.
+    </div>
+    <div class="bb-demo">
+      <div class="bb-inner">
+        <div class="score-display">
+          <div class="score-label">Kết quả hoàn thành</div>
+          <div class="score-value">
+            <span class="score-week">Tuần 15 Đạt</span>
+            <span class="score-pct">87.8%</span>
+            <span class="score-kh">KH</span>
+          </div>
+        </div>
+        <button class="submit-btn submit-btn-loading" disabled>
+          <span class="btn-label">⏳ Đang nộp...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F10 — MẠNG ĐỨT KHI NỘP — Toast đỏ, giữ nguyên form
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper">
+  <div class="sc-label">
+    <span class="sc-num">F10</span>
+    Mạng đứt khi đang nộp — Toast đỏ, form giữ nguyên
+    <span class="sc-note">— fetch POST thất bại (network error). Toast đỏ xuất hiện 4 giây. Form giữ nguyên toàn bộ data để NV thử lại.</span>
+  </div>
+  <div class="sc-frame pad">
+    <div class="sc-diff-note">
+      <strong>📌 Khác F7 (load lỗi):</strong> F10 xảy ra khi đang submit. Form KHÔNG bị xóa — NV chỉ cần kết nối lại và bấm Nộp lại. Toast tự tắt sau 4 giây.
+    </div>
+    <!-- Toast demo inline -->
+    <div class="toast-stage">
+      <div class="toast-stage-label">Toast xuất hiện góc trên phải (fixed), tự tắt sau 4s</div>
+      <div class="toast toast-error">
+        <span>❌ Mất kết nối mạng. Dữ liệu đã được lưu tạm. Thử lại khi có mạng!</span>
+        <span class="toast-close">×</span>
+      </div>
+    </div>
+    <p style="font-size:13px;color:#6b7280;margin-top:12px;font-style:italic;text-align:center;">↕ Form phía dưới giữ nguyên toàn bộ data, nút Nộp được enable lại</p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     F9 — NỘP THÀNH CÔNG — Màn hình chúc mừng
+════════════════════════════════════════════════════ -->
+<div class="sc-wrapper" style="margin-bottom:80px;">
+  <div class="sc-label">
+    <span class="sc-num">F9</span>
+    Nộp thành công — Màn hình chúc mừng (Full screen)
+    <span class="sc-note">— Sau khi POST thành công. Ẩn form, hiện toàn bộ màn hình success với điểm KH đạt được.</span>
+  </div>
+  <div class="sc-frame no-pad">
+    <div class="fsc fsc-bg-success" style="min-height:500px;">
+      <div class="fsc-card" style="max-width:520px;">
+        <div class="fsc-icon" style="animation:bounce 1s infinite alternate;">✅</div>
+        <style>@keyframes bounce{0%{transform:translateY(0)}100%{transform:translateY(-10px)}}</style>
+        <div class="fsc-title" style="color:#15803d;font-size:26px;">Nộp báo cáo thành công!</div>
+
+        <!-- Score box -->
+        <div class="fsc-score-box">
+          <div class="fsc-score-label">Kết quả Tuần 15</div>
+          <div class="fsc-score-val">87.8%</div>
+          <div class="fsc-score-sub">KH đạt được</div>
+        </div>
+
+        <div class="fsc-desc">
+          Người nộp: <strong style="color:var(--navy);">Nguyễn Văn A</strong><br/>
+          Mục tiêu: <strong style="color:var(--navy);">Tuần 15 (07/04 – 13/04)</strong><br/><br/>
+          Dữ liệu đã được ghi nhận vào hệ thống nhân sự IruKa.<br/>
+          Sếp sẽ xem xét và phản hồi trong vòng <strong>24 giờ</strong>.<br/><br/>
+          <div style="background:#dbeafe;border:1px solid #bfdbfe;border-radius:10px;padding:12px 16px;font-size:13px;color:#1e3a8a;font-weight:600;">
+            📬 Bot Discord sẽ thông báo kết quả cho bạn khi CEO duyệt xong!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
