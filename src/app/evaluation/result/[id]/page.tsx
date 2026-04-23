@@ -7,6 +7,8 @@
  *
  * Bảo mật: Dashboard password
  * URL: /evaluation/result/[eval_id]
+ *
+ * Refactored: Logic gửi kết quả đã tách ra ManagerResultSend component.
  */
 
 "use client";
@@ -16,7 +18,8 @@ import { useParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import EvalInfoForm from '@/components/evaluation/EvalInfoForm';
 import ScoreSummaryBar from '@/components/evaluation/ScoreSummaryBar';
-import { Lock, Send, Loader2, CheckCircle, AlertTriangle, MessageSquare } from 'lucide-react';
+import ManagerResultSend from '@/components/evaluation/ManagerResultSend';
+import { Loader2, AlertTriangle, MessageSquare } from 'lucide-react';
 import type { EvalInfo } from '@/components/evaluation/EvalInfoForm';
 
 // ── Login Gate ────────────────────────────────────────────────────
@@ -77,9 +80,6 @@ export default function ResultPage() {
   const [loading, setLoading] = useState(false);
   const [evalData, setEvalData] = useState<EvalData | null>(null);
   const [fetchError, setFetchError] = useState('');
-  const [mgrNote, setMgrNote] = useState('');
-  const [sendStatus, setSendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const [sendError, setSendError] = useState('');
 
   const loadData = async (dashPass: string) => {
     setLoading(true);
@@ -105,24 +105,6 @@ export default function ResultPage() {
     loadData(dashPass);
   };
 
-  const handleSend = async () => {
-    setSendStatus('sending');
-    setSendError('');
-    try {
-      const res = await fetch('/api/evaluation/send-result', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-dashboard-auth': pass },
-        body: JSON.stringify({ eval_id: evalId, mgr_note: mgrNote }),
-      });
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error);
-      setSendStatus('sent');
-    } catch (err: any) {
-      setSendStatus('error');
-      setSendError(err.message);
-    }
-  };
-
   if (!authed) {
     return fetchError ? (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#0a1120] text-center space-y-4 p-8">
@@ -132,19 +114,6 @@ export default function ResultPage() {
         <button onClick={() => { setFetchError(''); setPass(''); }} className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm transition-colors">Thử lại</button>
       </div>
     ) : <LoginGate onLogin={handleLogin} />;
-  }
-
-  if (sendStatus === 'sent') {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0a1120] text-center space-y-4 p-8">
-        <CheckCircle size={64} className="text-green-400" />
-        <h1 className="text-2xl font-bold text-white">Đã Gửi Kết Quả!</h1>
-        <p className="text-slate-400 max-w-md">
-          Kết quả đánh giá đã được gửi cho <strong className="text-white">{evalData?.info.name}</strong> qua Discord.
-          CEO cũng đã được CC thông báo.
-        </p>
-      </div>
-    );
   }
 
   // Tính điểm
@@ -234,42 +203,13 @@ export default function ResultPage() {
               </section>
             )}
 
-            {/* Lời nhắn kèm kết quả */}
-            <section className="bg-slate-800/60 rounded-2xl p-6 border border-slate-700/50">
-              <h2 className="text-base font-bold text-slate-300 mb-3 flex items-center gap-2">
-                Lời Nhắn Gửi Nhân Viên
-                <span className="text-slate-500 font-normal text-xs">(không bắt buộc)</span>
-              </h2>
-              <textarea
-                rows={4}
-                value={mgrNote}
-                onChange={e => setMgrNote(e.target.value)}
-                placeholder="Lời nhắn, động viên, hoặc hướng dẫn tiếp theo cho nhân viên..."
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none resize-none transition"
-              />
-            </section>
-
-            {/* Lỗi */}
-            {sendStatus === 'error' && (
-              <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 rounded-xl px-5 py-3 text-red-400 text-sm">
-                <AlertTriangle size={16} className="shrink-0" /> {sendError}
-              </div>
-            )}
-
-            {/* Nút gửi */}
-            <div className="flex justify-end pb-8">
-              <button
-                onClick={handleSend}
-                disabled={sendStatus === 'sending'}
-                className="flex items-center gap-2 px-8 py-3 bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white font-bold rounded-xl transition-colors shadow-lg shadow-green-600/20"
-              >
-                {sendStatus === 'sending' ? (
-                  <><Loader2 size={18} className="animate-spin" /> Đang gửi...</>
-                ) : (
-                  <><Send size={18} /> Gửi Kết Quả Cho Nhân Viên</>
-                )}
-              </button>
-            </div>
+            {/* Gửi kết quả — dùng ManagerResultSend component */}
+            <ManagerResultSend
+              evalId={evalId}
+              employeeName={evalData.info.name}
+              dashboardPass={pass}
+              currentStatus={evalData.status}
+            />
           </div>
         )}
       </main>
