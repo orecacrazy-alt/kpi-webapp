@@ -74,14 +74,23 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
     : null;
   const urlToken = searchParams?.get('token') || '';
   const urlHrId  = searchParams?.get('hr_discord_id') || hrDiscordId;
+
+  // Đọc thông tin nhân viên pre-filled từ URL (Bot gửi khi HR chọn từ Discord dropdown)
+  const preEmpDiscordId = searchParams?.get('emp_discord_id') || '';
+  const preEmpName      = searchParams?.get('emp_name')       || '';
+  const preEmpDept      = searchParams?.get('emp_dept')       || '';
+  const preEmpJoined    = searchParams?.get('emp_joined')     || '';
+  const preMgrName      = searchParams?.get('mgr_name')       || '';
+  const preMgrDiscordId = searchParams?.get('mgr_discord_id') || '';
+
   const [form, setForm] = useState<FormData>({
-    name: '',
-    discord_id: '',
-    dept: '',
+    name: preEmpName,
+    discord_id: preEmpDiscordId,
+    dept: preEmpDept,
     role: '',
-    manager_name: MANAGER_LIST[0].name,
-    manager_discord_id: MANAGER_LIST[0].discord_id,
-    trial_start: '',
+    manager_name: preMgrName || MANAGER_LIST[0].name,
+    manager_discord_id: preMgrDiscordId || MANAGER_LIST[0].discord_id,
+    trial_start: preEmpJoined ? preEmpJoined.slice(0, 10) : '',
     trial_end: '',
     eval_date: new Date().toISOString().slice(0, 10),
     hr_discord_id: hrDiscordId,
@@ -94,9 +103,18 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
   // ── Employee Picker state ──────────────────────────────────────
   const [memberList, setMemberList] = useState<MemberOption[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  // Nếu đã có thông tin pre-filled từ URL → hiển thị luôn tên đó trong ô tìm kiếm
+  const [searchQuery, setSearchQuery] = useState(preEmpName);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<MemberOption | null>(null);
+  // Nếu đã pre-filled → coi như đã chọn (hiện badge thông tin bên dưới)
+  const [selectedMember, setSelectedMember] = useState<MemberOption | null>(
+    preEmpDiscordId ? {
+      name: preEmpName, username: '', discordId: preEmpDiscordId,
+      dept: preEmpDept, contractType: 'fulltime',
+      joinedAt: preEmpJoined || null,
+      managerName: preMgrName, managerDiscordId: preMgrDiscordId,
+    } : null
+  );
   const pickerRef = useRef<HTMLDivElement>(null);
 
   // Load danh sách nhân viên từ /api/members khi form mount
