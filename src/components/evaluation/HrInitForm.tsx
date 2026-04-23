@@ -6,7 +6,7 @@
  * Đã được đắp giao diện chuẩn Pixel-Perfect từ evaluation-mockup.html
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CheckCircle, Loader2, Plus, Send } from 'lucide-react';
 
 const MANAGER_LIST = [
@@ -49,6 +49,18 @@ interface FormData {
   criteria: Criteria[];
 }
 
+// Cấu trúc 1 nhân viên từ /api/members
+interface MemberOption {
+  name: string;
+  username: string;
+  discordId: string;
+  dept: string;
+  contractType: string;
+  joinedAt: string | null;
+  managerName: string;
+  managerDiscordId: string;
+}
+
 interface HrInitFormProps {
   hrDiscordId: string;
   dashboardPassword: string;
@@ -72,6 +84,40 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
+  // ── Employee Picker state ──────────────────────────────────────
+  const [memberList, setMemberList] = useState<MemberOption[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<MemberOption | null>(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  // Load danh sách nhân viên từ /api/members khi form mount
+  useEffect(() => {
+    if (!dashboardPassword) return;
+    setLoadingMembers(true);
+    fetch('/api/members', {
+      headers: { 'x-dashboard-auth': dashboardPassword },
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.members) setMemberList(data.members);
+      })
+      .catch(() => { /* Không block form nếu load lỗi */ })
+      .finally(() => setLoadingMembers(false));
+  }, [dashboardPassword]);
+
+  // Đóng dropdown khi click ra ngoài
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   const setField = (field: keyof FormData, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
@@ -85,6 +131,34 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
         manager_discord_id: mgr.discord_id,
       }));
     }
+  };
+
+  // Khi HR chọn nhân viên từ dropdown → auto-fill toàn bộ thông tin
+  const selectEmployee = (member: MemberOption) => {
+    setSelectedMember(member);
+    setSearchQuery(member.name);
+    setShowDropdown(false);
+
+    // Tìm manager trong MANAGER_LIST theo discordId (ưu tiên)
+    // hoặc dùng managerName từ members.json nếu không match
+    const mgrInList = MANAGER_LIST.find(m => m.discord_id === member.managerDiscordId);
+    const mgrName = mgrInList ? mgrInList.name : (member.managerName || MANAGER_LIST[0].name);
+    const mgrId   = mgrInList ? mgrInList.discord_id : (member.managerDiscordId || MANAGER_LIST[0].discord_id);
+
+    // Chuyển joinedAt ISO → YYYY-MM-DD cho input[type=date]
+    const trialStart = member.joinedAt
+      ? member.joinedAt.slice(0, 10)
+      : '';
+
+    setForm(prev => ({
+      ...prev,
+      name:               member.name,
+      discord_id:         member.discordId,
+      dept:               member.dept,
+      manager_name:       mgrName,
+      manager_discord_id: mgrId,
+      trial_start:        trialStart,
+    }));
   };
 
   const addCriteria = () => {
@@ -163,6 +237,104 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
           {errorMsg}
         </div>
       )}
+
+      {/* ── EMPLOYEE PICKER — Chọn nhân viên từ Discord ─────────── */}
+      <div className="bg-white rounded-xl shadow-sm border border-[#3b82f6]/30 overflow-hidden">
+        <div className="bg-gradient-to-r from-[#eff6ff] to-[#f8fafc] px-5 py-3 border-b border-[#3b82f6]/20 flex items-center gap-2">
+          <span className="text-lg">🔍</span>
+          <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">Chọn Nhân Viên</span>
+          {loadingMembers && <Loader2 size={14} className="animate-spin text-blue-500 ml-1" />}
+          {memberList.length > 0 && !loadingMembers && (
+            <span className="ml-auto text-[11px] text-slate-400 font-medium">{memberList.length} nhân viên active</span>
+          )}
+        </div>
+        <div className="p-5">
+          <p className="text-[12px] text-slate-500 mb-3">
+            Chọn nhân viên từ hệ thống Discord — thông tin sẽ tự động điền vào form bên dưới.
+          </p>
+          <div ref={pickerRef} className="relative">
+            {/* Search input */}
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => { setSearchQuery(e.target.value); setShowDropdown(true); }}
+                onFocus={() => setShowDropdown(true)}
+                placeholder={loadingMembers ? 'Đang tải danh sách...' : 'Tìm kiếm tên nhân viên...'}
+                disabled={loadingMembers}
+                className="w-full font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[8px] px-[12px] py-[10px] pr-[36px] outline-none text-[#111] font-medium bg-white focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 transition-all disabled:opacity-60"
+              />
+              {selectedMember && (
+                <button
+                  type="button"
+                  onClick={() => { setSelectedMember(null); setSearchQuery(''); setForm(prev => ({ ...prev, name: '', discord_id: '', dept: '', trial_start: '' })); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 transition-colors text-lg"
+                  title="Xóa chọn"
+                >×</button>
+              )}
+            </div>
+
+            {/* Dropdown list */}
+            {showDropdown && !loadingMembers && (
+              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-[#d1d5db] rounded-[8px] shadow-lg max-h-56 overflow-y-auto">
+                {memberList
+                  .filter(m =>
+                    !searchQuery ||
+                    m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    m.dept.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map(member => (
+                    <button
+                      key={member.discordId}
+                      type="button"
+                      onClick={() => selectEmployee(member)}
+                      className="w-full text-left px-4 py-3 hover:bg-[#eff6ff] transition-colors border-b border-[#f1f5f9] last:border-0 flex items-center gap-3"
+                    >
+                      <div className="w-8 h-8 rounded-full bg-[#1e3a5f]/10 flex items-center justify-center text-[#1e3a5f] font-black text-[12px] shrink-0">
+                        {member.name.split(' ').pop()?.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13px] font-semibold text-slate-800 truncate">{member.name}</div>
+                        <div className="text-[11px] text-slate-400 flex gap-2">
+                          <span className="bg-[#e0f2fe] text-[#0369a1] px-1.5 py-0.5 rounded font-medium">{member.dept}</span>
+                          {member.managerName && <span>QL: {member.managerName}</span>}
+                        </div>
+                      </div>
+                      {member.joinedAt && (
+                        <div className="text-[10px] text-slate-400 shrink-0">
+                          {new Date(member.joinedAt).toLocaleDateString('vi-VN')}
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                {memberList.filter(m =>
+                  !searchQuery ||
+                  m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  m.dept.toLowerCase().includes(searchQuery.toLowerCase())
+                ).length === 0 && (
+                  <div className="px-4 py-3 text-[13px] text-slate-400 text-center">Không tìm thấy nhân viên</div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Preview thông tin đã chọn */}
+          {selectedMember && (
+            <div className="mt-3 bg-[#f0f9ff] border border-[#bae6fd] rounded-[8px] px-4 py-3 flex flex-wrap gap-4 text-[12px]">
+              <span className="text-slate-600">✅ <strong className="text-[#1e3a5f]">{selectedMember.name}</strong></span>
+              <span className="text-slate-500">🏢 {selectedMember.dept}</span>
+              {selectedMember.managerName && <span className="text-slate-500">👤 QL: {selectedMember.managerName}</span>}
+              {selectedMember.joinedAt && <span className="text-slate-500">📅 Ngày vào: {new Date(selectedMember.joinedAt).toLocaleDateString('vi-VN')}</span>}
+            </div>
+          )}
+
+          {memberList.length === 0 && !loadingMembers && (
+            <p className="text-[11px] text-amber-600 mt-2">
+              ⚠️ Không tải được danh sách nhân viên. Vui lòng điền thông tin thủ công bên dưới.
+            </p>
+          )}
+        </div>
+      </div>
 
       {/* ── 1. THÔNG TIN CHUNG ── */}
       <div className="bg-white rounded-xl shadow-sm border border-[#d1d5db] overflow-hidden">
