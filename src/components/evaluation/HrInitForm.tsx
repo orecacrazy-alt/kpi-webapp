@@ -138,10 +138,10 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
   if (status === 'success') {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <CheckCircle size={64} className="text-green-400" />
-        <h2 className="text-2xl font-bold text-white">Đã tạo phiếu thành công!</h2>
-        <p className="text-slate-400 max-w-md">
-          Bot Discord đã gửi link form đến <strong className="text-white">{form.manager_name}</strong> để điền công việc.
+        <CheckCircle size={64} className="text-green-600" />
+        <h2 className="text-2xl font-bold text-slate-800">Đã tạo phiếu thành công!</h2>
+        <p className="text-slate-500 max-w-md">
+          Bot Discord đã gửi link form đến <strong className="text-slate-800">{form.manager_name}</strong> để điền công việc.
           CEO đã được CC thông báo.
         </p>
         <button
@@ -158,16 +158,16 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
     <form onSubmit={handleSubmit} className="space-y-8">
 
       {/* ── PHẦN 1: THÔNG TIN NHÂN VIÊN ── */}
-      <section className="bg-slate-800/60 rounded-2xl p-6 border border-slate-700/50">
-        <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-          <span className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-sm font-bold">1</span>
+      <section className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+          <span className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold">1</span>
           Thông Tin Nhân Viên
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Họ tên */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
-              Họ và tên NV <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+              Họ và tên NV <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -175,13 +175,13 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               value={form.name}
               onChange={e => setField('name', e.target.value)}
               placeholder="Nguyễn Văn A"
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
             />
           </div>
           {/* Discord ID */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
-              Discord ID của NV <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+              Discord ID của NV <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -189,13 +189,13 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               value={form.discord_id}
               onChange={e => setField('discord_id', e.target.value)}
               placeholder="123456789012345678"
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
             />
           </div>
           {/* Bộ phận */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
-              Bộ phận <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+              Bộ phận <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -203,13 +203,13 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               value={form.dept}
               onChange={e => setField('dept', e.target.value)}
               placeholder="Kỹ thuật / Marketing / HCNS..."
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
             />
           </div>
           {/* Vị trí */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
-              Vị trí / Chức danh <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+              Vị trí / Chức danh <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -217,56 +217,56 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               value={form.role}
               onChange={e => setField('role', e.target.value)}
               placeholder="Frontend Developer / Content..."
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
             />
           </div>
           {/* Ngày bắt đầu thử việc */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
-              Ngày bắt đầu thử việc <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+              Ngày bắt đầu thử việc <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               required
               value={form.trial_start}
               onChange={e => setField('trial_start', e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
             />
           </div>
           {/* Ngày kết thúc thử việc */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
               Ngày kết thúc thử việc
             </label>
             <input
               type="date"
               value={form.trial_end}
               onChange={e => setField('trial_end', e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
             />
           </div>
           {/* Ngày đánh giá */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
-              Ngày đánh giá <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+              Ngày đánh giá <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               required
               value={form.eval_date}
               onChange={e => setField('eval_date', e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
             />
           </div>
           {/* Quản lý trực tiếp */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
-              Quản lý trực tiếp <span className="text-red-400">*</span>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+              Quản lý trực tiếp <span className="text-red-500">*</span>
             </label>
             <select
               value={form.manager_name}
               onChange={e => selectManager(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
             >
               {MANAGER_LIST.map(m => (
                 <option key={m.name} value={m.name}>{m.name}</option>
@@ -277,11 +277,11 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
       </section>
 
       {/* ── PHẦN 2: TIÊU CHÍ MẪU (OPTIONAL) ── */}
-      <section className="bg-slate-800/60 rounded-2xl p-6 border border-slate-700/50">
+      <section className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-              <span className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-sm font-bold">2</span>
+            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <span className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm font-bold">2</span>
               Tiêu Chí Đánh Giá Mẫu
             </h2>
             <p className="text-xs text-slate-500 mt-1 ml-9">
@@ -291,20 +291,20 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
           <button
             type="button"
             onClick={addCriteria}
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 rounded-xl text-sm font-semibold transition-colors border border-purple-600/30"
+            className="flex items-center gap-2 px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-600 rounded-xl text-sm font-semibold transition-colors border border-purple-200"
           >
             <Plus size={16} /> Thêm tiêu chí
           </button>
         </div>
 
         {form.criteria.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 text-sm border-2 border-dashed border-slate-700 rounded-xl">
+          <div className="text-center py-8 text-slate-500 text-sm border-2 border-dashed border-slate-200 rounded-xl">
             Chưa có tiêu chí mẫu — Nhấn "Thêm tiêu chí" hoặc để Quản lý tự điền
           </div>
         ) : (
           <div className="space-y-3">
             {form.criteria.map((c, i) => (
-              <div key={i} className="grid grid-cols-1 md:grid-cols-[1fr_2fr_auto] gap-3 items-start bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+              <div key={i} className="grid grid-cols-1 md:grid-cols-[1fr_2fr_auto] gap-3 items-start bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <div>
                   <label className="text-xs text-slate-500 mb-1 block">Tên tiêu chí</label>
                   <input
@@ -312,7 +312,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                     value={c.name}
                     onChange={e => updateCriteria(i, 'name', e.target.value)}
                     placeholder="VD: Kiến thức chuyên môn"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm placeholder-slate-500 focus:border-purple-500 outline-none"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 text-sm placeholder-slate-400 focus:border-purple-500 outline-none"
                   />
                 </div>
                 <div>
@@ -322,13 +322,13 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                     value={c.expectation}
                     onChange={e => updateCriteria(i, 'expectation', e.target.value)}
                     placeholder="Mô tả kỳ vọng cụ thể..."
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm placeholder-slate-500 focus:border-purple-500 outline-none resize-none"
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-800 text-sm placeholder-slate-400 focus:border-purple-500 outline-none resize-none"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={() => removeCriteria(i)}
-                  className="mt-5 p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                  className="mt-5 p-2 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   title="Xóa tiêu chí"
                 >
                   <Trash2 size={16} />
@@ -341,7 +341,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
 
       {/* ── LỖI ── */}
       {status === 'error' && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-5 py-3 text-red-400 text-sm">
+        <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-3 text-red-600 text-sm">
           ❌ {errorMsg}
         </div>
       )}
