@@ -626,21 +626,72 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
         </div>
       </div>
 
-      {/* ── PREVIEW KHÁC ── */}
+      {/* ── PREVIEW: 4. TỔNG ĐIỂM ── */}
       <div className="opacity-70 cursor-not-allowed grayscale-[20%] space-y-6">
-        {/* 4. TỔNG ĐIỂM */}
-        <div className="bg-white rounded-xl shadow-sm border border-[#d1d5db] overflow-hidden flex flex-wrap divide-x divide-[#d1d5db]">
-          <div className="p-4 flex-1 min-w-[150px]">
-            <div className="text-[11px] font-bold text-[#6b7280] uppercase tracking-[0.04em] mb-1">Điểm nhân viên</div>
-            <div className="text-[28px] font-black text-[#111] leading-none">—</div>
+        {/* TỔNG ĐIỂM — gradient amber, 3 ô + verdict */}
+        <div className="rounded-xl p-[24px_32px] flex flex-wrap items-center gap-6"
+          style={{ background: 'linear-gradient(135deg,#fffbeb,#fef9c3)', border: '2px solid #fbbf24' }}>
+          <div>
+            <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm nhân viên</div>
+            <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
+            <div className="text-[13px] text-[#6b7280] font-medium mt-1">/ 45 điểm tối đa (9 tiêu chí × 5)</div>
           </div>
-          <div className="p-4 flex-1 min-w-[150px]">
-            <div className="text-[11px] font-bold text-[#6b7280] uppercase tracking-[0.04em] mb-1">Điểm quản lý</div>
-            <div className="text-[28px] font-black text-[#111] leading-none">—</div>
+          <div>
+            <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm quản lý</div>
+            <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
+            <div className="text-[13px] text-[#6b7280] font-medium mt-1">/ 45 điểm tối đa (9 tiêu chí × 5)</div>
           </div>
-          <div className="p-4 flex-1 min-w-[150px] bg-[#eff6ff]">
-            <div className="text-[11px] font-bold text-[#1e3a5f] uppercase tracking-[0.04em] mb-1">Kết quả sơ bộ</div>
-            <span className="inline-block mt-1 px-3 py-1 bg-[#d1d5db] text-[#374151] rounded-full text-[12px] font-bold">Chưa đánh giá</span>
+          <div>
+            <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm bình quân</div>
+            <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
+            <div className="text-[13px] text-[#6b7280] font-medium mt-1">/ 5.0</div>
+          </div>
+          <div className="flex-1 min-w-[200px]">
+            <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-2">Kết quả sơ bộ</div>
+            <span className="inline-flex items-center gap-2 text-[15px] font-black px-5 py-2 rounded-full bg-[#dcfce7] text-[#15803d] border-2 border-[#86efac]">
+              Đang chờ đánh giá
+            </span>
+          </div>
+        </div>
+
+        {/* 4. NHÂN VIÊN TỰ ĐỀ XUẤT */}
+        <div className="bg-white rounded-xl shadow-sm border border-[#d1d5db] overflow-hidden">
+          <div className="bg-[#f8fafc] px-5 py-3 border-b border-[#d1d5db] flex items-center gap-2">
+            <span className="text-lg">✍️</span>
+            <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">4. Nhân Viên Tự Đề Xuất</span>
+            <span className="text-[11px] font-medium text-[#6b7280] ml-2">Bắt buộc điền — CEO / Quản lý sẽ xem xét</span>
+          </div>
+          <div className="p-5 grid gap-4">
+            <div className="flex flex-col gap-[5px]">
+              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+                💰 Lương thưởng / Chế độ mong muốn <span className="text-red-600">*</span>
+              </label>
+              <textarea
+                disabled
+                placeholder="Nêu rõ mức lương kỳ vọng và lý do cụ thể sau giai đoạn thử việc..."
+                className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] p-2 outline-none text-[#111] bg-white resize-y min-h-[60px] placeholder:text-[#9ca3af] placeholder:italic placeholder:font-normal w-full"
+              />
+            </div>
+            <div className="flex flex-col gap-[5px]">
+              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+                📚 Đào tạo chuyên môn cần hỗ trợ <span className="text-red-600">*</span>
+              </label>
+              <textarea
+                disabled
+                placeholder="VD: Khóa học React nâng cao, đào tạo nghiệp vụ giáo dục, kỹ năng AI..."
+                className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] p-2 outline-none text-[#111] bg-white resize-y min-h-[60px] placeholder:text-[#9ca3af] placeholder:italic placeholder:font-normal w-full"
+              />
+            </div>
+            <div className="flex flex-col gap-[5px]">
+              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+                🏢 Góp ý về môi trường / Quy trình / Văn hóa công ty
+              </label>
+              <textarea
+                disabled
+                placeholder="VD: Cần rõ ràng hơn về quy trình onboarding, muốn có mentor hỗ trợ trong 3 tháng đầu..."
+                className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] p-2 outline-none text-[#111] bg-white resize-y min-h-[60px] placeholder:text-[#9ca3af] placeholder:italic placeholder:font-normal w-full"
+              />
+            </div>
           </div>
         </div>
 
@@ -648,24 +699,74 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
         <div className="bg-white rounded-xl shadow-sm border border-[#d1d5db] overflow-hidden">
           <div className="bg-[#f8fafc] px-5 py-3 border-b border-[#d1d5db] flex items-center gap-2">
             <span className="text-lg">👔</span>
-            <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">Quản Lý Đánh Giá & Kết Luận</span>
+            <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">5. Quản Lý Đánh Giá &amp; Kết Luận</span>
+            <span className="text-[11px] font-medium text-[#6b7280] ml-2">Chỉ Quản lý / CEO điền phần này</span>
           </div>
-          <div className="p-5">
-            <div className="text-[11px] font-bold text-[#6b7280] uppercase tracking-[0.04em] mb-3">Quyết định</div>
-            <div className="flex flex-wrap gap-2">
-              <div className="border-2 border-[#d1d5db] rounded-[8px] p-[10px_16px] flex items-center gap-2 opacity-60">
-                <div className="w-4 h-4 rounded-full border-2 border-[#d1d5db]"></div>
-                <div>
-                  <div className="text-[13px] font-bold text-[#111]">CHÍNH THỨC</div>
-                  <div className="text-[11px] font-medium text-[#6b7280]">Đạt yêu cầu, ký HĐ chính thức</div>
-                </div>
+          <div className="p-5 grid gap-4">
+            <div className="flex flex-col gap-[5px]">
+              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+                📝 Nhận xét chung về nhân viên <span className="text-red-600">*</span>
+              </label>
+              <textarea
+                disabled
+                placeholder="Nhận xét tổng quát về năng lực, thái độ, sự phù hợp với vị trí và văn hóa công ty..."
+                className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] p-2 outline-none text-[#111] bg-white resize-y min-h-[90px] placeholder:text-[#9ca3af] placeholder:italic placeholder:font-normal w-full"
+              />
+            </div>
+            <div className="flex flex-col gap-[5px]">
+              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+                🎯 Kỳ vọng &amp; Mục tiêu khi chính thức
+              </label>
+              <textarea
+                disabled
+                placeholder="Mục tiêu cụ thể cần đạt trong 3 tháng đầu chính thức nếu được thông qua..."
+                className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] p-2 outline-none text-[#111] bg-white resize-y min-h-[60px] placeholder:text-[#9ca3af] placeholder:italic placeholder:font-normal w-full"
+              />
+            </div>
+            <div className="flex flex-col gap-[5px]">
+              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+                💰 Đề xuất lương thưởng / Chế độ từ quản lý
+              </label>
+              <textarea
+                disabled
+                placeholder="Mức lương chính thức đề xuất, phụ cấp, KPI gắn thưởng (nếu có)..."
+                className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] p-2 outline-none text-[#111] bg-white resize-y min-h-[60px] placeholder:text-[#9ca3af] placeholder:italic placeholder:font-normal w-full"
+              />
+            </div>
+
+            {/* Divider */}
+            <hr className="border-[#d1d5db] my-1" />
+
+            {/* Quyết định — 3 lựa chọn */}
+            <div>
+              <div className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em] mb-3">
+                ⚖️ QUYẾT ĐỊNH <span className="text-red-600">*</span>
               </div>
-              <div className="border-2 border-[#d1d5db] rounded-[8px] p-[10px_16px] flex items-center gap-2 opacity-60">
-                <div className="w-4 h-4 rounded-full border-2 border-[#d1d5db]"></div>
-                <div>
-                  <div className="text-[13px] font-bold text-[#111]">GIA HẠN THỬ VIỆC</div>
-                  <div className="text-[11px] font-medium text-[#6b7280]">Theo dõi thêm</div>
-                </div>
+              <div className="flex flex-wrap gap-[10px]">
+                <label className="flex items-center gap-2 border-2 border-[#d1d5db] rounded-[8px] p-[10px_16px] cursor-pointer hover:border-[#1e3a5f] hover:bg-[rgba(30,58,95,0.04)] transition-all">
+                  <input type="radio" name="trial-dec-preview" value="pass" disabled className="w-4 h-4 accent-[#1e3a5f] flex-shrink-0" />
+                  <span className="text-[18px]">✅</span>
+                  <div>
+                    <div className="text-[13px] font-bold text-[#15803d]">CHÍNH THỨC</div>
+                    <div className="text-[11px] font-medium text-[#6b7280]">Đạt yêu cầu, ký HĐ chính thức</div>
+                  </div>
+                </label>
+                <label className="flex items-center gap-2 border-2 border-[#d1d5db] rounded-[8px] p-[10px_16px] cursor-pointer hover:border-[#1e3a5f] hover:bg-[rgba(30,58,95,0.04)] transition-all">
+                  <input type="radio" name="trial-dec-preview" value="extend" disabled className="w-4 h-4 accent-[#1e3a5f] flex-shrink-0" />
+                  <span className="text-[18px]">⏳</span>
+                  <div>
+                    <div className="text-[13px] font-bold text-[#111]">GIA HẠN THỬ VIỆC</div>
+                    <div className="text-[11px] font-medium text-[#6b7280]">Gia hạn thêm 1 tháng để theo dõi</div>
+                  </div>
+                </label>
+                <label className="flex items-center gap-2 border-2 border-[#d1d5db] rounded-[8px] p-[10px_16px] cursor-pointer hover:border-[#1e3a5f] hover:bg-[rgba(30,58,95,0.04)] transition-all">
+                  <input type="radio" name="trial-dec-preview" value="fail" disabled className="w-4 h-4 accent-[#1e3a5f] flex-shrink-0" />
+                  <span className="text-[18px]">❌</span>
+                  <div>
+                    <div className="text-[13px] font-bold text-[#dc2626]">CHẤM DỨT</div>
+                    <div className="text-[11px] font-medium text-[#6b7280]">Không phù hợp, kết thúc hợp đồng</div>
+                  </div>
+                </label>
               </div>
             </div>
           </div>
@@ -675,26 +776,30 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
         <div className="bg-white rounded-xl shadow-sm border border-[#d1d5db] overflow-hidden">
           <div className="bg-[#f8fafc] px-5 py-3 border-b border-[#d1d5db] flex items-center gap-2">
             <span className="text-lg">✍️</span>
-            <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">Ký Xác Nhận</span>
+            <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">6. Ký Xác Nhận</span>
           </div>
           <div className="p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Nhân Sự */}
             <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
-              <div className="text-[11px] font-black uppercase text-[#1e3a5f] tracking-[0.06em] mb-2">Nhân Sự</div>
+              <div className="text-[11px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">🧑‍💼 Nhân Sự</div>
+              <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
+              <div className="text-[11px] text-[#9ca3af] italic">[Họ Tên Nhân Viên - Auto Fill]</div>
+            </div>
+            {/* Quản Lý Trực Tiếp */}
+            <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
+              <div className="text-[11px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">👔 Quản Lý Trực Tiếp</div>
               <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
               <div className="text-[11px] text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
             </div>
+            {/* Phòng HCNS */}
             <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
-              <div className="text-[11px] font-black uppercase text-[#1e3a5f] tracking-[0.06em] mb-2">Quản Lý</div>
+              <div className="text-[11px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">🏢 Phòng HCNS</div>
               <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
               <div className="text-[11px] text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
             </div>
+            {/* Giám Đốc */}
             <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
-              <div className="text-[11px] font-black uppercase text-[#1e3a5f] tracking-[0.06em] mb-2">HCNS</div>
-              <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
-              <div className="text-[11px] text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
-            </div>
-            <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
-              <div className="text-[11px] font-black uppercase text-[#1e3a5f] tracking-[0.06em] mb-2">Giám Đốc</div>
+              <div className="text-[11px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">👑 Giám Đốc</div>
               <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
               <div className="text-[11px] text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
             </div>
