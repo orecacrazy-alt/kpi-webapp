@@ -57,9 +57,11 @@ function Toast({ message, type, onClose }: { message: string; type: 'success' | 
 // ── Nội dung chính (cần Suspense do useSearchParams) ─────────────
 function EvaluationContent() {
   const searchParams = useSearchParams();
-  const evalId = searchParams.get('id') || '';
-  const discordId = searchParams.get('discord_id') || '';
-  const token = searchParams.get('token') || '';
+  const evalId      = searchParams.get('id') || '';
+  const discordId   = searchParams.get('discord_id') || '';
+  const token       = searchParams.get('token') || '';
+  // is_ceo_direct=1 khi Quản lý trực tiếp là CEO (luồng rút gọn)
+  const isCeoDirect = searchParams.get('is_ceo_direct') === '1';
 
   const [screen, setScreen] = useState<ScreenState>('loading');
   const [evalInfo, setEvalInfo] = useState<EvalInfo | null>(null);
@@ -206,8 +208,9 @@ function EvaluationContent() {
         <CheckCircle size={64} className="text-green-600" />
         <h1 className="text-2xl font-bold text-slate-900">Đã Nộp Thành Công!</h1>
         <p className="text-slate-500 max-w-md">
-          Phiếu tự đánh giá đã được gửi cho Quản lý. HR cũng đã được CC thông báo.
-          Bạn sẽ nhận kết quả qua Discord sau khi Quản lý và CEO hoàn tất duyệt.
+          {isCeoDirect
+            ? 'Phiếu tự đánh giá đã được gửi cho CEO xem xét. Bạn sẽ nhận kết quả qua Discord sau khi CEO phê duyệt.'
+            : 'Phiếu tự đánh giá đã được gửi cho Quản lý. HR cũng đã được CC thông báo. Bạn sẽ nhận kết quả sau khi Quản lý và CEO hoàn tất duyệt.'}
         </p>
       </div>
     );
@@ -247,21 +250,25 @@ function EvaluationContent() {
           </div>
           
           <div className="hidden md:flex items-center gap-2">
-            {['HR tạo', 'QL điền', 'NV đánh giá', 'QL chấm', 'CEO duyệt'].map((step, i) => (
+            {/* Luồng rút gọn (MGR=CEO) bỏ bước QL điền */}
+            {(isCeoDirect
+              ? ['HR tạo', 'NV đánh giá', 'CEO duyệt']
+              : ['HR tạo', 'QL điền', 'NV đánh giá', 'QL chấm', 'CEO duyệt']
+            ).map((step, i, arr) => (
               <React.Fragment key={step}>
                 <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold whitespace-nowrap border ${
-                  i === 2 ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' : 
-                  i < 2 ? 'bg-green-50 text-green-700 border-green-200' : 
+                  (isCeoDirect ? i === 1 : i === 2) ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm' :
+                  (isCeoDirect ? i < 1 : i < 2) ? 'bg-green-50 text-green-700 border-green-200' :
                   'bg-white text-slate-400 border-slate-200'
                 }`}>
                   <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                    i === 2 ? 'bg-blue-600 text-white' : 
-                    i < 2 ? 'bg-green-600 text-white' : 
+                    (isCeoDirect ? i === 1 : i === 2) ? 'bg-blue-600 text-white' :
+                    (isCeoDirect ? i < 1 : i < 2) ? 'bg-green-600 text-white' :
                     'bg-slate-200 text-slate-500'
                   }`}>{i + 1}</span>
                   {step}
                 </div>
-                {i < 4 && <span className="text-slate-300">›</span>}
+                {i < arr.length - 1 && <span className="text-slate-300">›</span>}
               </React.Fragment>
             ))}
           </div>

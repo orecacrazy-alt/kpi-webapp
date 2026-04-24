@@ -11,35 +11,42 @@
  *         → GAS lưu + chuyển status SUBMITTED → PENDING_CEO
  *         → Bot gửi CEO duyệt + CC HR
  *
- * Auth: Dashboard password
+ * Auth: HMAC-SHA256 token cá nhân hóa (discord_id + eval_id + 72h window)
+ *       Token được Discord Bot tạo và đính kèm trong link gửi cho Quản lý.
+ *       Thay thế DASHBOARD_PASSWORD cũ — cá nhân hóa, hết hạn sau 72h.
  */
 
 import { NextResponse } from 'next/server';
+import { verifyEvalToken } from '../_utils/verifyEvalToken';
 
 const GAS_EVAL_URL = process.env.GOOGLE_APPS_SCRIPT_EVALUATION_URL || '';
 
 // ── GET: Lấy toàn bộ phiếu để QL xem + chấm ─────────────────────
 export async function GET(request: Request) {
-  const authHeader = request.headers.get('x-dashboard-auth');
-  const dashPass = process.env.DASHBOARD_PASSWORD || '';
-  if (authHeader !== dashPass) {
-    return NextResponse.json({ error: 'Không có quyền truy cập' }, { status: 401 });
+  const { searchParams } = new URL(request.url);
+  const evalId    = searchParams.get('id');
+  const discordId = searchParams.get('discord_id');
+  const token     = searchParams.get('token');
+
+  // Xác thực HMAC token cá nhân hóa
+  if (!evalId || !discordId || !token) {
+    return NextResponse.json({ error: 'Thiếu thông tin xác thực (id, discord_id, token)' }, { status: 400 });
+  }
+  if (!verifyEvalToken(token, discordId, evalId)) {
+    return NextResponse.json(
+      { error: 'Link không hợp lệ hoặc đã hết hạn (72h). Vui lòng liên hệ HR để lấy link mới.' },
+      { status: 403 }
+    );
   }
 
   if (!GAS_EVAL_URL) {
     return NextResponse.json({ error: 'Chưa cấu hình GOOGLE_APPS_SCRIPT_EVALUATION_URL' }, { status: 500 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const evalId = searchParams.get('id');
-  if (!evalId) {
-    return NextResponse.json({ error: 'Thiếu id phiếu đánh giá' }, { status: 400 });
-  }
-
   try {
-    const url = `${GAS_EVAL_URL}?action=get_full_evaluation&eval_id=${encodeURIComponent(evalId)}`;
+    const url      = `${GAS_EVAL_URL}?action=get_full_evaluation&eval_id=${encodeURIComponent(evalId)}`;
     const response = await fetch(url);
-    const data = await response.json();
+    const data     = await response.json();
     if (data.error) throw new Error(data.error);
     return NextResponse.json(data);
   } catch (error: any) {
@@ -50,22 +57,22 @@ export async function GET(request: Request) {
 
 // ── POST: QL submit điểm + quyết định ────────────────────────────
 export async function POST(request: Request) {
-  const authHeader = request.headers.get('x-dashboard-auth');
-  const dashPass = process.env.DASHBOARD_PASSWORD || '';
-  if (authHeader !== dashPass) {
-    return NextResponse.json({ error: 'Không có quyền truy cập' }, { status: 401 });
-  }
-
   if (!GAS_EVAL_URL) {
     return NextResponse.json({ error: 'Chưa cấu hình GOOGLE_APPS_SCRIPT_EVALUATION_URL' }, { status: 500 });
   }
 
   try {
     const body = await request.json();
+    const { eval_id, discord_id, token } = body;
 
-    if (!body.eval_id) {
-      return NextResponse.json({ error: 'Thiếu eval_id' }, { status: 400 });
+    // Xác thực HMAC token cá nhân hóa
+    if (!eval_id || !discord_id || !token) {
+      return NextResponse.json({ error: 'Thiếu thông tin xác thực (eval_id, discord_id, token)' }, { status: 400 });
     }
+    if (!verifyEvalToken(token, discord_id, eval_id)) {
+      return NextResponse.json({ error: 'Token không hợp lệ hoặc đã hết hạn' }, { status: 403 });
+    }
+
     // Validate: phải có điểm QL cho tất cả tiêu chí
     if (!body.mgr_scores || body.mgr_scores.length === 0) {
       return NextResponse.json({ error: 'Vui lòng chấm điểm ít nhất 1 tiêu chí' }, { status: 400 });
