@@ -629,30 +629,44 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
       {/* ── PREVIEW: 4. TỔNG ĐIỂM ── */}
       <div className="opacity-70 cursor-not-allowed grayscale-[20%] space-y-6">
         {/* TỔNG ĐIỂM — gradient amber, 3 ô + verdict */}
-        <div className="rounded-xl p-[24px_32px] flex flex-wrap items-center gap-6"
-          style={{ background: 'linear-gradient(135deg,#fffbeb,#fef9c3)', border: '2px solid #fbbf24' }}>
-          <div>
-            <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm nhân viên</div>
-            <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
-            <div className="text-[13px] text-[#6b7280] font-medium mt-1">/ 45 điểm tối đa (9 tiêu chí × 5)</div>
-          </div>
-          <div>
-            <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm quản lý</div>
-            <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
-            <div className="text-[13px] text-[#6b7280] font-medium mt-1">/ 45 điểm tối đa (9 tiêu chí × 5)</div>
-          </div>
-          <div>
-            <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm bình quân</div>
-            <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
-            <div className="text-[13px] text-[#6b7280] font-medium mt-1">/ 5.0</div>
-          </div>
-          <div className="flex-1 min-w-[200px]">
-            <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-2">Kết quả sơ bộ</div>
-            <span className="inline-flex items-center gap-2 text-[15px] font-black px-5 py-2 rounded-full bg-[#dcfce7] text-[#15803d] border-2 border-[#86efac]">
-              Đang chờ đánh giá
-            </span>
-          </div>
-        </div>
+        {(() => {
+          const criteriaCount = form.criteria.length;
+          const maxScore = criteriaCount * 5;
+          const scoreLabel = maxScore > 0
+            ? `/ ${maxScore} điểm tối đa (${criteriaCount} tiêu chí × 5)`
+            : '— (Chưa có tiêu chí)';
+          return (
+            <div className="rounded-xl p-[24px_32px] flex flex-wrap items-center gap-6"
+              style={{ background: 'linear-gradient(135deg,#fffbeb,#fef9c3)', border: '2px solid #fbbf24' }}>
+              <div>
+                <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm nhân viên</div>
+                <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
+                <div className="text-[13px] text-[#6b7280] font-medium mt-1">{scoreLabel}</div>
+              </div>
+              <div>
+                <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm quản lý</div>
+                <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
+                <div className="text-[13px] text-[#6b7280] font-medium mt-1">{scoreLabel}</div>
+              </div>
+              <div>
+                <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm bình quân</div>
+                <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
+                <div className="text-[13px] text-[#6b7280] font-medium mt-1">/ 5.0</div>
+              </div>
+              <div className="flex-1 min-w-[200px]">
+                <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-2">Kết quả sơ bộ</div>
+                <span className="inline-flex items-center gap-2 text-[15px] font-black px-5 py-2 rounded-full bg-[#dcfce7] text-[#15803d] border-2 border-[#86efac]">
+                  Đang chờ đánh giá
+                </span>
+                {criteriaCount > 0 && (
+                  <div className="text-[11px] text-[#6b7280] mt-2 font-medium">
+                    {criteriaCount} tiêu chí · Tối đa {maxScore} điểm
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* 4. NHÂN VIÊN TỰ ĐỀ XUẤT */}
         <div className="bg-white rounded-xl shadow-sm border border-[#d1d5db] overflow-hidden">
