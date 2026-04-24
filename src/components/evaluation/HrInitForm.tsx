@@ -524,14 +524,12 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
 
       {/* ── 3. ĐÁNH GIÁ NĂNG LỰC (MẪU) ── */}
       <div className="bg-white rounded-xl shadow-sm border border-[#d1d5db] overflow-hidden">
-        <div className="bg-[#f8fafc] px-5 py-3 border-b border-[#d1d5db] flex items-center justify-between">
+        <div className="bg-[#f8fafc] px-5 py-3 border-b border-[#d1d5db] flex items-center gap-2">
           <div className="flex items-center gap-2">
             <span className="text-lg">⚡</span>
             <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">3. Đánh Giá Năng Lực (Tiêu Chí Mẫu)</span>
+            <span className="text-[11px] font-medium text-[#6b7280] ml-2">(HR điền sẵn tiêu chí, Quản lý & Nhân viên đánh giá sau)</span>
           </div>
-          <button type="button" onClick={addCriteria} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-bold text-[#1e3a5f] bg-white border border-[#d1d5db] rounded-[8px] hover:bg-[#f8fafc] hover:border-[#1e3a5f] transition-colors">
-            <Plus size={14} /> Thêm tiêu chí
-          </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-[13px]">
@@ -546,50 +544,76 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               </tr>
             </thead>
             <tbody>
-              {Object.entries(groupedCriteria).map(([group, items]) => (
-                <React.Fragment key={group}>
-                  <tr>
-                    <td colSpan={6} className="bg-[#1e3a5f]/5 text-[#1e3a5f] font-black text-[12px] uppercase tracking-[0.06em] p-[8px_12px] border border-[#d1d5db]">
-                      {group}
-                    </td>
-                  </tr>
-                  {items.map(({ item, index }) => (
-                    <tr key={index} className="hover:bg-[#eff6ff] transition-colors">
-                      <td className="border border-[#d1d5db] p-[6px] text-center font-bold text-[#6b7280] w-[40px]">{index + 1}</td>
-                      <td className="border border-[#d1d5db] p-[6px]">
-                        <textarea
-                          rows={2}
-                          value={item.name}
-                          onChange={e => updateCriteria(index, 'name', e.target.value)}
-                          placeholder="Nhập tên tiêu chí..."
-                          className="w-full font-sans text-[13px] border border-transparent hover:border-[#d1d5db] focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 rounded-[6px] p-[6px] outline-none text-[#111] font-bold bg-transparent focus:bg-white resize-y min-h-[44px] transition-all"
-                        />
+              {Object.entries(groupedCriteria).map(([group, items]) => {
+                // Xác định label nút thêm theo tên nhóm
+                const groupAddLabel = (() => {
+                  if (group.includes('KIẾN THỨC')) return 'Thêm kiến thức';
+                  if (group.includes('KỸ NĂNG')) return 'Thêm kỹ năng';
+                  if (group.includes('THÁI ĐỘ')) return 'Thêm thái độ';
+                  return 'Thêm tiêu chí';
+                })();
+
+                return (
+                  <React.Fragment key={group}>
+                    <tr>
+                      <td colSpan={6} className="bg-[#1e3a5f]/5 text-[#1e3a5f] font-black text-[12px] uppercase tracking-[0.06em] p-[8px_12px] border border-[#d1d5db]">
+                        {group}
                       </td>
-                      <td className="border border-[#d1d5db] p-[6px]">
-                        <textarea
-                          rows={2}
-                          value={item.expectation}
-                          onChange={e => updateCriteria(index, 'expectation', e.target.value)}
-                          placeholder="Mô tả kỳ vọng..."
-                          className="w-full font-sans text-[12px] border border-transparent hover:border-[#d1d5db] focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 rounded-[6px] p-[6px] outline-none text-[#111] bg-transparent focus:bg-white resize-y min-h-[44px] transition-all leading-relaxed"
-                        />
-                      </td>
-                      <td className="border border-[#d1d5db] p-[6px] bg-[#f9fafb]"></td>
-                      <td className="border border-[#d1d5db] p-[6px] bg-[#f9fafb]"></td>
-                      <td className="border border-[#d1d5db] p-[6px] text-center">
+                    </tr>
+                    {items.map(({ item, index }) => (
+                      <tr key={index} className="hover:bg-[#eff6ff] transition-colors">
+                        <td className="border border-[#d1d5db] p-[6px] text-center font-bold text-[#6b7280] w-[40px]">{index + 1}</td>
+                        <td className="border border-[#d1d5db] p-[6px]">
+                          <textarea
+                            rows={2}
+                            value={item.name}
+                            onChange={e => updateCriteria(index, 'name', e.target.value)}
+                            placeholder="Nhập tên tiêu chí..."
+                            className="w-full font-sans text-[13px] border border-transparent hover:border-[#d1d5db] focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 rounded-[6px] p-[6px] outline-none text-[#111] font-bold bg-transparent focus:bg-white resize-y min-h-[44px] transition-all"
+                          />
+                        </td>
+                        <td className="border border-[#d1d5db] p-[6px]">
+                          <textarea
+                            rows={2}
+                            value={item.expectation}
+                            onChange={e => updateCriteria(index, 'expectation', e.target.value)}
+                            placeholder="Mô tả kỳ vọng..."
+                            className="w-full font-sans text-[12px] border border-transparent hover:border-[#d1d5db] focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 rounded-[6px] p-[6px] outline-none text-[#111] bg-transparent focus:bg-white resize-y min-h-[44px] transition-all leading-relaxed"
+                          />
+                        </td>
+                        <td className="border border-[#d1d5db] p-[6px] bg-[#f9fafb]"></td>
+                        <td className="border border-[#d1d5db] p-[6px] bg-[#f9fafb]"></td>
+                        <td className="border border-[#d1d5db] p-[6px] text-center">
+                          <button
+                            type="button"
+                            onClick={() => removeCriteria(index)}
+                            className="text-red-400 hover:text-red-700 p-2 transition-colors"
+                            title="Xóa tiêu chí"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {/* Nút thêm cuối mỗi nhóm — đồng bộ với ReportGrid */}
+                    <tr>
+                      <td colSpan={6} className="border border-dashed border-blue-300 p-2 text-center bg-blue-50/20">
                         <button
                           type="button"
-                          onClick={() => removeCriteria(index)}
-                          className="w-[28px] h-[28px] inline-flex items-center justify-center rounded-[6px] text-[#fca5a5] hover:text-[#dc2626] hover:bg-[#fee2e2] transition-colors"
-                          title="Xóa"
+                          onClick={() => {
+                            const newItem = { name: '', expectation: '', group };
+                            setForm(prev => ({ ...prev, criteria: [...prev.criteria, newItem] }));
+                          }}
+                          className="text-[#1e3a5f] hover:text-blue-800 font-semibold flex items-center justify-center gap-2 w-full py-1 text-xs"
                         >
-                          ✕
+                          <PlusCircle size={15} className="text-[#1e3a5f]" />
+                          {groupAddLabel}
                         </button>
                       </td>
                     </tr>
-                  ))}
-                </React.Fragment>
-              ))}
+                  </React.Fragment>
+                );
+              })}
               {form.criteria.length === 0 && (
                 <tr>
                   <td colSpan={6} className="text-center py-8 text-slate-500 text-sm border border-[#d1d5db]">
