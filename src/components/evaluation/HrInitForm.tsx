@@ -330,11 +330,11 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* ── Ô Họ và Tên NV — tích hợp Employee Picker ── */}
             <div className="flex flex-col gap-1.5" ref={pickerRef}>
-              <label className="text-[11px] font-bold text-[#6b7280] uppercase tracking-[0.04em] flex items-center gap-1.5">
+              <label className="text-[13px] font-bold text-[#6b7280] uppercase tracking-[0.04em] flex items-center gap-1.5">
                 Họ và tên NV <span className="text-[#dc2626]">*</span>
                 {loadingMembers && <Loader2 size={11} className="animate-spin text-blue-400" />}
                 {memberList.length > 0 && !loadingMembers && (
-                  <span className="ml-auto text-[10px] text-slate-400 font-normal normal-case tracking-normal">{memberList.length} nhân viên</span>
+                  <span className="ml-auto text-xs text-slate-400 font-normal normal-case tracking-normal">{memberList.length} nhân viên</span>
                 )}
               </label>
               <div className="relative">
@@ -371,14 +371,14 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                           onClick={() => selectEmployee(member)}
                           className="w-full text-left px-3 py-2.5 hover:bg-[#eff6ff] transition-colors border-b border-[#f1f5f9] last:border-0 flex items-center gap-2.5"
                         >
-                          <div className="w-7 h-7 rounded-full bg-[#1e3a5f]/10 flex items-center justify-center text-[#1e3a5f] font-black text-[11px] shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-[#1e3a5f]/10 flex items-center justify-center text-[#1e3a5f] font-black text-xs shrink-0">
                             {member.name.split(' ').pop()?.slice(0, 2).toUpperCase()}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="text-[13px] font-semibold text-slate-800 truncate">{member.name}</div>
                           </div>
                           {member.joinedAt && (
-                            <div className="text-[10px] text-slate-400 shrink-0">
+                            <div className="text-xs text-slate-400 shrink-0">
                               {new Date(member.joinedAt).toLocaleDateString('vi-VN')}
                             </div>
                           )}
@@ -396,26 +396,26 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               </div>
               {/* Preview mini khi đã chọn */}
               {selectedMember && (
-                <div className="flex flex-wrap gap-2 text-[11px] text-slate-500 mt-0.5">
+                <div className="flex flex-wrap gap-2 text-xs text-slate-500 mt-0.5">
                   {selectedMember.joinedAt && <span className="bg-[#f0f9ff] border border-[#bae6fd] rounded px-2 py-0.5">📅 {new Date(selectedMember.joinedAt).toLocaleDateString('vi-VN')}</span>}
                 </div>
               )}
             </div>
             {/* Discord ID và Vị trí đã được ẩn theo yêu cầu */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-[#6b7280] uppercase tracking-[0.04em]">Ngày bắt đầu thử việc <span className="text-[#dc2626]">*</span></label>
+              <label className="text-[13px] font-bold text-[#6b7280] uppercase tracking-[0.04em]">Ngày bắt đầu thử việc <span className="text-[#dc2626]">*</span></label>
               <input type="date" required value={form.trial_start} onChange={e => setField('trial_start', e.target.value)} className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] px-[10px] py-[8px] outline-none text-[#111] font-medium bg-white focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 transition-all w-full" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-[#6b7280] uppercase tracking-[0.04em]">Ngày kết thúc thử việc</label>
+              <label className="text-[13px] font-bold text-[#6b7280] uppercase tracking-[0.04em]">Ngày kết thúc thử việc</label>
               <input type="date" value={form.trial_end} onChange={e => setField('trial_end', e.target.value)} className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] px-[10px] py-[8px] outline-none text-[#111] font-medium bg-white focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 transition-all w-full" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-[#6b7280] uppercase tracking-[0.04em]">Bộ phận <span className="text-[#dc2626]">*</span></label>
+              <label className="text-[13px] font-bold text-[#6b7280] uppercase tracking-[0.04em]">Bộ phận <span className="text-[#dc2626]">*</span></label>
               <input type="text" required value={form.dept} onChange={e => setField('dept', e.target.value)} placeholder="Kỹ thuật / Marketing / HCNS..." className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] px-[10px] py-[8px] outline-none text-[#111] font-medium bg-white focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 transition-all w-full" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-bold text-[#6b7280] uppercase tracking-[0.04em]">Quản lý trực tiếp <span className="text-[#dc2626]">*</span></label>
+              <label className="text-[13px] font-bold text-[#6b7280] uppercase tracking-[0.04em]">Quản lý trực tiếp <span className="text-[#dc2626]">*</span></label>
               <select value={form.manager_name} onChange={e => selectManager(e.target.value)} className="font-sans text-[13px] border-[1.5px] border-[#d1d5db] rounded-[6px] px-[10px] py-[8px] outline-none text-[#111] font-medium bg-white focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 transition-all w-full cursor-pointer">
                 {MANAGER_LIST.map(m => (
                   <option key={m.name} value={m.name}>{m.name}</option>
@@ -423,7 +423,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               </select>
             </div>
           </div>
-          <div className="mt-4 pt-3 border-t border-dashed border-[#d1d5db] text-[12px] text-[#6b7280] italic flex items-center gap-1.5">
+          <div className="mt-4 pt-3 border-t border-dashed border-[#d1d5db] text-[13px] text-[#6b7280] italic flex items-center gap-1.5">
             <span>📅 Ngày thực hiện đánh giá:</span>
             <strong className="text-[#1e3a5f] not-italic">{form.eval_date}</strong>
           </div>
@@ -432,7 +432,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
 
       {/* ── THANG ĐIỂM ── */}
       <div className="flex flex-wrap justify-center items-center gap-2 px-5">
-        <span className="text-[12px] font-bold text-[#6b7280] mr-1">Thang điểm:</span>
+        <span className="text-[13px] font-bold text-[#6b7280] mr-1">Thang điểm:</span>
         <span className="inline-flex items-center gap-1.5 text-[12px] font-bold"><span className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] font-black text-white bg-[#dc2626]">1</span><span className="text-[#374151]">Chưa đạt</span></span>
         <span className="inline-flex items-center gap-1.5 text-[12px] font-bold"><span className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] font-black text-white bg-[#f97316]">2</span><span className="text-[#374151]">Đạt một phần</span></span>
         <span className="inline-flex items-center gap-1.5 text-[12px] font-bold"><span className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] font-black text-white bg-[#eab308]">3</span><span className="text-[#374151]">Đạt</span></span>
@@ -446,7 +446,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
           <div className="flex items-center gap-2">
             <span className="text-lg">🗂️</span>
             <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">2. Tổng Kết Công Việc Thời Gian Thử Việc</span>
-            <span className="text-[11px] font-medium text-[#6b7280] ml-2">(HR điền sẵn, Quản lý &amp; Nhân viên bổ sung sau)</span>
+            <span className="text-[13px] font-medium text-[#6b7280] ml-2">(HR điền sẵn, Quản lý &amp; Nhân viên bổ sung sau)</span>
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -479,11 +479,11 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                       value={item.details}
                       onChange={e => updateWorkItem(index, 'details', e.target.value)}
                       placeholder="Ghi chi tiết các đầu việc nhỏ..."
-                      className="w-full font-sans text-[12px] border border-transparent hover:border-[#d1d5db] focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 rounded-[6px] p-[6px] outline-none text-[#111] bg-transparent focus:bg-white resize-y min-h-[44px] transition-all leading-relaxed"
+                      className="w-full font-sans text-sm border border-transparent hover:border-[#d1d5db] focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 rounded-[6px] p-[6px] outline-none text-[#111] bg-transparent focus:bg-white resize-y min-h-[44px] transition-all leading-relaxed"
                     />
                   </td>
                   <td className="border border-[#d1d5db] p-[6px] bg-[#f9fafb]">
-                    <div className="text-[11px] text-[#9ca3af] italic px-1">Nhân viên tự đánh giá, cho thang điểm và giải thích...</div>
+                    <div className="text-xs text-[#9ca3af] italic px-1">Nhân viên tự đánh giá, cho thang điểm và giải thích...</div>
                   </td>
                   <td className="border border-[#d1d5db] p-[6px] text-center">
                     <button
@@ -528,7 +528,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
           <div className="flex items-center gap-2">
             <span className="text-lg">⚡</span>
             <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">3. Đánh Giá Năng Lực (Tiêu Chí Mẫu)</span>
-            <span className="text-[11px] font-medium text-[#6b7280] ml-2">(HR điền sẵn tiêu chí, Quản lý & Nhân viên đánh giá sau)</span>
+            <span className="text-[13px] font-medium text-[#6b7280] ml-2">(HR điền sẵn tiêu chí, Quản lý & Nhân viên đánh giá sau)</span>
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -556,7 +556,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                 return (
                   <React.Fragment key={group}>
                     <tr>
-                      <td colSpan={6} className="bg-[#1e3a5f]/5 text-[#1e3a5f] font-black text-[12px] uppercase tracking-[0.06em] p-[8px_12px] border border-[#d1d5db]">
+                      <td colSpan={6} className="bg-[#1e3a5f]/5 text-[#1e3a5f] font-black text-sm uppercase tracking-[0.06em] p-[8px_12px] border border-[#d1d5db]">
                         {group}
                       </td>
                     </tr>
@@ -578,7 +578,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                             value={item.expectation}
                             onChange={e => updateCriteria(index, 'expectation', e.target.value)}
                             placeholder="Mô tả kỳ vọng..."
-                            className="w-full font-sans text-[12px] border border-transparent hover:border-[#d1d5db] focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 rounded-[6px] p-[6px] outline-none text-[#111] bg-transparent focus:bg-white resize-y min-h-[44px] transition-all leading-relaxed"
+                            className="w-full font-sans text-sm border border-transparent hover:border-[#d1d5db] focus:border-[#3b82f6] focus:ring-[3px] focus:ring-[#3b82f6]/15 rounded-[6px] p-[6px] outline-none text-[#111] bg-transparent focus:bg-white resize-y min-h-[44px] transition-all leading-relaxed"
                           />
                         </td>
                         <td className="border border-[#d1d5db] p-[6px] bg-[#f9fafb]"></td>
@@ -639,27 +639,27 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
             <div className="rounded-xl p-[24px_32px] flex flex-wrap items-center gap-6"
               style={{ background: 'linear-gradient(135deg,#fffbeb,#fef9c3)', border: '2px solid #fbbf24' }}>
               <div>
-                <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm nhân viên</div>
+                <div className="text-sm font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm nhân viên</div>
                 <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
                 <div className="text-[13px] text-[#6b7280] font-medium mt-1">{scoreLabel}</div>
               </div>
               <div>
-                <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm quản lý</div>
+                <div className="text-sm font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm quản lý</div>
                 <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
                 <div className="text-[13px] text-[#6b7280] font-medium mt-1">{scoreLabel}</div>
               </div>
               <div>
-                <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm bình quân</div>
+                <div className="text-sm font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-1">Điểm bình quân</div>
                 <div className="text-[40px] font-black leading-none text-[#b45309]">—</div>
                 <div className="text-[13px] text-[#6b7280] font-medium mt-1">/ 5.0</div>
               </div>
               <div className="flex-1 min-w-[200px]">
-                <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-2">Kết quả sơ bộ</div>
+                <div className="text-sm font-bold uppercase tracking-[0.06em] text-[#6b7280] mb-2">Kết quả sơ bộ</div>
                 <span className="inline-flex items-center gap-2 text-[15px] font-black px-5 py-2 rounded-full bg-[#dcfce7] text-[#15803d] border-2 border-[#86efac]">
                   Đang chờ đánh giá
                 </span>
                 {criteriaCount > 0 && (
-                  <div className="text-[11px] text-[#6b7280] mt-2 font-medium">
+                  <div className="text-[13px] text-[#6b7280] mt-2 font-medium">
                     {criteriaCount} tiêu chí · Tối đa {maxScore} điểm
                   </div>
                 )}
@@ -673,11 +673,11 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
           <div className="bg-[#f8fafc] px-5 py-3 border-b border-[#d1d5db] flex items-center gap-2">
             <span className="text-lg">✍️</span>
             <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">4. Nhân Viên Tự Đề Xuất</span>
-            <span className="text-[11px] font-medium text-[#6b7280] ml-2">Bắt buộc điền — CEO / Quản lý sẽ xem xét</span>
+            <span className="text-[13px] font-medium text-[#6b7280] ml-2">Bắt buộc điền — CEO / Quản lý sẽ xem xét</span>
           </div>
           <div className="p-5 grid gap-4">
             <div className="flex flex-col gap-[5px]">
-              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+              <label className="text-sm font-bold text-[#374151] uppercase tracking-[0.04em]">
                 💰 Lương thưởng / Chế độ mong muốn <span className="text-red-600">*</span>
               </label>
               <textarea
@@ -687,7 +687,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               />
             </div>
             <div className="flex flex-col gap-[5px]">
-              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+              <label className="text-sm font-bold text-[#374151] uppercase tracking-[0.04em]">
                 📚 Đào tạo chuyên môn cần hỗ trợ <span className="text-red-600">*</span>
               </label>
               <textarea
@@ -697,7 +697,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               />
             </div>
             <div className="flex flex-col gap-[5px]">
-              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+              <label className="text-sm font-bold text-[#374151] uppercase tracking-[0.04em]">
                 🏢 Góp ý về môi trường / Quy trình / Văn hóa công ty
               </label>
               <textarea
@@ -714,11 +714,11 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
           <div className="bg-[#f8fafc] px-5 py-3 border-b border-[#d1d5db] flex items-center gap-2">
             <span className="text-lg">👔</span>
             <span className="text-[15px] font-black text-[#1e3a5f] uppercase tracking-wide">5. Quản Lý Đánh Giá &amp; Kết Luận</span>
-            <span className="text-[11px] font-medium text-[#6b7280] ml-2">Chỉ Quản lý / CEO điền phần này</span>
+            <span className="text-[13px] font-medium text-[#6b7280] ml-2">Chỉ Quản lý / CEO điền phần này</span>
           </div>
           <div className="p-5 grid gap-4">
             <div className="flex flex-col gap-[5px]">
-              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+              <label className="text-sm font-bold text-[#374151] uppercase tracking-[0.04em]">
                 📝 Nhận xét chung về nhân viên <span className="text-red-600">*</span>
               </label>
               <textarea
@@ -728,7 +728,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               />
             </div>
             <div className="flex flex-col gap-[5px]">
-              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+              <label className="text-sm font-bold text-[#374151] uppercase tracking-[0.04em]">
                 🎯 Kỳ vọng &amp; Mục tiêu khi chính thức
               </label>
               <textarea
@@ -738,7 +738,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
               />
             </div>
             <div className="flex flex-col gap-[5px]">
-              <label className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em]">
+              <label className="text-sm font-bold text-[#374151] uppercase tracking-[0.04em]">
                 💰 Đề xuất lương thưởng / Chế độ từ quản lý
               </label>
               <textarea
@@ -753,7 +753,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
 
             {/* Quyết định — 3 lựa chọn */}
             <div>
-              <div className="text-[12px] font-bold text-[#374151] uppercase tracking-[0.04em] mb-3">
+              <div className="text-sm font-bold text-[#374151] uppercase tracking-[0.04em] mb-3">
                 ⚖️ QUYẾT ĐỊNH <span className="text-red-600">*</span>
               </div>
               <div className="flex flex-wrap gap-[10px]">
@@ -762,7 +762,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                   <span className="text-[18px]">✅</span>
                   <div>
                     <div className="text-[13px] font-bold text-[#15803d]">CHÍNH THỨC</div>
-                    <div className="text-[11px] font-medium text-[#6b7280]">Đạt yêu cầu, ký HĐ chính thức</div>
+                    <div className="text-[13px] font-medium text-[#6b7280]">Đạt yêu cầu, ký HĐ chính thức</div>
                   </div>
                 </label>
                 <label className="flex items-center gap-2 border-2 border-[#d1d5db] rounded-[8px] p-[10px_16px] cursor-pointer hover:border-[#1e3a5f] hover:bg-[rgba(30,58,95,0.04)] transition-all">
@@ -770,7 +770,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                   <span className="text-[18px]">⏳</span>
                   <div>
                     <div className="text-[13px] font-bold text-[#111]">GIA HẠN THỬ VIỆC</div>
-                    <div className="text-[11px] font-medium text-[#6b7280]">Gia hạn thêm 1 tháng để theo dõi</div>
+                    <div className="text-[13px] font-medium text-[#6b7280]">Gia hạn thêm 1 tháng để theo dõi</div>
                   </div>
                 </label>
                 <label className="flex items-center gap-2 border-2 border-[#d1d5db] rounded-[8px] p-[10px_16px] cursor-pointer hover:border-[#1e3a5f] hover:bg-[rgba(30,58,95,0.04)] transition-all">
@@ -778,7 +778,7 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
                   <span className="text-[18px]">❌</span>
                   <div>
                     <div className="text-[13px] font-bold text-[#dc2626]">CHẤM DỨT</div>
-                    <div className="text-[11px] font-medium text-[#6b7280]">Không phù hợp, kết thúc hợp đồng</div>
+                    <div className="text-[13px] font-medium text-[#6b7280]">Không phù hợp, kết thúc hợp đồng</div>
                   </div>
                 </label>
               </div>
@@ -795,27 +795,27 @@ export default function HrInitForm({ hrDiscordId, dashboardPassword }: HrInitFor
           <div className="p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
             {/* Nhân Sự */}
             <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
-              <div className="text-[11px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">🧑‍💼 Nhân Sự</div>
+              <div className="text-[13px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">🧑‍💼 Nhân Sự</div>
               <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
-              <div className="text-[11px] text-[#9ca3af] italic">[Họ Tên Nhân Viên - Auto Fill]</div>
+              <div className="text-xs text-[#9ca3af] italic">[Họ Tên Nhân Viên - Auto Fill]</div>
             </div>
             {/* Quản Lý Trực Tiếp */}
             <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
-              <div className="text-[11px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">👔 Quản Lý Trực Tiếp</div>
+              <div className="text-[13px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">👔 Quản Lý Trực Tiếp</div>
               <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
-              <div className="text-[11px] text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
+              <div className="text-xs text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
             </div>
             {/* Phòng HCNS */}
             <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
-              <div className="text-[11px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">🏢 Phòng HCNS</div>
+              <div className="text-[13px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">🏢 Phòng HCNS</div>
               <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
-              <div className="text-[11px] text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
+              <div className="text-xs text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
             </div>
             {/* Giám Đốc */}
             <div className="border-[1.5px] border-[#d1d5db] rounded-[8px] p-4 text-center bg-[#f9fafb]">
-              <div className="text-[11px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">👑 Giám Đốc</div>
+              <div className="text-[13px] font-black uppercase tracking-[0.06em] text-[#1e3a5f] mb-2">👑 Giám Đốc</div>
               <div className="h-[60px] border-b-[1.5px] border-dashed border-[#d1d5db] mb-2"></div>
-              <div className="text-[11px] text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
+              <div className="text-xs text-[#9ca3af] italic">Ký, ghi rõ họ tên</div>
             </div>
           </div>
         </div>
