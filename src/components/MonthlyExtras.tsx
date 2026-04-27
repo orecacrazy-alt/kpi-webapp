@@ -37,7 +37,7 @@ export default function MonthlyExtras() {
             <textarea
               className="w-full min-h-[110px] p-3 border-2 rounded-lg outline-none focus:border-blue-500 transition"
               style={{ fontSize: 13.5, fontWeight: 500, color: '#111827', borderColor: '#d1d5db' }}
-              placeholder="VD: Hoàn thành toàn bộ bộ banner tháng 3 trước deadline 2 ngày..."
+              placeholder="VD: Hoàn thiện module Pronounce trong Game SDK đạt accuracy 92%, tích hợp thành công vào 2 game pilot trước deadline 3 ngày..."
               value={monthlyData.achievements}
               onChange={(e) => updateMonthlyField('achievements', e.target.value)}
             />
@@ -52,7 +52,7 @@ export default function MonthlyExtras() {
             <textarea
               className="w-full min-h-[110px] p-3 border-2 rounded-lg outline-none focus:border-blue-500 transition"
               style={{ fontSize: 13.5, fontWeight: 500, color: '#111827', borderColor: '#d1d5db' }}
-              placeholder="VD: Video TikTok 2 clip bị trễ do chờ approval content..."
+              placeholder="VD: Crash bug khi chạy SDK Pronounce trên Android RAM dưới 3GB, mất 4 ngày debug; chờ team Edu duyệt kịch bản 5 màn mới nên dev block 1 tuần..."
               value={monthlyData.difficulties}
               onChange={(e) => updateMonthlyField('difficulties', e.target.value)}
             />
@@ -67,7 +67,7 @@ export default function MonthlyExtras() {
             <textarea
               className="w-full min-h-[110px] p-3 border-2 rounded-lg outline-none focus:border-blue-500 transition"
               style={{ fontSize: 13.5, fontWeight: 500, color: '#111827', borderColor: '#d1d5db' }}
-              placeholder="VD: Cần thêm account Canva Pro để sản xuất nhanh hơn..."
+              placeholder="VD: Cần thêm license Figma Team Plan cho team Design icon; đề xuất tuyển 1 dev mid để san task SDK + game native iOS..."
               value={monthlyData.proposals}
               onChange={(e) => updateMonthlyField('proposals', e.target.value)}
             />
@@ -83,7 +83,7 @@ export default function MonthlyExtras() {
             <textarea
               className="w-full min-h-[110px] p-3 border-2 rounded-lg outline-none focus:border-blue-500 transition"
               style={{ fontSize: 13.5, fontWeight: 500, color: '#111827', borderColor: '#d1d5db' }}
-              placeholder="VD: Ra mắt series blog 5 bài về STEM, đạt 10k lượt đọc..."
+              placeholder="VD: Hoàn thiện toàn bộ bộ icon UI game v2.0 (~120 icon, đóng gói thành design system); release SDK Pronounce v1.0 cho 2 game test nội bộ..."
               value={monthlyData.priorities}
               onChange={(e) => updateMonthlyField('priorities', e.target.value)}
             />
